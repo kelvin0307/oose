@@ -1,4 +1,7 @@
 using Core.Interfaces.Repositories;
+using Data.Context;
+using Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +17,6 @@ builder.Services.AddDbContext<DataContext>(options =>
 });
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped(typeof(QuestionService));
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

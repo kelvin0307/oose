@@ -9,8 +9,9 @@ namespace Domain.Models
     public class Planning
     {
         public int Id { get; set; }
-        public int WeekNumber { get; set; }
-        public string Name { get; set; }
-        public int SequenceNumber { get; set; }
+
+        public Course Course { get; set; }
+        public int CourseId { get; set; }
+        public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
     }
 }
