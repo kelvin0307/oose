@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kelvi\\source\\repos\\SchoolProject\\SchoolProject.csproj": {}
+    "C:\\Users\\kelvi\\OneDrive\\Documenten\\GitHub\\oose\\SchoolProject\\SchoolProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kelvi\\source\\repos\\SchoolProject\\SchoolProject.csproj": {
+    "C:\\Users\\kelvi\\OneDrive\\Documenten\\GitHub\\oose\\SchoolProject\\SchoolProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kelvi\\source\\repos\\SchoolProject\\SchoolProject.csproj",
+        "projectUniqueName": "C:\\Users\\kelvi\\OneDrive\\Documenten\\GitHub\\oose\\SchoolProject\\SchoolProject.csproj",
         "projectName": "SchoolProject",
-        "projectPath": "C:\\Users\\kelvi\\source\\repos\\SchoolProject\\SchoolProject.csproj",
+        "projectPath": "C:\\Users\\kelvi\\OneDrive\\Documenten\\GitHub\\oose\\SchoolProject\\SchoolProject.csproj",
         "packagesPath": "C:\\Users\\kelvi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kelvi\\source\\repos\\SchoolProject\\obj\\",
+        "outputPath": "C:\\Users\\kelvi\\OneDrive\\Documenten\\GitHub\\oose\\SchoolProject\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\kelvi\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -46,10 +46,6 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "AutoMapper": {
-              "target": "Package",
-              "version": "[16.0.0, )"
-            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"

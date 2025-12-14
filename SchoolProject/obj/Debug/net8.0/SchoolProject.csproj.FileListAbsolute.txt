@@ -1,0 +1,8 @@
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.csproj.AssemblyReference.cache
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.AssemblyInfoInputs.cache
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.AssemblyInfo.cs
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.csproj.CoreCompileInputs.cache
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\kelvi\OneDrive\Documenten\GitHub\oose\SchoolProject\obj\Debug\net8.0\SchoolProject.sourcelink.json

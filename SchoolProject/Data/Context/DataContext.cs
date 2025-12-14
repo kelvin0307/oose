@@ -1,10 +1,5 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Context
 {
@@ -37,9 +32,16 @@ namespace Data.Context
                 .WithMany(l => l.LearningOutcomes)
                 .UsingEntity<Dictionary<string, object>>(
                     "LessonLearningOutcome",
-                    j => j.HasOne<Lesson>().WithMany().HasForeignKey("LessonId"),
-                    j => j.HasOne<LearningOutcome>().WithMany().HasForeignKey("LearningOutcomeId") 
+                    j => j.HasOne<Lesson>()
+                          .WithMany()
+                          .HasForeignKey("LessonId")
+                          .OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<LearningOutcome>()
+                          .WithMany()
+                          .HasForeignKey("LearningOutcomeId")
+                          .OnDelete(DeleteBehavior.Cascade)
                 );
+
         }
     }
 }
