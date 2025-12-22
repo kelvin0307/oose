@@ -324,4 +324,63 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
     }
+    
+    [Test]
+    public async Task Delete_WithValidId_ReturnsNoContent()
+    {
+        // Arrange
+        var courseId = 1;
+        var deleteResponse = Response<bool>.Ok(true);
+
+        _courseServiceMock
+            .Setup(s => s.DeleteCourse(courseId))
+            .ReturnsAsync(deleteResponse);
+
+        // Act
+        var result = await _courseController.Delete(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NoContentResult>());
+        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task Delete_WithInvalidId_ReturnsNotFound()
+    {
+        // Arrange
+        var courseId = 999;
+        var deleteResponse = Response<bool>.NotFound("Course not found");
+
+        _courseServiceMock
+            .Setup(s => s.DeleteCourse(courseId))
+            .ReturnsAsync(deleteResponse);
+
+        // Act
+        var result = await _courseController.Delete(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task Delete_WhenServiceFails_ReturnsObjectResult()
+    {
+        // Arrange
+        var courseId = 1;
+        var deleteResponse = Response<bool>.Fail("An unexpected error occurred while deleting the course");
+
+        _courseServiceMock
+            .Setup(s => s.DeleteCourse(courseId))
+            .ReturnsAsync(deleteResponse);
+
+        // Act
+        var result = await _courseController.Delete(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+    }
 }

@@ -346,4 +346,92 @@ public class CourseServiceTests
         Assert.That(result.Message, Does.Contain("An unexpected error occurred while updating the course"));
         _courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
     }
+    
+    [Test]
+    public async Task DeleteCourse_WithValidId_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var course = new Course { Id = courseId, Name = "Test Course", Description = "Test Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync(course);
+
+        _courseRepositoryMock
+            .Setup(r => r.DeleteAndCommit(courseId))
+            .ReturnsAsync(course);
+
+        // Act
+        var result = await _courseService.DeleteCourse(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result, Is.True);
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+        _courseRepositoryMock.Verify(r => r.DeleteAndCommit(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteCourse_WithInvalidId_ReturnsNotFound()
+    {
+        // Arrange
+        var courseId = 999;
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync((Course)null!);
+
+        // Act
+        var result = await _courseService.DeleteCourse(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Course not found"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+        _courseRepositoryMock.Verify(r => r.DeleteAndCommit(It.IsAny<int>()), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteCourse_WhenInvalidOperationExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        // Act
+        var result = await _courseService.DeleteCourse(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Invalid operation while deleting course"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteCourse_WhenGeneralExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+        var course = new Course { Id = courseId, Name = "Test Course", Description = "Test Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync(course);
+
+        _courseRepositoryMock
+            .Setup(r => r.DeleteAndCommit(courseId))
+            .ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act
+        var result = await _courseService.DeleteCourse(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while deleting the course"));
+        _courseRepositoryMock.Verify(r => r.DeleteAndCommit(courseId), Times.Once);
+    }
 }
