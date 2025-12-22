@@ -8,6 +8,23 @@ namespace Core.Services;
 
 public class CourseService(IRepository<Course> courseRepository) : ICourseService
 {
+    public async Task<Response<List<CourseDto>>> GetAllCourses()
+    {
+        try
+        {
+            var courses = await courseRepository.GetAll();
+            return Response<List<CourseDto>>.Ok(courses.Select(MapToDto).ToList());
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Response<List<CourseDto>>.Fail("Invalid operation while fetching course", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            return Response<List<CourseDto>>.Fail("An unexpected error occurred while fetching courses");
+        }
+        
+    }
     public async Task<Response<CourseDto>> CreateCourse(CreateCourseDto createCourseDto)
     {
         try
