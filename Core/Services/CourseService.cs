@@ -73,6 +73,32 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         
     }
     
+    public async Task<Response<CourseDto>> UpdateCourse(int id, UpdateCourseDto updateCourseDto)
+    {
+        try
+        {
+            var course = await courseRepository.Get(id);
+            if (course == null)
+                return Response<CourseDto>.NotFound("Course not found");    
+
+            course.Name = updateCourseDto.Name;
+            course.Description = updateCourseDto.Description;
+
+            var updatedCourse = await courseRepository.UpdateAndCommit(course);
+            return Response<CourseDto>.Ok(MapToDto(updatedCourse));
+        }  
+        catch (InvalidOperationException ex)
+        {
+            return Response<CourseDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            return Response<CourseDto>.Fail("An unexpected error occurred while updating the course");
+        }
+        
+    }
+
+    
     private CourseDto MapToDto(Course course)
     {
         return new CourseDto

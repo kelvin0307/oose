@@ -27,4 +27,11 @@ public class CourseController(ICourseService courseService) : BaseApiController
         var response = await courseService.CreateCourse(createCourseDto);
         return HandleCreatedResponse(response, nameof(Get), new { id = response.Result?.Id });
     }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto updateCourseDto)
+    {
+        var response = await courseService.UpdateCourse(id, updateCourseDto);
+        return HandleResponse(response);
+    }
 }
