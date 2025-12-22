@@ -34,4 +34,11 @@ public class CourseController(ICourseService courseService) : BaseApiController
         var response = await courseService.UpdateCourse(id, updateCourseDto);
         return HandleResponse(response);
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response = await courseService.DeleteCourse(id);
+        return HandleResponse(response, noContentOnSuccess: true);
+    }
 }

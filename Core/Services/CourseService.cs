@@ -97,6 +97,28 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }
         
     }
+    
+    public async Task<Response<bool>> DeleteCourse(int id)
+    {
+        try
+        {
+            var course = await courseRepository.Get(id);
+            if (course == null)
+                return Response<bool>.NotFound("Course not found");
+            
+            await courseRepository.DeleteAndCommit(id);
+            return Response<bool>.Ok(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Response<bool>.Fail("Invalid operation while deleting course", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            return Response<bool>.Fail("An unexpected error occurred while deleting the course");
+        }
+    }
+
 
     
     private CourseDto MapToDto(Course course)
