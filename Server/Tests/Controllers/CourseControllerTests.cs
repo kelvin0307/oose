@@ -21,6 +21,76 @@ public class CourseControllerTests
     }
 
     [Test]
+    public async Task GetAll_WhenServiceReturnsSuccess_ReturnsOkResponse()
+    {
+        // Arrange
+        var courses = new List<CourseDto>
+        {
+            new CourseDto { Id = 1, Name = "Course 1", Description = "Description 1" },
+            new CourseDto { Id = 2, Name = "Course 2", Description = "Description 2" }
+        };
+
+        var response = Response<List<CourseDto>>.Ok(courses);
+
+        _courseServiceMock
+            .Setup(s => s.GetAllCourses())
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.GetAll();
+
+        // Assert
+        Assert.That(result, Is.TypeOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAll_WhenServiceReturnsEmptyList_ReturnsOkResponse()
+    {
+        // Arrange
+        var response = Response<List<CourseDto>>.Ok(new List<CourseDto>());
+
+        _courseServiceMock
+            .Setup(s => s.GetAllCourses())
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.GetAll();
+
+        // Assert
+        Assert.That(result, Is.TypeOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+    }
+
+    [Test]
+    public async Task GetAll_WhenServiceReturnsFail_ReturnsErrorResponse()
+    {
+        // Arrange
+        var response = new Response<List<CourseDto>>
+        {
+            Success = false,
+            Message = "Failed to fetch courses"
+        };
+
+        _courseServiceMock
+            .Setup(s => s.GetAllCourses())
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.GetAll();
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+    }
+    
+    [Test]
     public async Task Create_WithValidInput_ReturnsCreatedResponse()
     {
         // Arrange
