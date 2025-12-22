@@ -23,10 +23,12 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }   
         catch (InvalidOperationException ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("An unexpected error occurred while updating the course");
         }
         
