@@ -17,10 +17,12 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }
         catch (InvalidOperationException ex)
         {
+            //TODO: Log exception
             return Response<List<CourseDto>>.Fail("Invalid operation while fetching course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
+            //TODO: Log exception
             return Response<List<CourseDto>>.Fail("An unexpected error occurred while fetching courses");
         }
         
@@ -38,10 +40,12 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }
         catch (InvalidOperationException ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("An unexpected error occurred while fetching the course");
         }
         
@@ -89,10 +93,12 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }  
         catch (InvalidOperationException ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
+            //TODO: Log exception
             return Response<CourseDto>.Fail("An unexpected error occurred while updating the course");
         }
         
@@ -111,10 +117,12 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }
         catch (InvalidOperationException ex)
         {
+            //TODO: Log exception
             return Response<bool>.Fail("Invalid operation while deleting course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
+            //TODO: Log exception
             return Response<bool>.Fail("An unexpected error occurred while deleting the course");
         }
     }
