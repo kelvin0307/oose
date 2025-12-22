@@ -249,4 +249,79 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
+    
+    [Test]
+    public async Task Update_WithValidIdAndData_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+        var courseDto = new CourseDto { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
+        var response = Response<CourseDto>.Ok(courseDto);
+
+        _courseServiceMock
+            .Setup(s => s.UpdateCourse(courseId, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Update(courseId, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+    }
+
+    [Test]
+    public async Task Update_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var courseId = 999;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+        var response = new Response<CourseDto>
+        {
+            Success = false,
+            Message = "Course not found"
+        };
+
+        _courseServiceMock
+            .Setup(s => s.UpdateCourse(courseId, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Update(courseId, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+    }
+
+    [Test]
+    public async Task Update_WhenServiceThrowsException_ReturnsErrorResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+        var response = new Response<CourseDto>
+        {
+            Success = false,
+            Message = "An unexpected error occurred while updating the course"
+        };
+
+        _courseServiceMock
+            .Setup(s => s.UpdateCourse(courseId, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Update(courseId, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+    }
 }

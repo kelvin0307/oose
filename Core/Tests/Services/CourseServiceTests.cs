@@ -252,4 +252,98 @@ public class CourseServiceTests
         Assert.That(result.Success, Is.False);
         Assert.That(result.Message, Is.EqualTo("An unexpected error occurred while updating the course"));
     }
+    
+    [Test]
+    public async Task UpdateCourse_WithValidIdAndData_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+        var existingCourse = new Course { Id = courseId, Name = "Old Course", Description = "Old Description" };
+        var updatedCourse = new Course { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync(existingCourse);
+
+        _courseRepositoryMock
+            .Setup(r => r.UpdateAndCommit(It.IsAny<Course>()))
+            .ReturnsAsync(updatedCourse);
+
+        // Act
+        var result = await _courseService.UpdateCourse(courseId, updateDto);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result.Name, Is.EqualTo("Updated Course"));
+        Assert.That(result.Result.Description, Is.EqualTo("Updated Description"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+        _courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateCourse_WithInvalidId_ReturnsNotFound()
+    {
+        // Arrange
+        var courseId = 999;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync((Course)null!);
+
+        // Act
+        var result = await _courseService.UpdateCourse(courseId, updateDto);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Course not found"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+        _courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Never);
+    }
+
+    [Test]
+    public async Task UpdateCourse_WhenInvalidOperationExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        // Act
+        var result = await _courseService.UpdateCourse(courseId, updateDto);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Invalid operation while updating course"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task UpdateCourse_WhenGeneralExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+        var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
+        var existingCourse = new Course { Id = courseId, Name = "Old Course", Description = "Old Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync(existingCourse);
+
+        _courseRepositoryMock
+            .Setup(r => r.UpdateAndCommit(It.IsAny<Course>()))
+            .ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act
+        var result = await _courseService.UpdateCourse(courseId, updateDto);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while updating the course"));
+        _courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
+    }
 }
