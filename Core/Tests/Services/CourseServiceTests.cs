@@ -99,6 +99,84 @@ public class CourseServiceTests
     }
 
     [Test]
+    public async Task GetCourseById_WithValidId_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var course = new Course { Id = courseId, Name = "Test Course", Description = "Test Description" };
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync(course);
+
+        // Act
+        var result = await _courseService.GetCourseById(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result.Id, Is.EqualTo(courseId));
+        Assert.That(result.Result.Name, Is.EqualTo("Test Course"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task GetCourseById_WithInvalidId_ReturnsNotFound()
+    {
+        // Arrange
+        var courseId = 999;
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync((Course)null!);
+
+        // Act
+        var result = await _courseService.GetCourseById(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Course not found"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task GetCourseById_WhenInvalidOperationExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        // Act
+        var result = await _courseService.GetCourseById(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Invalid operation while getting course"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task GetCourseById_WhenGeneralExceptionThrown_ReturnsFail()
+    {
+        // Arrange
+        var courseId = 1;
+
+        _courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act
+        var result = await _courseService.GetCourseById(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching the course"));
+        _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
+    
+    [Test]
     public async Task CreateCourse_WithValidInput_ReturnsSuccessResponse()
     {
         // Arrange

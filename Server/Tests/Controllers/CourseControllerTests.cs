@@ -91,6 +91,78 @@ public class CourseControllerTests
     }
     
     [Test]
+    public async Task Get_WithValidId_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var courseDto = new CourseDto { Id = courseId, Name = "Test Course", Description = "Test Description" };
+        var response = Response<CourseDto>.Ok(courseDto);
+
+        _courseServiceMock
+            .Setup(s => s.GetCourseById(courseId))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Get(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task Get_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var courseId = 999;
+        var response = new Response<CourseDto>
+        {
+            Success = false,
+            Message = "Course not found"
+        };
+
+        _courseServiceMock
+            .Setup(s => s.GetCourseById(courseId))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Get(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+    }
+
+    [Test]
+    public async Task Get_WhenServiceThrowsException_ReturnsErrorResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var response = new Response<CourseDto>
+        {
+            Success = false,
+            Message = "An unexpected error occurred while fetching the course"
+        };
+
+        _courseServiceMock
+            .Setup(s => s.GetCourseById(courseId))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _courseController.Get(courseId);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
+        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+    }
+        
+    [Test]
     public async Task Create_WithValidInput_ReturnsCreatedResponse()
     {
         // Arrange
