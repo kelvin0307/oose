@@ -25,6 +25,28 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         }
         
     }
+    
+    public async Task<Response<CourseDto>> GetCourseById(int id)
+    {
+        try
+        {
+            var course = await courseRepository.Get(id);
+
+            return course != null 
+                ? Response<CourseDto>.Ok(MapToDto(course))
+                : Response<CourseDto>.NotFound("Course not found");
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Response<CourseDto>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            return Response<CourseDto>.Fail("An unexpected error occurred while fetching the course");
+        }
+        
+    }
+    
     public async Task<Response<CourseDto>> CreateCourse(CreateCourseDto createCourseDto)
     {
         try

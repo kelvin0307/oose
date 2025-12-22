@@ -14,10 +14,17 @@ public class CourseController(ICourseService courseService) : BaseApiController
         return HandleResponse(response);
     }
     
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var response = await courseService.GetCourseById(id);
+        return HandleResponse(response);
+    }
+    
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
     {
         var response = await courseService.CreateCourse(createCourseDto);
-        return HandleCreatedResponse(response, "TODO: ADD ACTION URL ONCE GET CALL GETS BUILD", new { id = response.Result?.Id });
+        return HandleCreatedResponse(response, nameof(Get), new { id = response.Result?.Id });
     }
 }
