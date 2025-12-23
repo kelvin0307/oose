@@ -2,6 +2,7 @@ using Core.Common;
 using Core.DTOs;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
@@ -59,6 +60,7 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
             {
                 Name = createCourseDto.Name,
                 Description = createCourseDto.Description,
+                Status = CourseStatus.Concept
             };
 
             var createdCourse = await courseRepository.CreateAndCommit(course);

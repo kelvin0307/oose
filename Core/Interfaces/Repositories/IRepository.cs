@@ -4,7 +4,7 @@
         TEntity : class
     {
         Task<List<TEntity>> GetAll();
-        Task<TEntity> Get(int id);
+        Task<TEntity?> Get(int id);
         Task<TEntity> CreateAndCommit(TEntity entity);
         void Create(List<TEntity> entity);
         void Update(TEntity entity);
