@@ -10,6 +10,5 @@ namespace Core.Interfaces.Services
         Task<Response<CourseDto>> CreateCourse(CreateCourseDto createCourseDto);
         Task<Response<CourseDto>> UpdateCourse(int id, UpdateCourseDto updateCourseDto);
         Task<Response<bool>> DeleteCourse(int id);
-
     }
 }

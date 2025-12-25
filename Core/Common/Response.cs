@@ -1,5 +1,4 @@
-using Core.Common;
-
+namespace Core.Common;
 public class Response<T>
 {
     public bool Success { get; set; }

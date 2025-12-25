@@ -11,14 +11,14 @@ namespace Server.Tests.Controllers;
 [TestFixture]
 public class CourseControllerTests
 {
-    private Mock<ICourseService> _courseServiceMock;
+    private Mock<ICourseService> courseServiceMock;
     private CourseController _courseController;
 
     [SetUp]
     public void Setup()
     {
-        _courseServiceMock = new Mock<ICourseService>();
-        _courseController = new CourseController(_courseServiceMock.Object);
+        courseServiceMock = new Mock<ICourseService>();
+        _courseController = new CourseController(courseServiceMock.Object);
     }
 
     #region GetAll Tests
@@ -34,7 +34,7 @@ public class CourseControllerTests
 
         var response = Response<List<CourseDto>>.Ok(courses);
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetAllCourses())
             .ReturnsAsync(response);
 
@@ -45,7 +45,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+        courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class CourseControllerTests
         // Arrange
         var response = Response<List<CourseDto>>.Ok(new List<CourseDto>());
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetAllCourses())
             .ReturnsAsync(response);
 
@@ -65,7 +65,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+        courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
     }
 
     [Test]
@@ -78,7 +78,7 @@ public class CourseControllerTests
             Message = "Failed to fetch courses"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetAllCourses())
             .ReturnsAsync(response);
 
@@ -89,7 +89,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
+        courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
     }
     #endregion
     
@@ -102,7 +102,7 @@ public class CourseControllerTests
         var courseDto = new CourseDto { Id = courseId, Name = "Test Course", Description = "Test Description" };
         var response = Response<CourseDto>.Ok(courseDto);
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetCourseById(courseId))
             .ReturnsAsync(response);
 
@@ -113,7 +113,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
     }
 
     [Test]
@@ -127,7 +127,7 @@ public class CourseControllerTests
             Message = "Course not found"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetCourseById(courseId))
             .ReturnsAsync(response);
 
@@ -138,7 +138,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
     }
 
     [Test]
@@ -152,7 +152,7 @@ public class CourseControllerTests
             Message = "An unexpected error occurred while fetching the course"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.GetCourseById(courseId))
             .ReturnsAsync(response);
 
@@ -163,7 +163,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
     }
     #endregion
     
@@ -192,7 +192,7 @@ public class CourseControllerTests
             Message = "Course created successfully"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.CreateCourse(It.IsAny<CreateCourseDto>()))
             .ReturnsAsync(response);
 
@@ -204,7 +204,7 @@ public class CourseControllerTests
         var createdResult = result as CreatedAtActionResult;
         Assert.That(createdResult!.StatusCode, Is.EqualTo(201));
         Assert.That(createdResult.Value, Is.EqualTo(courseDto));
-        _courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
+        courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
 
     [Test]
@@ -217,13 +217,13 @@ public class CourseControllerTests
             Description = "Test Description"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.CreateCourse(It.IsAny<CreateCourseDto>()))
             .ThrowsAsync(new Exception("Service error"));
 
         // Act & Assert
         Assert.ThrowsAsync<Exception>(() => _courseController.Create(createCourseDto));
-        _courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
+        courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
 
     [Test]
@@ -242,7 +242,7 @@ public class CourseControllerTests
             Message = "Failed to create course"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.CreateCourse(It.IsAny<CreateCourseDto>()))
             .ReturnsAsync(response);
 
@@ -253,7 +253,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
+        courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
     #endregion
     
@@ -267,7 +267,7 @@ public class CourseControllerTests
         var courseDto = new CourseDto { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
         var response = Response<CourseDto>.Ok(courseDto);
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.UpdateCourse(courseId, updateDto))
             .ReturnsAsync(response);
 
@@ -278,7 +278,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+        courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
     }
 
     [Test]
@@ -293,7 +293,7 @@ public class CourseControllerTests
             Message = "Course not found"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.UpdateCourse(courseId, updateDto))
             .ReturnsAsync(response);
 
@@ -304,7 +304,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+        courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
     }
 
     [Test]
@@ -319,7 +319,7 @@ public class CourseControllerTests
             Message = "An unexpected error occurred while updating the course"
         };
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.UpdateCourse(courseId, updateDto))
             .ReturnsAsync(response);
 
@@ -330,7 +330,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
+        courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
     }
     #endregion
     
@@ -342,7 +342,7 @@ public class CourseControllerTests
         var courseId = 1;
         var deleteResponse = Response<bool>.Ok(true);
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.DeleteCourse(courseId))
             .ReturnsAsync(deleteResponse);
 
@@ -351,7 +351,7 @@ public class CourseControllerTests
 
         // Assert
         Assert.That(result, Is.TypeOf<NoContentResult>());
-        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
 
     [Test]
@@ -361,7 +361,7 @@ public class CourseControllerTests
         var courseId = 999;
         var deleteResponse = Response<bool>.NotFound("Course not found");
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.DeleteCourse(courseId))
             .ReturnsAsync(deleteResponse);
 
@@ -370,7 +370,7 @@ public class CourseControllerTests
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
-        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
 
     [Test]
@@ -380,7 +380,7 @@ public class CourseControllerTests
         var courseId = 1;
         var deleteResponse = Response<bool>.Fail("An unexpected error occurred while deleting the course");
 
-        _courseServiceMock
+        courseServiceMock
             .Setup(s => s.DeleteCourse(courseId))
             .ReturnsAsync(deleteResponse);
 
@@ -391,7 +391,7 @@ public class CourseControllerTests
         Assert.That(result, Is.TypeOf<ObjectResult>());
         var objectResult = result as ObjectResult;
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
-        _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
+        courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
     #endregion
 }

@@ -1,13 +1,11 @@
-namespace Core.Common
+namespace Core.Common;
+public enum ResponseStatus
 {
-    public enum ResponseStatus
-    {
-        Success,
-        NotFound,
-        ValidationError,
-        InvalidOperation,
-        UnexpectedError,
-        Unauthorized,
-        Forbidden
-    }
+    Success,
+    NotFound,
+    ValidationError,
+    InvalidOperation,
+    UnexpectedError,
+    Unauthorized,
+    Forbidden
 }
