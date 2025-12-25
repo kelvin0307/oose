@@ -2,6 +2,7 @@ using Core.Common;
 using Core.DTOs;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Core.Mappers;
 using Domain.Enums;
 using Domain.Models;
 
@@ -14,7 +15,7 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
         try
         {
             var courses = await courseRepository.GetAll();
-            return Response<List<CourseDto>>.Ok(courses.Select(MapToDto).ToList());
+            return Response<List<CourseDto>>.Ok(courses.Select(CourseMapper.ToDto).ToList());
         }
         catch (InvalidOperationException ex)
         {
@@ -36,7 +37,7 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
             var course = await courseRepository.Get(id);
 
             return course != null 
-                ? Response<CourseDto>.Ok(MapToDto(course))
+                ? Response<CourseDto>.Ok(CourseMapper.ToDto(course))
                 : Response<CourseDto>.NotFound("Course not found");
         }
         catch (InvalidOperationException ex)
@@ -64,7 +65,7 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
             };
 
             var createdCourse = await courseRepository.CreateAndCommit(course);
-            return Response<CourseDto>.Ok(MapToDto(createdCourse));
+            return Response<CourseDto>.Ok(CourseMapper.ToDto(createdCourse));
         }   
         catch (InvalidOperationException ex)
         {
@@ -91,7 +92,7 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
             course.Description = updateCourseDto.Description;
 
             var updatedCourse = await courseRepository.UpdateAndCommit(course);
-            return Response<CourseDto>.Ok(MapToDto(updatedCourse));
+            return Response<CourseDto>.Ok(CourseMapper.ToDto(updatedCourse));
         }  
         catch (InvalidOperationException ex)
         {
@@ -127,17 +128,5 @@ public class CourseService(IRepository<Course> courseRepository) : ICourseServic
             //TODO: Log exception
             return Response<bool>.Fail("An unexpected error occurred while deleting the course");
         }
-    }
-
-
-    
-    private CourseDto MapToDto(Course course)
-    {
-        return new CourseDto
-        {
-            Id = course.Id,
-            Name = course.Name,
-            Description = course.Description,
-        };
     }
 }
