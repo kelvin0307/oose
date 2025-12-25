@@ -19,7 +19,8 @@ public class CourseServiceTests
         _courseRepositoryMock = new Mock<IRepository<Course>>();
         _courseService = new CourseService(_courseRepositoryMock.Object);
     }
-    
+
+    #region GetAllCourses Tests
     [Test]
     public async Task GetAllCourses_WithValidCourses_ReturnsOkResponse()
     {
@@ -97,7 +98,9 @@ public class CourseServiceTests
         Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching courses"));
         _courseRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
+    #endregion
 
+    #region GetCourseById Tests
     [Test]
     public async Task GetCourseById_WithValidId_ReturnsOkResponse()
     {
@@ -175,7 +178,9 @@ public class CourseServiceTests
         Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching the course"));
         _courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
     }
-    
+    #endregion
+
+    #region CreateCourse Tests
     [Test]
     public async Task CreateCourse_WithValidInput_ReturnsSuccessResponse()
     {
@@ -190,7 +195,8 @@ public class CourseServiceTests
         {
             Id = 1,
             Name = createCourseDto.Name,
-            Description = createCourseDto.Description
+            Description = createCourseDto.Description,
+            Status = Domain.Enums.CourseStatus.Concept
         };
 
         _courseRepositoryMock
@@ -252,7 +258,9 @@ public class CourseServiceTests
         Assert.That(result.Success, Is.False);
         Assert.That(result.Message, Is.EqualTo("An unexpected error occurred while updating the course"));
     }
+    #endregion
     
+    #region UpdateCourse Tests
     [Test]
     public async Task UpdateCourse_WithValidIdAndData_ReturnsOkResponse()
     {
@@ -346,7 +354,9 @@ public class CourseServiceTests
         Assert.That(result.Message, Does.Contain("An unexpected error occurred while updating the course"));
         _courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
     }
+    #endregion
     
+    #region DeleteCourse Tests
     [Test]
     public async Task DeleteCourse_WithValidId_ReturnsOkResponse()
     {
@@ -434,4 +444,5 @@ public class CourseServiceTests
         Assert.That(result.Message, Does.Contain("An unexpected error occurred while deleting the course"));
         _courseRepositoryMock.Verify(r => r.DeleteAndCommit(courseId), Times.Once);
     }
+    #endregion
 }

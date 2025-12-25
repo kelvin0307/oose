@@ -1,5 +1,6 @@
 using Core.DTOs;
 using Core.Interfaces.Services;
+using Core.Common;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -20,6 +21,7 @@ public class CourseControllerTests
         _courseController = new CourseController(_courseServiceMock.Object);
     }
 
+    #region GetAll Tests
     [Test]
     public async Task GetAll_WhenServiceReturnsSuccess_ReturnsOkResponse()
     {
@@ -89,7 +91,9 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
     }
+    #endregion
     
+    #region Get Tests
     [Test]
     public async Task Get_WithValidId_ReturnsOkResponse()
     {
@@ -161,7 +165,9 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.GetCourseById(courseId), Times.Once);
     }
-        
+    #endregion
+    
+    #region Create Tests
     [Test]
     public async Task Create_WithValidInput_ReturnsCreatedResponse()
     {
@@ -249,7 +255,9 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
+    #endregion
     
+    #region Update Tests
     [Test]
     public async Task Update_WithValidIdAndData_ReturnsOkResponse()
     {
@@ -324,7 +332,9 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.UpdateCourse(courseId, updateDto), Times.Once);
     }
+    #endregion
     
+    #region Delete Tests
     [Test]
     public async Task Delete_WithValidId_ReturnsNoContent()
     {
@@ -383,4 +393,5 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         _courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
+    #endregion
 }
