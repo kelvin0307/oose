@@ -12,13 +12,13 @@ namespace Server.Tests.Controllers;
 public class CourseControllerTests
 {
     private Mock<ICourseService> courseServiceMock;
-    private CourseController _courseController;
+    private CourseController courseController;
 
     [SetUp]
     public void Setup()
     {
         courseServiceMock = new Mock<ICourseService>();
-        _courseController = new CourseController(courseServiceMock.Object);
+        courseController = new CourseController(courseServiceMock.Object);
     }
 
     #region GetAll Tests
@@ -39,7 +39,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.GetAll();
+        var result = await courseController.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -59,7 +59,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.GetAll();
+        var result = await courseController.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -83,7 +83,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.GetAll();
+        var result = await courseController.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -107,7 +107,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Get(courseId);
+        var result = await courseController.Get(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -132,7 +132,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Get(courseId);
+        var result = await courseController.Get(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -157,7 +157,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Get(courseId);
+        var result = await courseController.Get(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -197,7 +197,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Create(createCourseDto);
+        var result = await courseController.Create(createCourseDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
@@ -222,7 +222,7 @@ public class CourseControllerTests
             .ThrowsAsync(new Exception("Service error"));
 
         // Act & Assert
-        Assert.ThrowsAsync<Exception>(() => _courseController.Create(createCourseDto));
+        Assert.ThrowsAsync<Exception>(() => courseController.Create(createCourseDto));
         courseServiceMock.Verify(s => s.CreateCourse(createCourseDto), Times.Once);
     }
 
@@ -247,7 +247,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Create(createCourseDto);
+        var result = await courseController.Create(createCourseDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -272,7 +272,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Update(courseId, updateDto);
+        var result = await courseController.Update(courseId, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -298,7 +298,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Update(courseId, updateDto);
+        var result = await courseController.Update(courseId, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -324,7 +324,7 @@ public class CourseControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _courseController.Update(courseId, updateDto);
+        var result = await courseController.Update(courseId, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -347,7 +347,7 @@ public class CourseControllerTests
             .ReturnsAsync(deleteResponse);
 
         // Act
-        var result = await _courseController.Delete(courseId);
+        var result = await courseController.Delete(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<NoContentResult>());
@@ -366,7 +366,7 @@ public class CourseControllerTests
             .ReturnsAsync(deleteResponse);
 
         // Act
-        var result = await _courseController.Delete(courseId);
+        var result = await courseController.Delete(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -385,7 +385,7 @@ public class CourseControllerTests
             .ReturnsAsync(deleteResponse);
 
         // Act
-        var result = await _courseController.Delete(courseId);
+        var result = await courseController.Delete(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
