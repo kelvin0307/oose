@@ -62,7 +62,7 @@ namespace Data.Repositories
             _context.Set<List<TEntity>>().Add(entity);
         }
 
-        public async Task<TEntity> Get(int id)
+        public async Task<TEntity?> Get(int id)
         {
             return await DbSet.FindAsync(id);
         }
