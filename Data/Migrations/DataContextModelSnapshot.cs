@@ -38,6 +38,9 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PlanningId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -54,10 +57,14 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CourseId")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EndQualification")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -164,13 +171,13 @@ namespace Data.Migrations
 
             modelBuilder.Entity("LessonLearningOutcome", b =>
                 {
-                    b.HasOne("Domain.Models.LearningOutcome", null)
+                    b.HasOne("Domain.Models.Lesson", null)
                         .WithMany()
                         .HasForeignKey("LearningOutcomeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Models.Lesson", null)
+                    b.HasOne("Domain.Models.LearningOutcome", null)
                         .WithMany()
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
