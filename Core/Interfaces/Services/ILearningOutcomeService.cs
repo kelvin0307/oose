@@ -6,5 +6,6 @@ namespace Core.Interfaces.Services;
 public interface ILearningOutcomeService
 {
     Task<Response<List<LearningOutcomeDto>>> GetAllLearningOutcomes();
+    Task<Response<LearningOutcomeDto>> GetLearningOutcomeById(int id);
     Task<Response<LearningOutcomeDto>> CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto);
 }
