@@ -22,12 +22,34 @@ public class LearningOutcomeService(
         catch (InvalidOperationException ex)
         {
             //TODO: Log exception
-            return Response<List<LearningOutcomeDto>>.Fail("Invalid operation while fetching course", ResponseStatus.InvalidOperation);
+            return Response<List<LearningOutcomeDto>>.Fail("Invalid operation while fetching learning outcomes", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
             //TODO: Log exception
-            return Response<List<LearningOutcomeDto>>.Fail("An unexpected error occurred while fetching courses");
+            return Response<List<LearningOutcomeDto>>.Fail("An unexpected error occurred while fetching learning outcomes");
+        }
+    }
+    
+    public async Task<Response<LearningOutcomeDto>> GetLearningOutcomeById(int id)
+    {
+        try
+        {
+            var learningOutcome = await learningOutcomeRepository.Get(id);
+    
+            return learningOutcome != null 
+                ? Response<LearningOutcomeDto>.Ok(LearningOutcomeMapper.ToDto(learningOutcome))
+                : Response<LearningOutcomeDto>.NotFound("Learning outcome not found");
+        }
+        catch (InvalidOperationException ex)
+        {
+            //TODO: Log exception
+            return Response<LearningOutcomeDto>.Fail("Invalid operation while getting learning outcome", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Log exception
+            return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while fetching the learning outcome");
         }
     }
     
@@ -54,12 +76,12 @@ public class LearningOutcomeService(
         catch (InvalidOperationException ex)
         {
             //TODO: Log exception
-            return Response<LearningOutcomeDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
+            return Response<LearningOutcomeDto>.Fail("Invalid operation while creating learning outcome", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
             //TODO: Log exception
-            return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while updating the course");
+            return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while creating the learning outcome");
         }
     }
 }

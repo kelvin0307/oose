@@ -15,11 +15,17 @@ public class LearningOutcomeController(ILearningOutcomeService learningOutcomeSe
         return HandleResponse(response);
     }
     
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var response = await learningOutcomeService.GetLearningOutcomeById(id);
+        return HandleResponse(response);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateLearningOutcomeDto createLearningOutcomeDto)
     {
         var response = await learningOutcomeService.CreateLearningOutcome(createLearningOutcomeDto);
-        return HandleCreatedResponse(response, nameof(GetAll), new { id = response.Result?.Id });
-        // change nameof(GetAll) to nameof(Get) if GetById method is implemented
+        return HandleCreatedResponse(response, nameof(Get), new { id = response.Result?.Id });
     }
 }
