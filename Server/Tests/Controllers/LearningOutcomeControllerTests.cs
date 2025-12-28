@@ -89,7 +89,6 @@ public class LearningOutcomeControllerTests
 
     #endregion
     
-    
     #region Get Tests
 
     [Test]
@@ -162,7 +161,6 @@ public class LearningOutcomeControllerTests
     }
 
     #endregion
-    
     
     #region Create Tests
 
@@ -255,5 +253,102 @@ public class LearningOutcomeControllerTests
         Assert.That(objectResult.StatusCode, Is.EqualTo(500));
         learningOutcomeServiceMock.Verify(s => s.CreateLearningOutcome(createDto), Times.Once);
     }
+    #endregion
+    
+    #region Update Tests
+
+    [Test]
+    public async Task Update_WithValidIdAndDto_ReturnsOkResponse()
+    {
+        // Arrange
+        var id = 1;
+        var updateDto = new UpdateLearningOutcomeDto
+        {
+            Name = "Updated Outcome",
+            Description = "Updated Description",
+            EndQualification = "Updated Qualification"
+        };
+
+        var learningOutcomeDto = new LearningOutcomeDto
+        {
+            Id = id,
+            Name = updateDto.Name,
+            Description = updateDto.Description,
+            EndQualification = updateDto.EndQualification,
+            CourseId = 1
+        };
+
+        var response = Response<LearningOutcomeDto>.Ok(learningOutcomeDto);
+
+        learningOutcomeServiceMock
+            .Setup(s => s.UpdateLearningOutcome(id, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.Update(id, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<OkObjectResult>());
+        var okResult = result as OkObjectResult;
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
+        learningOutcomeServiceMock.Verify(s => s.UpdateLearningOutcome(id, updateDto), Times.Once);
+    }
+
+    [Test]
+    public async Task Update_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var id = 999;
+        var updateDto = new UpdateLearningOutcomeDto
+        {
+            Name = "Updated Outcome",
+            Description = "Updated Description",
+            EndQualification = "Updated Qualification"
+        };
+
+        var response = Response<LearningOutcomeDto>.NotFound("Learning outcome not found");
+
+        learningOutcomeServiceMock
+            .Setup(s => s.UpdateLearningOutcome(id, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.Update(id, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult.StatusCode, Is.EqualTo(404));
+        learningOutcomeServiceMock.Verify(s => s.UpdateLearningOutcome(id, updateDto), Times.Once);
+    }
+
+    [Test]
+    public async Task Update_WhenServiceFails_ReturnsObjectResultWithInternalServerError()
+    {
+        // Arrange
+        var id = 1;
+        var updateDto = new UpdateLearningOutcomeDto
+        {
+            Name = "Updated Outcome",
+            Description = "Updated Description",
+            EndQualification = "Updated Qualification"
+        };
+
+        var response = Response<LearningOutcomeDto>.Fail("An error occurred");
+
+        learningOutcomeServiceMock
+            .Setup(s => s.UpdateLearningOutcome(id, updateDto))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.Update(id, updateDto);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult.StatusCode, Is.EqualTo(500));
+        learningOutcomeServiceMock.Verify(s => s.UpdateLearningOutcome(id, updateDto), Times.Once);
+    }
+
     #endregion
 }

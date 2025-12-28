@@ -111,6 +111,5 @@ public class LearningOutcomeService(
             //TODO: Log exception
             return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while updating the learning outcome");
         }
-        
     }
 }
