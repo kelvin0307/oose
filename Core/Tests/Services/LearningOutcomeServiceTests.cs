@@ -79,7 +79,7 @@ public class LearningOutcomeServiceTests
 
         // Assert
         Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("Invalid operation while fetching course"));
+        Assert.That(result.Message, Does.Contain("Invalid operation while fetching learning outcomes"));
         learningOutcomeRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
 
@@ -96,9 +96,91 @@ public class LearningOutcomeServiceTests
 
         // Assert
         Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching courses"));
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching learning outcomes"));
         learningOutcomeRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
+    #endregion
+    
+    #region GetLearningOutcomeById Tests
+
+    [Test]
+    public async Task GetLearningOutcomeById_WithValidId_ReturnsOkResponse()
+    {
+        // Arrange
+        var learningOutcome = new LearningOutcome
+        {
+            Id = 1,
+            Name = "Test Outcome",
+            Description = "Test Description",
+            EndQualification = "Test Qualification",
+            CourseId = 1
+        };
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(1))
+            .ReturnsAsync(learningOutcome);
+
+        // Act
+        var result = await learningOutcomeService.GetLearningOutcomeById(1);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result.Id, Is.EqualTo(1));
+        Assert.That(result.Result.Name, Is.EqualTo("Test Outcome"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(1), Times.Once);
+    }
+
+    [Test]
+    public async Task GetLearningOutcomeById_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(999))
+            .ReturnsAsync((LearningOutcome)null);
+
+        // Act
+        var result = await learningOutcomeService.GetLearningOutcomeById(999);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Is.EqualTo("Learning outcome not found"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(999), Times.Once);
+    }
+
+    [Test]
+    public async Task GetLearningOutcomeById_WhenInvalidOperationThrown_ReturnsFailResponse()
+    {
+        // Arrange
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(1))
+            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        // Act
+        var result = await learningOutcomeService.GetLearningOutcomeById(1);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Invalid operation while getting learning outcome"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(1), Times.Once);
+    }
+
+    [Test]
+    public async Task GetLearningOutcomeById_WhenExceptionThrown_ReturnsFailResponse()
+    {
+        // Arrange
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(1))
+            .ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act
+        var result = await learningOutcomeService.GetLearningOutcomeById(1);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while fetching the learning outcome"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(1), Times.Once);
+    }
+
     #endregion
     
     #region CreateLearningOutcome Tests
@@ -197,7 +279,7 @@ public class LearningOutcomeServiceTests
 
         // Assert
         Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("Invalid operation while updating course"));
+        Assert.That(result.Message, Does.Contain("Invalid operation while creating learning outcome"));
         learningOutcomeRepositoryMock.Verify(r => r.CreateAndCommit(It.IsAny<LearningOutcome>()), Times.Once);
     }
 
@@ -228,7 +310,7 @@ public class LearningOutcomeServiceTests
 
         // Assert
         Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("An unexpected error occurred while updating the course"));
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while creating the learning outcome"));
         learningOutcomeRepositoryMock.Verify(r => r.CreateAndCommit(It.IsAny<LearningOutcome>()), Times.Once);
     }
 
