@@ -28,4 +28,11 @@ public class LearningOutcomeController(ILearningOutcomeService learningOutcomeSe
         var response = await learningOutcomeService.CreateLearningOutcome(createLearningOutcomeDto);
         return HandleCreatedResponse(response, nameof(Get), new { id = response.Result?.Id });
     }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateLearningOutcomeDto updateLearningOutcome)
+    {
+        var response = await learningOutcomeService.UpdateLearningOutcome(id, updateLearningOutcome);
+        return HandleResponse(response);
+    }
 }
