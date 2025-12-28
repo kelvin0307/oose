@@ -112,4 +112,27 @@ public class LearningOutcomeService(
             return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while updating the learning outcome");
         }
     }
+    
+    public async Task<Response<bool>> DeleteLearningOutcome(int id)
+    {
+        try
+        {
+            var learningOutcome = await learningOutcomeRepository.Get(id);
+            if (learningOutcome == null)
+                return Response<bool>.NotFound("Learning outcome not found");
+            
+            await learningOutcomeRepository.DeleteAndCommit(id);
+            return Response<bool>.Ok(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            //TODO: Log exception
+            return Response<bool>.Fail("Invalid operation while deleting learning outcome", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Log exception
+            return Response<bool>.Fail("An unexpected error occurred while deleting the learning outcome");
+        }
+    }
 }

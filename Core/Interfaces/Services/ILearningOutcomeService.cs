@@ -9,4 +9,5 @@ public interface ILearningOutcomeService
     Task<Response<LearningOutcomeDto>> GetLearningOutcomeById(int id);
     Task<Response<LearningOutcomeDto>> CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto);
     Task<Response<LearningOutcomeDto>> UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcome);
+    Task<Response<bool>> DeleteLearningOutcome(int id);
 }
