@@ -35,4 +35,11 @@ public class LearningOutcomeController(ILearningOutcomeService learningOutcomeSe
         var response = await learningOutcomeService.UpdateLearningOutcome(id, updateLearningOutcome);
         return HandleResponse(response);
     }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var response = await learningOutcomeService.DeleteLearningOutcome(id);
+        return HandleResponse(response, noContentOnSuccess: true);
+    }
 }
