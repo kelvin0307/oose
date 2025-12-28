@@ -20,7 +20,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICourseService, CourseService>();
-
+builder.Services.AddScoped<ILearningOutcomeService, LearningOutcomeService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

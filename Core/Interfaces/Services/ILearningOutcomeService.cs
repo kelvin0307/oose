@@ -1,0 +1,10 @@
+using Core.Common;
+using Core.DTOs;
+
+namespace Core.Interfaces.Services;
+
+public interface ILearningOutcomeService
+{
+    Task<Response<List<LearningOutcomeDto>>> GetAllLearningOutcomes();
+    Task<Response<LearningOutcomeDto>> CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto);
+}

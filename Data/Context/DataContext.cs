@@ -27,21 +27,20 @@ namespace Data.Context
                 .HasOne(l => l.Planning)
                 .WithMany(p => p.Lessons)
                 .HasForeignKey(l => l.PlanningId);
-            modelBuilder.Entity<LearningOutcome>()
-                .HasMany(lo => lo.Lessons)
-                .WithMany(l => l.LearningOutcomes)
+            modelBuilder.Entity<Lesson>()
+                .HasMany(lo => lo.LearningOutcomes)
+                .WithMany(l => l.Lessons)
                 .UsingEntity<Dictionary<string, object>>(
                     "LessonLearningOutcome",
-                    j => j.HasOne<Lesson>()
+                    j => j.HasOne<LearningOutcome>()
                           .WithMany()
                           .HasForeignKey("LessonId")
                           .OnDelete(DeleteBehavior.Restrict),
-                    j => j.HasOne<LearningOutcome>()
+                    j => j.HasOne<Lesson>()
                           .WithMany()
                           .HasForeignKey("LearningOutcomeId")
                           .OnDelete(DeleteBehavior.Cascade)
                 );
-
         }
     }
 }
