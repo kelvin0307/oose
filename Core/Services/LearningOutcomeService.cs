@@ -84,4 +84,33 @@ public class LearningOutcomeService(
             return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while creating the learning outcome");
         }
     }
+    
+    public async Task<Response<LearningOutcomeDto>> UpdateLearningOutcome(int id, UpdateLearningOutcomeDto learningOutcomeDto)
+    {
+        try
+        {
+            var learningOutcome = await learningOutcomeRepository.Get(id);
+            if (learningOutcome == null)
+                return Response<LearningOutcomeDto>.NotFound("Learning outcome not found");
+    
+            learningOutcome.Name = learningOutcomeDto.Name;
+            learningOutcome.Description = learningOutcomeDto.Description;
+            learningOutcome.EndQualification = learningOutcomeDto.EndQualification;
+            
+    
+            var updatedLearningOutcome = await learningOutcomeRepository.UpdateAndCommit(learningOutcome);
+            return Response<LearningOutcomeDto>.Ok(LearningOutcomeMapper.ToDto(updatedLearningOutcome));
+        }  
+        catch (InvalidOperationException ex)
+        {
+            //TODO: Log exception
+            return Response<LearningOutcomeDto>.Fail("Invalid operation while updating learning outcome", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Log exception
+            return Response<LearningOutcomeDto>.Fail("An unexpected error occurred while updating the learning outcome");
+        }
+        
+    }
 }
