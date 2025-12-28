@@ -474,4 +474,124 @@ public class LearningOutcomeServiceTests
     }
 
     #endregion
+    
+    #region DeleteLearningOutcome Tests
+
+    [Test]
+    public async Task DeleteLearningOutcome_WithValidId_ReturnsOkResponse()
+    {
+        // Arrange
+        var id = 1;
+        var learningOutcome = new LearningOutcome
+        {
+            Id = id,
+            Name = "Test Outcome",
+            Description = "Test Description",
+            EndQualification = "Test Qualification",
+            CourseId = 1
+        };
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(id))
+            .ReturnsAsync(learningOutcome);
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.DeleteAndCommit(id))
+            .ReturnsAsync(learningOutcome);
+
+        // Act
+        var result = await learningOutcomeService.DeleteLearningOutcome(id);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result, Is.True);
+        learningOutcomeRepositoryMock.Verify(r => r.Get(id), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.DeleteAndCommit(id), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteLearningOutcome_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var id = 999;
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(id))
+            .ReturnsAsync((LearningOutcome)null);
+
+        // Act
+        var result = await learningOutcomeService.DeleteLearningOutcome(id);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Is.EqualTo("Learning outcome not found"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(id), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.DeleteAndCommit(It.IsAny<int>()), Times.Never);
+    }
+
+    [Test]
+    public async Task DeleteLearningOutcome_WhenInvalidOperationThrown_ReturnsFailResponse()
+    {
+        // Arrange
+        var id = 1;
+        var learningOutcome = new LearningOutcome
+        {
+            Id = id,
+            Name = "Test Outcome",
+            Description = "Test Description",
+            EndQualification = "Test Qualification",
+            CourseId = 1
+        };
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(id))
+            .ReturnsAsync(learningOutcome);
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.DeleteAndCommit(id))
+            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        // Act
+        var result = await learningOutcomeService.DeleteLearningOutcome(id);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("Invalid operation while deleting learning outcome"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(id), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.DeleteAndCommit(id), Times.Once);
+    }
+
+    [Test]
+    public async Task DeleteLearningOutcome_WhenExceptionThrown_ReturnsFailResponse()
+    {
+        // Arrange
+        var id = 1;
+        var learningOutcome = new LearningOutcome
+        {
+            Id = id,
+            Name = "Test Outcome",
+            Description = "Test Description",
+            EndQualification = "Test Qualification",
+            CourseId = 1
+        };
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Get(id))
+            .ReturnsAsync(learningOutcome);
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.DeleteAndCommit(id))
+            .ThrowsAsync(new Exception("Unexpected error"));
+
+        // Act
+        var result = await learningOutcomeService.DeleteLearningOutcome(id);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Message, Does.Contain("An unexpected error occurred while deleting the learning outcome"));
+        learningOutcomeRepositoryMock.Verify(r => r.Get(id), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.DeleteAndCommit(id), Times.Once);
+    }
+
+    #endregion
 }
