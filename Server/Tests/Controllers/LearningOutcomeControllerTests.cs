@@ -1,6 +1,7 @@
 using Core.Common;
 using Core.DTOs;
 using Core.Interfaces.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -12,13 +13,13 @@ namespace Server.Tests.Controllers;
 public class LearningOutcomeControllerTests
 {
     private Mock<ILearningOutcomeService> learningOutcomeServiceMock;
-    private LearningOutcomeController _controller;
+    private LearningOutcomeController controller;
 
     [SetUp]
     public void Setup()
     {
         learningOutcomeServiceMock = new Mock<ILearningOutcomeService>();
-        _controller = new LearningOutcomeController(learningOutcomeServiceMock.Object);
+        controller = new LearningOutcomeController(learningOutcomeServiceMock.Object);
     }
 
     #region GetAll Tests
@@ -40,7 +41,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.GetAll();
+        var result = await controller.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -60,7 +61,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.GetAll();
+        var result = await controller.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -78,7 +79,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.GetAll();
+        var result = await controller.GetAll();
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -111,7 +112,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Get(1);
+        var result = await controller.Get(1);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -131,7 +132,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Get(999);
+        var result = await controller.Get(999);
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -151,7 +152,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Get(1);
+        var result = await controller.Get(1);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -192,7 +193,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Create(createDto);
+        var result = await controller.Create(createDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
@@ -220,7 +221,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Create(createDto);
+        var result = await controller.Create(createDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -245,7 +246,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Create(createDto);
+        var result = await controller.Create(createDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -285,7 +286,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Update(id, updateDto);
+        var result = await controller.Update(id, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -313,7 +314,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Update(id, updateDto);
+        var result = await controller.Update(id, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -341,7 +342,7 @@ public class LearningOutcomeControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await _controller.Update(id, updateDto);
+        var result = await controller.Update(id, updateDto);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -351,4 +352,70 @@ public class LearningOutcomeControllerTests
     }
 
     #endregion
+    
+    #region Delete Tests
+
+    [Test]
+    public async Task Delete_WithValidId_ReturnsNoContentResponse()
+    {
+        // Arrange
+        var id = 1;
+        var response = Response<bool>.Ok(true);
+
+        learningOutcomeServiceMock
+            .Setup(s => s.DeleteLearningOutcome(id))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await controller.Delete(id);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NoContentResult>());
+        learningOutcomeServiceMock.Verify(s => s.DeleteLearningOutcome(id), Times.Once);
+    }
+
+    [Test]
+    public async Task Delete_WithInvalidId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var id = 999;
+        var response = Response<bool>.NotFound("Learning outcome not found");
+
+        learningOutcomeServiceMock
+            .Setup(s => s.DeleteLearningOutcome(id))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await controller.Delete(id);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult.StatusCode, Is.EqualTo(404));
+        learningOutcomeServiceMock.Verify(s => s.DeleteLearningOutcome(id), Times.Once);
+    }
+
+    [Test]
+    public async Task Delete_WhenServiceFails_ReturnsObjectResultWithInternalServerError()
+    {
+        // Arrange
+        var id = 1;
+        var response = Response<bool>.Fail("An error occurred");
+
+        learningOutcomeServiceMock
+            .Setup(s => s.DeleteLearningOutcome(id))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await controller.Delete(id);
+
+        // Assert
+        Assert.That(result, Is.TypeOf<ObjectResult>());
+        var objectResult = result as ObjectResult;
+        Assert.That(objectResult.StatusCode, Is.EqualTo(500));
+        learningOutcomeServiceMock.Verify(s => s.DeleteLearningOutcome(id), Times.Once);
+    }
+
+    #endregion
+
 }
