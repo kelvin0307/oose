@@ -1,8 +1,8 @@
-﻿using Core.Interfaces.Repositories;
+﻿using System.Collections;
+using System.Linq.Expressions;
+using Core.Interfaces.Repositories;
 using Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Linq.Expressions;
 
 namespace Data.Repositories
 {
@@ -67,9 +67,19 @@ namespace Data.Repositories
             return await DbSet.FindAsync(id);
         }
 
+        public async Task<TEntity?> Get(Expression<Func<TEntity, bool>> action)
+        {
+            return await DbSet.FirstOrDefaultAsync(action);
+        }
+
         public async Task<List<TEntity>> GetAll()
         {
             return await DbSet.ToListAsync();
+        }
+
+        public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> action)
+        {
+            return await DbSet.Where(action).ToListAsync();
         }
 
         public async Task SaveManually()
@@ -87,12 +97,19 @@ namespace Data.Repositories
 
         public async Task<TEntity> DeleteAndCommit(int id)
         {
-            var objectData = await DbSet.FindAsync(id);
+            try
+            {
+                var objectData = await DbSet.FindAsync(id) ?? throw new Exception($"Object with id:{id} not found.");
 
-            DbSet.Remove(objectData);
-            await _context.SaveChangesAsync();
-
-            return objectData;
+                DbSet.Remove(objectData);
+                await _context.SaveChangesAsync();
+                return objectData;
+            }
+            catch (Exception)
+            {
+                //TODO: add logging with message and stacktrace
+                throw;
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
-using Core.Interfaces.Repositories;
-using Core.Interfaces.Services;
-using Core.Services;
+using Core.Extentions;
 using Data.Context;
-using Data.Repositories;
+using Data.Extentions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,14 +16,15 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<ICourseService, CourseService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+builder.Services.AddCoreServices();
+builder.Services.AddDataServices();
 
 var app = builder.Build();
 
