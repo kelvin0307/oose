@@ -1,0 +1,113 @@
+---
+config:
+  look: neo
+  theme: redux
+  layout: dagre
+---
+classDiagram
+direction TD
+      
+    namespace Core.Dto {
+        class CourseDto {
+            Id: int
+            Name: string
+            Descripton: String
+            Status: CourseStatus
+        }
+        class CreateCourseDto {
+            Name: string
+            Descripton: String
+        }
+        class UpdateCourseDto {
+            Name: string
+            Descripton: String
+        }
+    }
+
+    namespace Core.Interfaces.Repositories {
+        class IRepository~Course~ {
+            <<interface>>
+            +GetAll() Task~List~Course~~
+            +Get(int id) Task~Course?~
+            +CreateAndCommit(Course entity) Task~Course~
+            +UpdateAndCommit(Course entity) Task~Course~
+            +DeleteAndCommit(int id) Task~bool~
+        }
+    }
+
+    namespace Core.Interfaces.Services {
+        class ICourseService {
+            <<interface>>
+            +GetAllCourses() Task~Response~List~CourseDto~~~
+            +GetCourseById(int id) Task~Response~CourseDto~~
+            +CreateCourse(CreateCourseDto dto) Task~Response~CourseDto~~
+            +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
+            +DeleteCourse(int id) Task~Response~bool~~
+        }
+    }
+
+    namespace Core.Services {
+        class CourseService {
+            -IRepository~Course~ courseRepository
+            +CourseService(IRepository~Course~ repository)
+            +GetAllCourses() Task~Response~List~CourseDto~~~
+            +GetCourseById(int id) Task~Response~CourseDto~~
+            +CreateCourse(CreateCourseDto dto) Task~Response~CourseDto~~
+            +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
+            +DeleteCourse(int id) Task~Response~bool~~
+        }
+    }
+
+    namespace Core.Common {
+        class Response~T~ {
+            +bool Success
+            +T Result
+            +string Message
+            +Dictionary~string, string[]~ ValidationErrors
+            +ResponseStatus Status
+            +Ok(T result)$ Response~T~
+            +NotFound(string message)$ Response~T~
+            +Fail(string message, ResponseStatus status)$ Response~T~
+            +ValidationFail(Dictionary errors)$ Response~T~
+        }
+
+        class ResponseStatus {
+            <<enumeration>>
+            Success
+            NotFound
+            ValidationError
+            InvalidOperation
+            UnexpectedError
+            Unauthorized
+            Forbidden
+        }
+    }
+
+    namespace Core.Mappers{
+        class CourseMapper{
+             <<static>>
+            +$ToDto(course: Course) CourseDto
+        }
+    }
+
+    namespace Domain.Models {
+        class Course {
+            <<external>>
+            
+        }
+    }
+
+%% --------------------- Course Relations ---------------------
+    %% Common
+        Response --> ResponseStatus : has status
+
+
+    %% COURSE
+        CourseService ..|> ICourseService : implements
+        CourseService --> IRepository~Course~ : uses
+        CourseService ..> CourseDto : returns
+        CourseService ..> CreateCourseDto : uses
+        CourseService ..> UpdateCourseDto : uses
+        CourseService ..> Response : returns
+        CourseService ..> Course : uses
+        CourseService ..> CourseMapper: uses
