@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
+using Core.Extentions.ModelExtentions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Enums;
@@ -15,7 +16,7 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
         try
         {
             var courses = await courseRepository.GetAll();
-            return Response<List<CourseDto>>.Ok(courses.Select(mapper.Map<CourseDto>).ToList());
+            return Response<List<CourseDto>>.Ok(courses.Select(x => x.ToDto(mapper)).ToList());
         }
         catch (InvalidOperationException)
         {
@@ -38,7 +39,7 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
             var course = await courseRepository.Get(id);
 
             return course != null
-                ? Response<CourseDto>.Ok(mapper.Map<CourseDto>(course))
+                ? Response<CourseDto>.Ok(course.ToDto(mapper))
                 : Response<CourseDto>.NotFound("Course not found");
         }
         catch (InvalidOperationException)
@@ -58,15 +59,11 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
     {
         try
         {
-            var course = new Course
-            {
-                Name = createCourseDto.Name,
-                Description = createCourseDto.Description,
-                Status = CourseStatus.Concept
-            };
+            var course = createCourseDto.ToModel(mapper);
+            course.Status = CourseStatus.Concept;
 
             var createdCourse = await courseRepository.CreateAndCommit(course);
-            return Response<CourseDto>.Ok(mapper.Map<CourseDto>(createdCourse));
+            return Response<CourseDto>.Ok(createdCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
@@ -93,7 +90,7 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
             course.Description = updateCourseDto.Description;
 
             var updatedCourse = await courseRepository.UpdateAndCommit(course);
-            return Response<CourseDto>.Ok(mapper.Map<CourseDto>(updatedCourse));
+            return Response<CourseDto>.Ok(updatedCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
