@@ -17,6 +17,7 @@ public static class CoreExtensions
         QuestPDF.Settings.License = LicenseType.Community;
 
         services.AddTransient<ICourseService, CourseService>();
+        services.AddTransient<IValidatorService, ValidatorService>();
         services.AddTransient<IPlanningService, PlanningService>();
         services.AddTransient<IDocumentFactory, DocumentFactory>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
