@@ -9,6 +9,5 @@ public class Course
     public CourseStatus Status { get; set; }
 
     public Planning? Planning { get; set; }
-    public int? PlanningId { get; set; }
     public List<LearningOutcome>? LearningOutcomes { get; set; }
 }

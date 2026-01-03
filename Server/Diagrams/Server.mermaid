@@ -1,0 +1,60 @@
+---
+config:
+  look: neo
+  theme: redux
+  layout: dagre
+---
+classDiagram
+direction LR
+    namespace Server.Controllers {
+        class ControllerBase {
+            <<external>>
+        }
+
+        class BaseApiController {
+            <<abstract>>
+            #HandleResponse~T~(Response~T~ response, bool noContentOnSuccess) IActionResult
+            #HandleCreatedResponse~T~(Response~T~ response, string actionName, object routeValues) IActionResult
+        }
+
+        class CourseController {
+            -ICourseService _courseService
+            +CourseController(ICourseService courseService)
+            +GetAll() Task~IActionResult~
+            +Get(int id) Task~IActionResult~
+            +Create(CreateCourseDto dto) Task~IActionResult~
+            +Update(int id, UpdateCourseDto dto) Task~IActionResult~
+            +Delete(int id) Task~IActionResult~
+        }
+
+    }
+
+
+    namespace Core.Dto{
+        class CourseDto {
+            <<external>>
+        }
+
+        class CreateCourseDto {
+            <<external>>
+        }
+
+        class UpdateCourseDto {
+            <<external>>
+        }
+    }
+
+    namespace Core.Interfaces.Services{
+        class ICourseService {
+            <<external>>
+        }
+    }
+
+    %% Base Controller
+    CourseController --|> BaseApiController : inherits
+
+    %% Course
+    CourseController --> ICourseService : delegates to
+    CourseController ..> CreateCourseDto : receives
+    CourseController ..> UpdateCourseDto : receives
+    CourseController ..> CourseDto : returns

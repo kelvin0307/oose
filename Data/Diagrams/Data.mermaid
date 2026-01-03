@@ -1,0 +1,44 @@
+---
+config:
+  look: neo
+  theme: redux
+  layout: dagre
+---
+classDiagram
+direction LR    
+    namespace Data.Repositories {
+        class Repository~TEntity~ {
+            #DbSet~TEntity~ DbSet
+            -DataContext _context
+            +Repository(DataContext context)
+            +GetAll() Task~List~TEntity~~
+            +CreateAndCommit(TEntity) Task~TEntity~
+        }
+    }
+
+    namespace Data.Context {
+        class DataContext {
+            +DbSet~Course~ Courses
+            +DbSet~Planning~ Plannings
+            +DbSet~Lesson~ Lessons
+            +DbSet~LearningOutcome~ LearningOutcomes
+            #OnModelCreating(ModelBuilder) void
+        }
+    }
+
+    namespace Core.Interfaces.Repositories {
+        class IRepository~TEntity~{
+            <<external>>
+        }
+    }
+
+    namespace Domain.Models{
+        class Course{
+            <<external>>
+        }
+    }
+
+%% Relations
+    Repository~TEntity~ --> DataContext : uses
+    Repository~TEntity~ ..|> IRepository : implements
+    DataContext --> Course : stores (EF Core context)

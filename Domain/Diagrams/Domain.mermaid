@@ -1,0 +1,28 @@
+---
+config:
+  look: neo
+  theme: redux
+  layout: dagre
+---
+classDiagram
+direction LR  
+   namespace Domain.Models {
+        class Course {
+            +Id: int
+            +Name: string
+            +Description: string
+            +Status: CourseStatus
+            +LearningOutcome: LearningOutcome
+       }
+    }
+
+    namespace Domain.Enums {
+        class CourseStatus{
+            <<enumeration>>
+            Concept
+            Validated
+        }
+    }
+
+%% Relations
+    Course --> CourseStatus : has status
