@@ -2,7 +2,7 @@
 using Domain.Models;
 using System.Linq.Expressions;
 
-namespace Core.Tests.TestSupport.Helpers.Fakes;
+namespace Core.Tests.TestSupport.Fakes;
 
 public class InMemoryLearningOutcomeRepository : IRepository<LearningOutcome>
 {

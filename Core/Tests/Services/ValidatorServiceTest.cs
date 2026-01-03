@@ -3,7 +3,7 @@ using Core.Services;
 using Domain.Models;
 using Domain.Enums;
 using Core.Tests.TestSupport.Helpers;
-using Core.Tests.TestSupport.Helpers.Fakes;
+using Core.Tests.TestSupport.Fakes;
 
 namespace Core.Tests.Services;
 
