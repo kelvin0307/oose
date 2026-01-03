@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Server.Controllers;
+using Domain.Models;
 
 namespace Server.Tests.Controllers;
 
@@ -19,6 +20,7 @@ public class CourseControllerTests
     public void Setup()
     {
         courseServiceMock = new Mock<ICourseService>();
+        validatorServiceMock = new Mock<IValidatorService>();
         courseController = new CourseController(courseServiceMock.Object, validatorServiceMock.Object);
     }
 
@@ -395,4 +397,5 @@ public class CourseControllerTests
         courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
     #endregion
+
 }
