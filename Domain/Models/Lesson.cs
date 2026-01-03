@@ -1,4 +1,6 @@
-﻿namespace Domain.Models
+﻿using Domain.Enums;
+
+namespace Domain.Models
 {
     public class Lesson
     {
@@ -6,6 +8,7 @@
         public int WeekNumber { get; set; }
         public string Name { get; set; }
         public int SequenceNumber { get; set; }
+        public TestType? TestType { get; set; }
 
         public Planning? Planning { get; set; }
         public int? PlanningId { get; set; }

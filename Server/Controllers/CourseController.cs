@@ -41,4 +41,12 @@ public class CourseController(ICourseService courseService) : BaseApiController
         var response = await courseService.DeleteCourse(id);
         return HandleResponse(response, noContentOnSuccess: true);
     }
+
+    [HttpGet("{Id}/validatePlanning")]
+    public async Task<IActionResult> ValidatePlanning(int id)
+    {
+
+
+        return null;
+    }
 }
