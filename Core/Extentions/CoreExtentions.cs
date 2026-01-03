@@ -9,6 +9,7 @@ public static class CoreExtentions
     public static void AddCoreServices(this IServiceCollection services)
     {
         services.AddTransient<ICourseService, CourseService>();
+        services.AddTransient<IValidatorService, ValidatorService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }

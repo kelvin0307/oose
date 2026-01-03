@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class CourseController(ICourseService courseService) : BaseApiController
+public class CourseController(ICourseService courseService, IValidatorService validationService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -42,11 +42,16 @@ public class CourseController(ICourseService courseService) : BaseApiController
         return HandleResponse(response, noContentOnSuccess: true);
     }
 
-    [HttpGet("{Id}/validatePlanning")]
+    [HttpGet("{id}/validatePlanning")]
     public async Task<IActionResult> ValidatePlanning(int id)
     {
+        var response = await validationService.ValidateCoursePlanning(id);
 
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
 
-        return null;
+        return Ok(response);
     }
 }

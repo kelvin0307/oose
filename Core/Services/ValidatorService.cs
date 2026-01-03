@@ -1,5 +1,6 @@
 ﻿using Core.Common;
 using Core.Extensions;
+using Core.Extentions.ModelExtentions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Models;
@@ -11,17 +12,33 @@ namespace Core.Services
     {
         public Task<Response<string>> ValidateCoursePlanning(int courseId)
         {
-            var response = new Response<string>();
+            var validationErrors = new Dictionary<string, string[]>();
 
-            var learningOutcomes = learningOutcomeRepository.FindByCourseId(courseId);
+            var learningOutcomes = learningOutcomeRepository
+                .FindByCourseId(courseId)
+                .ToList();
+
+            if (!learningOutcomes.Any())
+            {
+                validationErrors.Add(
+                    "Course",
+                    [$"No learning outcomes found for course {courseId}."]
+                );
+            }
 
             foreach (var learningOutcome in learningOutcomes)
             {
-                var lessons = lessonRepository.FindLessonsByLearningOutcomeId(learningOutcome.Id);
-                if (lessons.Count() < 1)
+                var errors = new List<string>();
+
+                var lessons = lessonRepository
+                    .FindLessonsByLearningOutcomeId(learningOutcome.Id)
+                    .ToList();
+
+                if (!lessons.Any())
                 {
-                    response.Success = false;
-                    response.Message = $"Learning outcome '{learningOutcome.Name}' had not enough lessons.";
+                    errors.Add(
+                        $"Learning outcome '{learningOutcome.Name}' has no lessons."
+                    );
                 }
 
                 var lastLesson = lessonRepository
@@ -30,16 +47,34 @@ namespace Core.Services
                     .ThenByDescending(x => x.SequenceNumber)
                     .FirstOrDefault();
 
-
-                if (lastLesson != null && lastLesson.TestType == null)
+                if (lastLesson == null || lastLesson.TestType == null)
                 {
-                    response.Success = false;
-                    response.Message = $"The last lesson of learning outcome '{learningOutcome.Name}' is not a test.";
+                    errors.Add(
+                        $"The last lesson of learning outcome '{learningOutcome.Name}' is not a test."
+                    );
+                }
+
+                if (errors.Any())
+                {
+                    validationErrors.Add(
+                        $"LearningOutcome_{learningOutcome.Id}",
+                        errors.ToArray()
+                    );
                 }
             }
 
-            return Task.FromResult(response);
+            if (validationErrors.Any())
+            {
+                return Task.FromResult(
+                    Response<string>.ValidationFail(validationErrors)
+                );
+            }
+
+            return Task.FromResult(
+                Response<string>.Ok("Course planning is valid.")
+            );
         }
+
 
     }
 }

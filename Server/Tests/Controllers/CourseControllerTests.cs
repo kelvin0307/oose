@@ -12,13 +12,14 @@ namespace Server.Tests.Controllers;
 public class CourseControllerTests
 {
     private Mock<ICourseService> courseServiceMock;
+    private Mock<IValidatorService> validatorServiceMock;
     private CourseController courseController;
 
     [SetUp]
     public void Setup()
     {
         courseServiceMock = new Mock<ICourseService>();
-        courseController = new CourseController(courseServiceMock.Object);
+        courseController = new CourseController(courseServiceMock.Object, validatorServiceMock.Object);
     }
 
     #region GetAll Tests
