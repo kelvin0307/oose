@@ -111,5 +111,25 @@ namespace Data.Repositories
                 throw;
             }
         }
+
+        public async Task<List<TEntity>> ToListAsync(IQueryable<TEntity> query)
+        {
+            return await query.ToListAsync();
+        }
+
+        public async Task<TEntity?> FirstOrDefaultAsync(IQueryable<TEntity> query)
+        {
+            return await query.FirstOrDefaultAsync(); // EF Core extension
+        }
+
+        public IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> navigationProperty)
+        {
+            return DbSet.Include(navigationProperty);
+        }
+
+        public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        {
+            return DbSet.Where(predicate);
+        }
     }
 }

@@ -1,11 +1,11 @@
 using Core.DTOs;
-using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
 using AutoMapper;
+using Core.Interfaces.Repositories;
 
 namespace Core.Tests.Services;
 
