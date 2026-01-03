@@ -1,12 +1,15 @@
-﻿using Core.DTOs;
+﻿using Core.DocumentGenerator.Generators.Abstraction;
+using Core.DTOs;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Core.DocumentGenerator.Generators;
-public class DocXGenerator
+public class DocXGenerator : IGenerator
 {
-    public byte[] GenerateDocument(DocumentDataDTO documentData)
+    public string ContentType => "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+    public DocumentDTO GenerateDocument(DocumentDataDTO documentData)
     {
         using var stream = new MemoryStream();
 
@@ -19,16 +22,25 @@ public class DocXGenerator
             mainPart.Document = new Document();
             var body = mainPart.Document.AppendChild(new Body());
 
-            body.Append(CreateHeading(documentData.Title, 3));
+            body.Append(CreateParagraph(documentData.Title, true));
             foreach (var paragraph in documentData.Paragraphs)
             {
-                body.Append(CreateHeading(paragraph.Key, 4));
+                body.Append(CreateParagraph(paragraph.Key, true));
                 body.Append(CreateParagraph(paragraph.Value));
             }
 
             mainPart.Document.Save();
         }
-        return stream.ToArray();
+
+        // saving to the server
+        //File.WriteAllBytes(documentData.Title, stream.ToArray());
+
+        return new DocumentDTO
+        {
+            Document = stream.ToArray(),
+            ContentType = ContentType,
+            DocumentName = documentData.Title
+        };
     }
 
     private static Paragraph CreateParagraph(string text, bool bold = false)
@@ -40,18 +52,6 @@ public class DocXGenerator
                 ),
                 new Text(text)
             )
-        );
-    }
-    private static Paragraph CreateHeading(string text, int level = 1)
-    {
-        return new Paragraph(
-            new ParagraphProperties(
-                new ParagraphStyleId
-                {
-                    Val = $"Heading{level}"
-                }
-            ),
-            new Run(new Text(text))
         );
     }
 }

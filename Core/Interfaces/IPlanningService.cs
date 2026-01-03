@@ -1,9 +1,11 @@
-﻿using Core.DTOs;
+﻿using Core.Common;
+using Core.DTOs;
+using Domain.Enums;
 
 namespace Core.Interfaces;
 public interface IPlanningService
 {
-    Task<PlanningDTO?> GetPlanningByCourseId(int courseId);
-    Task<byte[]> GenerateDocument(int id);
+    Response<PlanningDTO> GetPlanningByCourseId(int courseId);
+    DocumentDTO GenerateDocument(int courseId, DocumentTypes documentType);
 
 }

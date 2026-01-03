@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers;
@@ -8,19 +9,19 @@ namespace Server.Controllers;
 public class PlanningController(IPlanningService planningService) : ControllerBase
 {
     [HttpGet("{courseId}")]
-    public async Task<IActionResult> Get(int courseId)
+    public IActionResult Get(int courseId)
     {
-        return Ok(await planningService.GetPlanningByCourseId(courseId));
+        return Ok(planningService.GetPlanningByCourseId(courseId));
     }
 
-    [HttpGet("[action]/{courseId}")]
-    public async Task<IActionResult> GenerateDocument(int courseId)
+    [HttpGet("[action]/{courseId}/{DocumentType}")]
+    public IActionResult GenerateDocument(int courseId, DocumentTypes DocumentType)
     {
-        var doc = await planningService.GenerateDocument(courseId);
+        var doc = planningService.GenerateDocument(courseId, DocumentType);
         return File(
-            doc,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "rapport.docx"
+            doc.Document,
+            doc.ContentType,
+            doc.DocumentName
         );
     }
 

@@ -1,4 +1,4 @@
-﻿using Core.DocumentGenerator.Factories;
+﻿using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
 using Domain.Enums;
 
@@ -6,7 +6,7 @@ namespace Core.Interfaces;
 public abstract class Generatable<Domain>(IDocumentFactory documentFactory)
 {
     // should contain the full flow for generating a document
-    public abstract Task<byte[]> GenerateDocument(int id);
+    public abstract DocumentDTO GenerateDocument(int id, DocumentTypes documentType);
 
     /// <summary>
     /// Implement this method to map your domain model to DocumentDataDTO, 
@@ -16,7 +16,7 @@ public abstract class Generatable<Domain>(IDocumentFactory documentFactory)
     /// <returns></returns>
     protected abstract DocumentDataDTO MapToDocumentDataDTO(Domain document);
 
-    protected byte[] CreateDocument(DocumentDataDTO documentData, DocumentTypes documentType)
+    protected DocumentDTO CreateDocument(DocumentDataDTO documentData, DocumentTypes documentType)
     {
         return documentFactory.GenerateDocument(documentData, documentType);
     }

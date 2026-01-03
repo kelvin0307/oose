@@ -3,8 +3,8 @@ using Data.Extentions;
 using Data.Extentions.ExtentionModels;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
 
+var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
@@ -16,7 +16,7 @@ builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializ
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCoreServices();
+builder.Services.AddCoreStartUp();
 builder.Services.AddDataServices(
     new ApplicationOptions()
     { ConnectionString = connectionString }
