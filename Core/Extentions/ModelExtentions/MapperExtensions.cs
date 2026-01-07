@@ -4,7 +4,7 @@ using Domain.Models;
 
 namespace Core.Extentions.ModelExtentions;
 
-public static class MapperExtentions
+public static class MapperExtensions
 {
     #region DTO Mappers
 
