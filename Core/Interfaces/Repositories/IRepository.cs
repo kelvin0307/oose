@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace Core.Interfaces.Repositories
+﻿namespace Core.Interfaces.Repositories
 {
     public interface IRepository<TEntity> : IQueryable<TEntity> where
         TEntity : class
