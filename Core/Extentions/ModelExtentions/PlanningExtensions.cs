@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Core.Extentions.ModelExtentions;
+namespace Core.Extensions.ModelExtensions;
 
 public static class PlanningExtensions
 {

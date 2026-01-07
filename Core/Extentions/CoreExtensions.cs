@@ -7,8 +7,8 @@ using Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
 
-namespace Core.Extentions;
-public static class CoreExtentions
+namespace Core.Extensions;
+public static class CoreExtensions
 {
     public static void AddCoreStartUp(this IServiceCollection services)
     {

@@ -1,6 +1,6 @@
-using Core.Extentions;
-using Data.Extentions;
-using Data.Extentions.ExtentionModels;
+using Core.Extensions;
+using Data.Extensions;
+using Data.Extensions.ExtensionModels;
 using Microsoft.EntityFrameworkCore;
 
 

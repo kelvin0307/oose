@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Core.Interfaces.Repositories;
+﻿using Core.Interfaces.Repositories;
 using Data.Context;
-using Data.Extentions.ExtentionModels;
+using Data.Extensions.ExtensionModels;
 using Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Data.Extentions;
-public static class DataExtentions
+namespace Data.Extensions;
+public static class DataExtensions
 {
     public static void AddDataServices(this IServiceCollection services, ApplicationOptions applicationOptions)
     {
