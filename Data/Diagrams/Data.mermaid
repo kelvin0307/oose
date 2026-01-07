@@ -36,9 +36,14 @@ direction LR
         class Course{
             <<external>>
         }
+
+        class LearningOutcome{
+            <<external>>
+        }
     }
 
 %% Relations
     Repository~TEntity~ --> DataContext : uses
     Repository~TEntity~ ..|> IRepository : implements
     DataContext --> Course : stores (EF Core context)
+    DataContext --> LearningOutcome : stores (EF Core context)
