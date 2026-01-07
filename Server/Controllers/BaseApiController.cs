@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using Core.Common;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers
 {
