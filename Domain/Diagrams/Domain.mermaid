@@ -12,7 +12,17 @@ direction LR
             +Name: string
             +Description: string
             +Status: CourseStatus
-            +LearningOutcome: LearningOutcome
+            +LearningOutcomes: List<LearningOutcome>
+       }
+
+       class LearningOutcome {
+            +Id: int
+            +CourseId: string
+            +Name: string
+            +Description: string
+            +EndQualification: string
+            +Course: Course
+            +Lessons: List<Lessons>?
        }
     }
 
@@ -26,3 +36,6 @@ direction LR
 
 %% Relations
     Course --> CourseStatus : has status
+    Course --> LearningOutcome
+    LearningOutcome --> Course
+    LearningOutcome --> Lesson
