@@ -46,7 +46,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
@@ -76,7 +76,7 @@ namespace Data.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("LearningOutcomes");
+                    b.ToTable("LearningOutcomes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Lesson", b =>
@@ -104,7 +104,7 @@ namespace Data.Migrations
 
                     b.HasIndex("PlanningId");
 
-                    b.ToTable("Lessons");
+                    b.ToTable("Lessons", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Planning", b =>
@@ -124,7 +124,7 @@ namespace Data.Migrations
                         .IsUnique()
                         .HasFilter("[CourseId] IS NOT NULL");
 
-                    b.ToTable("Plannings");
+                    b.ToTable("Plannings", (string)null);
                 });
 
             modelBuilder.Entity("LessonLearningOutcome", b =>
@@ -139,7 +139,7 @@ namespace Data.Migrations
 
                     b.HasIndex("LessonId");
 
-                    b.ToTable("LessonLearningOutcome");
+                    b.ToTable("LessonLearningOutcome", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
