@@ -1,6 +1,8 @@
 using Core.DTOs;
 using Core.Interfaces.Services;
 using Core.Common;
+using Core.Mappers;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -13,6 +15,7 @@ namespace Server.Tests.Controllers;
 public class CourseControllerTests
 {
     private Mock<ICourseService> courseServiceMock;
+    private Mock<ILearningOutcomeService> learningOutcomeServiceMock;
     private Mock<IValidatorService> validatorServiceMock;
     private CourseController courseController;
 
@@ -20,8 +23,9 @@ public class CourseControllerTests
     public void Setup()
     {
         courseServiceMock = new Mock<ICourseService>();
+        learningOutcomeServiceMock = new Mock<ILearningOutcomeService>();
         validatorServiceMock = new Mock<IValidatorService>();
-        courseController = new CourseController(courseServiceMock.Object, validatorServiceMock.Object);
+        courseController = new CourseController(courseServiceMock.Object, learningOutcomeServiceMock.Object, validatorServiceMock.Object);
     }
 
     #region GetAll Tests
@@ -94,6 +98,80 @@ public class CourseControllerTests
         Assert.That(objectResult!.StatusCode, Is.EqualTo(500));
         courseServiceMock.Verify(s => s.GetAllCourses(), Times.Once);
     }
+    #endregion
+
+    #region GetAllLearningOutcomesByCourseId Tests
+
+    [Test]
+    public async Task GetLearningOutcomesByCourseId_WithValidCourseId_ReturnsOkResponse()
+    {
+        // Arrange
+        var courseId = 1;
+        var learningOutcomes = new List<LearningOutcome>
+        {
+            new() { Id = 1, Name = "Outcome 1", CourseId = courseId },
+            new() { Id = 2, Name = "Outcome 2", CourseId = courseId }
+        };
+        
+        learningOutcomeServiceMock
+            .Setup(s => s.GetAllLearningOutcomesByCourseId(courseId))
+            .ReturnsAsync(new Response<List<LearningOutcomeDto>>
+            {
+                Result = learningOutcomes.Select(LearningOutcomeMapper.ToDto).ToList(),
+                Success = true
+            });
+
+        // Act
+        var result = await learningOutcomeServiceMock.Object.GetAllLearningOutcomesByCourseId(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result, Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public async Task GetLearningOutcomesByCourseId_WithInvalidCourseId_ReturnsNotFound()
+    {
+        // Arrange
+        var courseId = 999;
+        
+        learningOutcomeServiceMock
+            .Setup(s => s.GetAllLearningOutcomesByCourseId(courseId))
+            .ReturnsAsync(new Response<List<LearningOutcomeDto>>
+            {
+                Success = false,
+                Message = "Course not found"
+            });
+
+        // Act
+        var result = await learningOutcomeServiceMock.Object.GetAllLearningOutcomesByCourseId(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+    }
+
+    [Test]
+    public async Task GetLearningOutcomesByCourseId_WithValidCourseIdButNoOutcomes_ReturnsEmptyList()
+    {
+        // Arrange
+        var courseId = 1;
+
+        learningOutcomeServiceMock
+            .Setup(s => s.GetAllLearningOutcomesByCourseId(courseId))
+            .ReturnsAsync(new Response<List<LearningOutcomeDto>>
+            {
+                Result = new List<LearningOutcomeDto>(),
+                Success = true
+            });
+
+        // Act
+        var result = await learningOutcomeServiceMock.Object.GetAllLearningOutcomesByCourseId(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Result, Is.Empty);
+    }
+
     #endregion
     
     #region Get Tests
