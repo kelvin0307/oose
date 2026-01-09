@@ -1,4 +1,6 @@
+using Core.Common;
 using Core.DTOs;
+using Core.Extensions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
@@ -181,6 +183,28 @@ public class LearningOutcomeServiceTests
         learningOutcomeRepositoryMock.Verify(r => r.Get(1), Times.Once);
     }
 
+    #endregion
+
+    #region GetAllLearningOutcomesByCourseId Tests
+    
+    [Test]
+    public async Task GetAllLearningOutcomesByCourseId_WithInvalidCourseId_ReturnsNotFoundResponse()
+    {
+        // Arrange
+        var courseId = 999;
+
+        courseRepositoryMock
+            .Setup(r => r.Get(courseId))
+            .ReturnsAsync((Course)null);
+
+        // Act
+        var result = await learningOutcomeService.GetAllLearningOutcomesByCourseId(courseId);
+
+        // Assert
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Status, Is.EqualTo(ResponseStatus.NotFound));
+        courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
+    }
     #endregion
     
     #region CreateLearningOutcome Tests

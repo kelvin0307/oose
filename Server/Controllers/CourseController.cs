@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
-public class CourseController(ICourseService courseService) : BaseApiController
+public class CourseController(ICourseService courseService, ILearningOutcomeService learningOutcomeService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -18,6 +18,14 @@ public class CourseController(ICourseService courseService) : BaseApiController
     public async Task<IActionResult> Get(int id)
     {
         var response = await courseService.GetCourseById(id);
+        return HandleResponse(response);
+    }
+    
+        
+    [HttpGet("{id}/learningOutcomes")]
+    public async Task<IActionResult> GetLearningOutcomesByCourseId(int id)
+    {
+        var response = await learningOutcomeService.GetAllLearningOutcomesByCourseId(id);
         return HandleResponse(response);
     }
     

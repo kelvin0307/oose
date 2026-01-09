@@ -1,5 +1,6 @@
 using Core.Common;
 using Core.DTOs;
+using Core.Extensions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Mappers;
@@ -17,6 +18,29 @@ public class LearningOutcomeService(
         try
         {
             var learningOutcomes = await learningOutcomeRepository.GetAll();
+            return Response<List<LearningOutcomeDto>>.Ok(learningOutcomes.Select(LearningOutcomeMapper.ToDto).ToList());
+        }
+        catch (InvalidOperationException ex)
+        {
+            //TODO: Log exception
+            return Response<List<LearningOutcomeDto>>.Fail("Invalid operation while fetching learning outcomes", ResponseStatus.InvalidOperation);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Log exception
+            return Response<List<LearningOutcomeDto>>.Fail("An unexpected error occurred while fetching learning outcomes");
+        }
+    }
+    
+    public async Task<Response<List<LearningOutcomeDto>>> GetAllLearningOutcomesByCourseId(int courseId)
+    {
+        try
+        {
+            var course = await courseRepository.Get(courseId);
+            if (course == null) 
+                return Response<List<LearningOutcomeDto>>.NotFound("Course not found");
+            
+            var learningOutcomes = learningOutcomeRepository.GetLearningOutcomesByCourseId(courseId).ToList();
             return Response<List<LearningOutcomeDto>>.Ok(learningOutcomes.Select(LearningOutcomeMapper.ToDto).ToList());
         }
         catch (InvalidOperationException ex)
