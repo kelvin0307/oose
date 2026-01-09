@@ -52,6 +52,6 @@ public class CourseController(ICourseService courseService, IValidatorService va
             return BadRequest(response);
         }
 
-        return Ok(response);
+        return HandleResponse(response, noContentOnSuccess: true);
     }
 }
