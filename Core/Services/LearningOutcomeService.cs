@@ -83,7 +83,7 @@ public class LearningOutcomeService(
         {
             var course = await courseRepository.Get(createLearningOutcomeDto.CourseId);
             if (course == null) 
-                return Response<LearningOutcomeDto>.NotFound("Course not found");
+                return Response<LearningOutcomeDto>.NotFound("Could not add learning outcome for this course (Course not found)");
             
             var learningOutcome = new LearningOutcome
             {
