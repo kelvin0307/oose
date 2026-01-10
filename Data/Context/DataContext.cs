@@ -28,19 +28,19 @@ namespace Data.Context
                 .WithMany(p => p.Lessons)
                 .HasForeignKey(l => l.PlanningId);
             modelBuilder.Entity<Lesson>()
-                .HasMany(lo => lo.LearningOutcomes)
-                .WithMany(l => l.Lessons)
+                .HasMany(l => l.LearningOutcomes)
+                .WithMany(lo => lo.Lessons)
                 .UsingEntity<Dictionary<string, object>>(
                     "LessonLearningOutcome",
-                    j => j.HasOne<LearningOutcome>()
-                          .WithMany()
-                          .HasForeignKey("LessonId")
-                          .OnDelete(DeleteBehavior.Restrict),
-                    j => j.HasOne<Lesson>()
-                          .WithMany()
-                          .HasForeignKey("LearningOutcomeId")
-                          .OnDelete(DeleteBehavior.Cascade)
+                    j => j.HasOne<LearningOutcome>().WithMany().HasForeignKey("LearningOutcomeId"),
+                    j => j.HasOne<Lesson>().WithMany().HasForeignKey("LessonId")
                 );
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.LogTo(x => Console.WriteLine(x));
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

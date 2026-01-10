@@ -1,4 +1,6 @@
-﻿namespace Core.Interfaces.Repositories
+﻿using System.Linq.Expressions;
+
+namespace Core.Interfaces.Repositories
 {
     public interface IRepository<TEntity> : IQueryable<TEntity> where
         TEntity : class
@@ -12,5 +14,11 @@
         Task<TEntity> DeleteAndCommit(int id);
         void Delete(int id);
         Task SaveManually();
+        Task<List<TEntity>> ToListAsync(IQueryable<TEntity> query);
+        Task<TEntity?> FirstOrDefaultAsync(IQueryable<TEntity> query);
+        IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> navigationProperty);
+        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+
+
     }
 }
