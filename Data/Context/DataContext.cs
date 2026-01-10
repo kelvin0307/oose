@@ -8,6 +8,7 @@ namespace Data.Context
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Planning> Plannings { get; set; }
         public virtual DbSet<Lesson> Lessons { get; set; }
+        public virtual DbSet<Material> Materials { get; set; }
         public virtual DbSet<LearningOutcome> LearningOutcomes { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
@@ -27,6 +28,8 @@ namespace Data.Context
                 .HasOne(l => l.Planning)
                 .WithMany(p => p.Lessons)
                 .HasForeignKey(l => l.PlanningId);
+            modelBuilder.Entity<Lesson>()
+                .HasMany(x => x.Materials);
             modelBuilder.Entity<Lesson>()
                 .HasMany(l => l.LearningOutcomes)
                 .WithMany(lo => lo.Lessons)

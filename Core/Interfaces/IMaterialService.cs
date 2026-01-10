@@ -3,9 +3,11 @@ using Core.DTOs;
 using Domain.Enums;
 
 namespace Core.Interfaces;
-public interface IPlanningService
+
+public interface IMaterialService
 {
-    Response<PlanningDTO> GetPlanningByCourseId(int courseId);
     Task<Response<DocumentDTO>> GenerateDocument(int courseId, DocumentTypes documentType);
+
+
 
 }

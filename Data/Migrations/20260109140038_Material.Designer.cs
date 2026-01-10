@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260109140038_Material")]
+    partial class Material
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,47 +24,6 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CourseExecutionMaterial", b =>
-                {
-                    b.Property<int>("CourseExecutionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaterialsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CourseExecutionsId", "MaterialsId");
-
-                    b.HasIndex("MaterialsId");
-
-                    b.ToTable("CourseExecutionMaterial");
-                });
-
-            modelBuilder.Entity("Domain.Models.Class", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClassCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CourseExecutionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseExecutionId");
-
-                    b.ToTable("Class");
-                });
 
             modelBuilder.Entity("Domain.Models.Course", b =>
                 {
@@ -87,30 +49,6 @@ namespace Data.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("Domain.Models.CourseExecution", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("CourseExecution");
-                });
-
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
                 {
                     b.Property<int>("Id")
@@ -125,6 +63,9 @@ namespace Data.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MinimumLessons")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -153,9 +94,6 @@ namespace Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("SequenceNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("TestType")
                         .HasColumnType("int");
 
                     b.Property<int>("WeekNumber")
@@ -232,37 +170,6 @@ namespace Data.Migrations
                     b.ToTable("LessonLearningOutcome");
                 });
 
-            modelBuilder.Entity("CourseExecutionMaterial", b =>
-                {
-                    b.HasOne("Domain.Models.CourseExecution", null)
-                        .WithMany()
-                        .HasForeignKey("CourseExecutionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.Material", null)
-                        .WithMany()
-                        .HasForeignKey("MaterialsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.Models.Class", b =>
-                {
-                    b.HasOne("Domain.Models.CourseExecution", null)
-                        .WithMany("Classes")
-                        .HasForeignKey("CourseExecutionId");
-                });
-
-            modelBuilder.Entity("Domain.Models.CourseExecution", b =>
-                {
-                    b.HasOne("Domain.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
                 {
                     b.HasOne("Domain.Models.Course", "Course")
@@ -308,7 +215,7 @@ namespace Data.Migrations
                     b.HasOne("Domain.Models.Lesson", null)
                         .WithMany()
                         .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -317,11 +224,6 @@ namespace Data.Migrations
                     b.Navigation("LearningOutcomes");
 
                     b.Navigation("Planning");
-                });
-
-            modelBuilder.Entity("Domain.Models.CourseExecution", b =>
-                {
-                    b.Navigation("Classes");
                 });
 
             modelBuilder.Entity("Domain.Models.Lesson", b =>

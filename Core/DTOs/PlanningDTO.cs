@@ -2,5 +2,5 @@
 public class PlanningDTO
 {
     public int Id { get; set; }
-    public IList<LessonDTO> Lessons { get; set; } = [];
+    public IList<LessonDTO>? Lessons { get; set; } = [];
 }
