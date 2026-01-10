@@ -18,15 +18,26 @@ direction LR
         }
 
         class CourseController {
-            -ICourseService _courseService
-            +CourseController(ICourseService courseService)
+            -ICourseService courseService
+            -ILearningOutcomeService learningOutcomeService
+            +CourseController(ICourseService courseService, ILearningOutcomeService learningOutcomeService)
             +GetAll() Task~IActionResult~
             +Get(int id) Task~IActionResult~
+            +GetLearningOutcomesByCourseId(int id) Task~IActionResult~
             +Create(CreateCourseDto dto) Task~IActionResult~
             +Update(int id, UpdateCourseDto dto) Task~IActionResult~
             +Delete(int id) Task~IActionResult~
         }
 
+        class LearningOutcomeController {
+            -ILearningOutcomeService learningOutcomeService
+            +CourseController(ILearningOutcomeService learningOutcomeService)
+            +GetAll() Task~IActionResult~
+            +Get(int id) Task~IActionResult~
+            +Create(CreateLearningOutcome createLearningOutcome) Task~IActionResult~
+            +Update(int id, UpdateLearningOutcome updateLearningOutcome) Task~IActionResult~
+            +Delete(int id) Task~IActionResult~
+        }
     }
 
 
@@ -42,19 +53,44 @@ direction LR
         class UpdateCourseDto {
             <<external>>
         }
+
+        class LearningOutcomeDto {
+            <<external>>
+        }
+
+        class CreateLearningOutcomeDto {
+            <<external>>
+        }
+
+        class UpdateLearningOutcomeDto {
+            <<external>>
+        }
     }
 
     namespace Core.Interfaces.Services{
         class ICourseService {
             <<external>>
         }
+
+        class ILearningOutcomeService {
+            <<external>>
+        }
     }
 
     %% Base Controller
+    BaseApiController --|> ControllerBase : inherits
     CourseController --|> BaseApiController : inherits
+    LearningOutcomeController --|> BaseApiController : inherits
 
     %% Course
     CourseController --> ICourseService : delegates to
+    CourseController --> ILearningOutcomeService : delegates to
     CourseController ..> CreateCourseDto : receives
     CourseController ..> UpdateCourseDto : receives
     CourseController ..> CourseDto : returns
+
+    %% LearningOutcome
+    LearningOutcomeController --> ILearningOutcomeService : delegates to
+    LearningOutcomeController ..> CreateLearningOutcomeDto : receives
+    LearningOutcomeController ..> UpdateLearningOutcomeDto : receives
+    LearningOutcomeController ..> LearningOutcomeDto : returns
