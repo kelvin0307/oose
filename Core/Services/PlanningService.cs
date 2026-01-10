@@ -10,7 +10,7 @@ using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
-public class PlanningService : Generatable<PlanningDTO>, IPlanningService
+public class PlanningService : Generatable<Planning>, IPlanningService
 {
     private readonly IRepository<Planning> planningRepository;
     private readonly IMapper mapper;
@@ -29,7 +29,11 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
     {
         try
         {
-            var planning = GetByCourseId(courseId);
+            var planning = planningRepository
+                .Include(x => x.Lessons)
+                .GetByCourseId(courseId)
+                .FirstOrDefault()?
+                .ToDto(mapper);
 
             return planning != null
             ? Response<PlanningDTO>.Ok(planning)
@@ -53,7 +57,10 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
     {
         try
         {
-            var planning = GetByCourseId(courseId);
+            var planning = planningRepository
+                .Include(x => x.Lessons)
+                .GetByCourseId(courseId)
+                .FirstOrDefault();
 
             if (planning == null)
             {
@@ -71,7 +78,7 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
         }
     }
 
-    protected override DocumentDataDTO MapToDocumentDataDTO(PlanningDTO planning)
+    protected override DocumentDataDTO MapToDocumentDataDTO(Planning planning)
     {
         var paragraphs = planning.Lessons?.ToDictionary(x => x.SequenceNumber + ". " + x.Name, x => "Week " + x.WeekNumber.ToString());
 
@@ -79,22 +86,6 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
         {
             Title = "Planning",
             Paragraphs = paragraphs ?? [],
-        };
-    }
-
-    private PlanningDTO? GetByCourseId(int courseId)
-    {
-        var planning = planningRepository.Include(x => x.Lessons).GetByCourseId(courseId).FirstOrDefault();
-
-        if (planning == null)
-        {
-            return null;
-        }
-
-        return new PlanningDTO
-        {
-            Id = planning.Id,
-            Lessons = planning.Lessons?.Select(x => x.ToDto(mapper)).ToArray()
         };
     }
     #endregion
