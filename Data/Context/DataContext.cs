@@ -25,8 +25,9 @@ namespace Data.Context
                 .WithOne(lo => lo.Course)
                 .HasForeignKey(lo => lo.CourseId);
             modelBuilder.Entity<Lesson>()
+                .HasMany(x => x.Materials);
+            modelBuilder.Entity<Lesson>()
                 .HasOne(l => l.Planning)
-                .HasMany(x => x.Materials)
                 .WithMany(p => p.Lessons)
                 .HasForeignKey(l => l.PlanningId);
             modelBuilder.Entity<Lesson>()
