@@ -22,6 +22,28 @@ direction TD
             Name: string
             Descripton: String
         }
+
+        class LearningOutcomeDto {
+            Id: int
+            CourseId: int
+            Name: string
+            Description: string
+            EndQualification: string
+        }
+
+        class UpdateLearningOutcomeDto {
+            Id: int
+            Name: string
+            Description: string
+            EndQualification: string
+        }
+
+        class CreateLearningOutcomeDto {
+            CourseId: int
+            Name: string
+            Description: string
+            EndQualification: string
+        }
     }
 
     namespace Core.Interfaces.Repositories {
@@ -44,6 +66,16 @@ direction TD
             +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
             +DeleteCourse(int id) Task~Response~bool~~
         }
+
+        class ILearningOutcomeService {
+            <<interface>>
+            +GetAllLearningOutcomes() Task~Response~List~LearningOutcomeDto~~~
+            +GetAllLearningOutcomesByCourseId(int courseId) Task~Response~LearningOutcomeDto~~
+            +GetLearningOutcomeById(int id) Task~Response~LearningOutcomeDto~~
+            +CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto) Task~Response~LearningOutocomeDto~~
+            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
+            +DeleteLearningOutcome(int id) Task~Response~bool~~
+        }
     }
 
     namespace Core.Services {
@@ -55,6 +87,17 @@ direction TD
             +CreateCourse(CreateCourseDto dto) Task~Response~CourseDto~~
             +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
             +DeleteCourse(int id) Task~Response~bool~~
+        }
+
+        class LearningOutcomeService {
+            -IRepository~LearningOutcome~ learningOutcomeRepository
+            +LearningOutcomeService(IRepository~LearningOutcome~ repository)
+            +GetAllLearningOutcomes() Task~Response~List~LearningOutcomeDto~~~
+            +GetAllLearningOutcomesByCourseId(int courseId) Task~Response~List~LearningOutcomeDto~~~
+            +GetLearningOutcomeById(int id) Task~Response~LearningOutcomeDto~~
+            +CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
+            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
+            +DeleteLearningOutcome(int id) Task~Response~bool~~
         }
     }
 
@@ -88,12 +131,27 @@ direction TD
              <<static>>
             +$ToDto(course: Course) CourseDto
         }
+
+        class LearningOutcomeMapper{
+             <<static>>
+            +$ToDto(learningOutcome: LearningOutcome) LearningOutcomeDto
+        }
     }
 
     namespace Domain.Models {
         class Course {
             <<external>>
-            
+        }
+
+        class LearningOutcome {
+            <<external>>
+        }
+    }
+
+    namespace Core.Extensions {
+        class LearningOutcomeExtensions {
+            <<static>>
+            +getLearningOutcomesByCourseId(IQueryable~LearningOutcome~ learningOutcomes, int courseId): IQueryable~LearningOutcome~
         }
     }
 
@@ -111,3 +169,15 @@ direction TD
         CourseService ..> Response : returns
         CourseService ..> Course : uses
         CourseService ..> CourseMapper: uses
+
+    %% LEARNINGOUTCOMES
+        LearningOutcomeService ..|> ILearningOutcomeService : implements
+        LearningOutcomeService --> IRepository~LearningOutcome~ : uses
+        LearningOutcomeService ..> LearningOutcomeDto : returns
+        LearningOutcomeService ..> CreateLearningOutcomeDto : uses
+        LearningOutcomeService ..> UpdateLearningOutcomeDto : uses
+        LearningOutcomeService ..> Response : returns
+        LearningOutcomeService ..> LearningOutcome : uses
+        LearningOutcomeService ..> LearningOutcomeMapper: uses
+        LearningOutcomeExtensions ..> LearningOutcome : uses
+        LearningOutcomeService ..> LearningOutcomeExtensions : uses
