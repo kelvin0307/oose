@@ -22,6 +22,7 @@ public static class CoreExtensions
         services.AddTransient<IPlanningService, PlanningService>();
         services.AddTransient<IDocumentFactory, DocumentFactory>();
         services.AddTransient<IMaterialService, MaterialService>();
+        services.AddTransient<IAuthService, AuthService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }

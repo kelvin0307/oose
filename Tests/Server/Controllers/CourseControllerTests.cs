@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Server.Controllers;
-using Domain.Models;
 
-namespace Server.Tests.Controllers;
+namespace Tests.Server.Controllers;
 
 [TestFixture]
 public class CourseControllerTests
@@ -475,5 +474,4 @@ public class CourseControllerTests
         courseServiceMock.Verify(s => s.DeleteCourse(courseId), Times.Once);
     }
     #endregion
-
 }

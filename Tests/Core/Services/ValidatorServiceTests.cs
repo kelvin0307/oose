@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
 using Core.Services;
-using Domain.Models;
 using Domain.Enums;
-using Core.Tests.TestSupport.Helpers;
-using Core.Tests.TestSupport.Fakes;
+using Domain.Models;
+using NUnit.Framework;
+using Tests.Core.TestSupport.Fakes;
+using Tests.Core.TestSupport.Helpers;
 
-namespace Core.Tests.Services;
+namespace Tests.Core.Services;
 
 [TestFixture]
 public class ValidatorServiceTests
