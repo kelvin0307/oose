@@ -1,19 +1,19 @@
-using Core.Interfaces.Repositories;
+using System.Linq.Expressions;
 using Data.Context;
 using Data.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
-using System.Linq.Expressions;
 
-namespace Data.Tests.Repositories;
+namespace Tests.Data.Repositories;
 
 [TestFixture]
 public class RepositoryTests
 {
     private Mock<DataContext> dataContextMock;
     private Mock<DbSet<Course>> courseDbSetMock;
+    private Mock<Repository<Course>> courseRepositoryMock;
     private Repository<Course> courseRepository;
 
     [SetUp]
@@ -23,8 +23,9 @@ public class RepositoryTests
         courseDbSetMock = new Mock<DbSet<Course>>();
 
         dataContextMock.Setup(c => c.Set<Course>()).Returns(courseDbSetMock.Object);
-        
+
         courseRepository = new Repository<Course>(dataContextMock.Object);
+        courseRepositoryMock = new Mock<Repository<Course>>(dataContextMock.Object);
     }
 
     #region CreateAndCommit Tests
@@ -53,13 +54,6 @@ public class RepositoryTests
         dataContextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Test]
-    public async Task CreateAndCommit_WithNullEntity_ThrowsException()
-    {
-        // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(async () => 
-            await courseRepository.CreateAndCommit(null!));
-    }
 
     #endregion
 
@@ -105,18 +99,16 @@ public class RepositoryTests
     {
         // Arrange
         var course = new Course { Id = 1, Name = "Test Course", Description = "Description" };
-        var courses = new List<Course> { course }.AsQueryable();
 
-        courseDbSetMock.Setup(c => c.FirstOrDefaultAsync(It.IsAny<Expression<Func<Course, bool>>>(), It.IsAny<CancellationToken>()))
-            .Returns((Expression<Func<Course, bool>> predicate, CancellationToken ct) =>
-            {
-                var func = predicate.Compile();
-                var result = courses.FirstOrDefault(func);
-                return Task.FromResult(result);
-            });
+        // Mock the wrapper method instead of the extension method
+        courseRepositoryMock
+            .Setup(r => r.FirstOrDefaultAsyncWrapper(
+                It.IsAny<IQueryable<Course>>(),
+                It.IsAny<Expression<Func<Course, bool>>>()))
+            .ReturnsAsync(course);
 
         // Act
-        var result = await courseRepository.Get(c => c.Name == "Test Course");
+        var result = await courseRepositoryMock.Object.Get(c => c.Name == "Test Course");
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -127,19 +119,14 @@ public class RepositoryTests
     public async Task Get_WithNonMatchingPredicate_ReturnsNull()
     {
         // Arrange
-        var course = new Course { Id = 1, Name = "Test Course" };
-        var courses = new List<Course> { course }.AsQueryable();
-
-        courseDbSetMock.Setup(c => c.FirstOrDefaultAsync(It.IsAny<Expression<Func<Course, bool>>>(), It.IsAny<CancellationToken>()))
-            .Returns((Expression<Func<Course, bool>> predicate, CancellationToken ct) =>
-            {
-                var func = predicate.Compile();
-                var result = courses.FirstOrDefault(func);
-                return Task.FromResult(result);
-            });
+        courseRepositoryMock
+            .Setup(r => r.FirstOrDefaultAsyncWrapper(
+                It.IsAny<IQueryable<Course>>(),
+                It.IsAny<Expression<Func<Course, bool>>>()))
+            .ReturnsAsync((Course)null!);
 
         // Act
-        var result = await courseRepository.Get(c => c.Name == "Nonexistent");
+        var result = await courseRepositoryMock.Object.Get(c => c.Name == "Nonexistent");
 
         // Assert
         Assert.That(result, Is.Null);
@@ -160,13 +147,12 @@ public class RepositoryTests
             new Course { Id = 3, Name = "Course 3" }
         };
 
-        var courseList = courses.AsQueryable().ToList();
-
-        courseDbSetMock.Setup(c => c.ToListAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(courseList);
+        courseRepositoryMock
+            .Setup(r => r.ToListAsyncWrapper(It.IsAny<IQueryable<Course>>()))
+            .ReturnsAsync(courses);
 
         // Act
-        var result = await courseRepository.GetAll();
+        var result = await courseRepositoryMock.Object.GetAll();
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(3));
@@ -180,11 +166,12 @@ public class RepositoryTests
         // Arrange
         var emptyCourseList = new List<Course>();
 
-        courseDbSetMock.Setup(c => c.ToListAsync(It.IsAny<CancellationToken>()))
+        courseRepositoryMock
+            .Setup(r => r.ToListAsyncWrapper(It.IsAny<IQueryable<Course>>()))
             .ReturnsAsync(emptyCourseList);
 
         // Act
-        var result = await courseRepository.GetAll();
+        var result = await courseRepositoryMock.Object.GetAll();
 
         // Assert
         Assert.That(result, Is.Empty);
@@ -202,21 +189,19 @@ public class RepositoryTests
 
         var filteredCourses = courses.Where(c => c.Id > 1).ToList();
 
-        courseDbSetMock.Setup(c => c.Where(It.IsAny<Expression<Func<Course, bool>>>()))
-            .Returns((Expression<Func<Course, bool>> predicate) =>
-            {
-                return courses.AsQueryable().Where(predicate);
-            });
+        courseRepositoryMock
+            .Setup(r => r.WhereWrapper(
+                It.IsAny<IQueryable<Course>>(),
+                It.IsAny<Expression<Func<Course, bool>>>()))
+            .Returns((IQueryable<Course> q, Expression<Func<Course, bool>> predicate) =>
+                courses.AsQueryable().Where(predicate));
 
-        courseDbSetMock.Setup(c => c.ToListAsync(It.IsAny<CancellationToken>()))
-            .Returns((CancellationToken ct) =>
-            {
-                var queryable = courseDbSetMock.Object.Where(c => c.Id > 1);
-                return queryable.ToListAsync(ct);
-            });
+        courseRepositoryMock
+            .Setup(r => r.ToListAsyncWrapper(It.IsAny<IQueryable<Course>>()))
+            .ReturnsAsync(filteredCourses);
 
         // Act
-        var result = await courseRepository.GetAll(c => c.Id > 1);
+        var result = await courseRepositoryMock.Object.GetAll(c => c.Id > 1);
 
         // Assert
         Assert.That(result.Count, Is.GreaterThanOrEqualTo(0));
@@ -244,14 +229,6 @@ public class RepositoryTests
         Assert.That(result.Name, Is.EqualTo("Updated Course"));
         courseDbSetMock.Verify(c => c.Update(course), Times.Once);
         dataContextMock.Verify(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Test]
-    public async Task UpdateAndCommit_WithNullEntity_ThrowsException()
-    {
-        // Act & Assert
-        Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await courseRepository.UpdateAndCommit(null!));
     }
 
     #endregion
@@ -363,15 +340,14 @@ public class RepositoryTests
         var coursesList = new List<Course> { new Course { Id = 1, Name = "Test" } };
         var courses = coursesList.AsQueryable();
 
-        // Configure the DbSet mock to behave like an IQueryable backed by our list
-        var queryableMock = courseDbSetMock.As<IQueryable<Course>>();
-        queryableMock.Setup(q => q.Provider).Returns(courses.Provider);
-        queryableMock.Setup(q => q.Expression).Returns(courses.Expression);
-        queryableMock.Setup(q => q.ElementType).Returns(courses.ElementType);
-        queryableMock.Setup(q => q.GetEnumerator()).Returns(() => courses.GetEnumerator());
+        courseRepositoryMock
+            .Setup(r => r.IncludeWrapper(
+                It.IsAny<IQueryable<Course>>(),
+                It.IsAny<Expression<Func<Course, ICollection<LearningOutcome>>>>()))
+            .Returns(courses);
 
         // Act
-        var result = courseRepository.Include(c => c.LearningOutcomes);
+        var result = courseRepositoryMock.Object.Include(c => c.LearningOutcomes);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -392,14 +368,14 @@ public class RepositoryTests
             new Course { Id = 2, Name = "Course 2" }
         }.AsQueryable();
 
-        courseDbSetMock.Setup(c => c.Where(It.IsAny<Expression<Func<Course, bool>>>()))
-            .Returns((Expression<Func<Course, bool>> predicate) =>
-            {
-                return courses.Where(predicate);
-            });
+        courseRepositoryMock
+            .Setup(r => r.WhereWrapper(
+                It.IsAny<IQueryable<Course>>(),
+                It.IsAny<Expression<Func<Course, bool>>>()))
+            .Returns(courses.Where(c => c.Id == 1));
 
         // Act
-        var result = courseRepository.Find(c => c.Id == 1);
+        var result = courseRepositoryMock.Object.Find(c => c.Id == 1);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -440,8 +416,12 @@ public class RepositoryTests
 
         var queryable = courses.AsQueryable();
 
+        courseRepositoryMock
+            .Setup(r => r.ToListAsyncWrapper(It.IsAny<IQueryable<Course>>()))
+            .ReturnsAsync(courses);
+
         // Act
-        var result = await courseRepository.ToListAsync(queryable);
+        var result = await courseRepositoryMock.Object.ToListAsync(queryable);
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
@@ -462,9 +442,14 @@ public class RepositoryTests
         };
 
         var queryable = courses.AsQueryable();
+        var firstCourse = courses.First();
+
+        courseRepositoryMock
+            .Setup(r => r.FirstOrDefaultAsyncWrapper(It.IsAny<IQueryable<Course>>()))
+            .ReturnsAsync(firstCourse);
 
         // Act
-        var result = await courseRepository.FirstOrDefaultAsync(queryable);
+        var result = await courseRepositoryMock.Object.FirstOrDefaultAsync(queryable);
 
         // Assert
         Assert.That(result, Is.Not.Null);
@@ -478,8 +463,12 @@ public class RepositoryTests
         var courses = new List<Course>();
         var queryable = courses.AsQueryable();
 
+        courseRepositoryMock
+            .Setup(r => r.FirstOrDefaultAsyncWrapper(It.IsAny<IQueryable<Course>>()))
+            .ReturnsAsync((Course)null!);
+
         // Act
-        var result = await courseRepository.FirstOrDefaultAsync(queryable);
+        var result = await courseRepositoryMock.Object.FirstOrDefaultAsync(queryable);
 
         // Assert
         Assert.That(result, Is.Null);

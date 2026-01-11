@@ -20,7 +20,5 @@ namespace Core.Interfaces.Repositories
         Task<TEntity?> FirstOrDefaultAsync(IQueryable<TEntity> query);
         IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> navigationProperty);
         IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
-
-
     }
 }

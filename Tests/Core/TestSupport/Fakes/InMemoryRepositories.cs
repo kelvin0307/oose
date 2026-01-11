@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Core.Interfaces.Repositories;
 using Domain.Models;
 
-namespace Core.Tests.TestSupport.Fakes;
+namespace Tests.Core.TestSupport.Fakes;
 
 /// <summary>
 /// In-memory fake repository for Course testing

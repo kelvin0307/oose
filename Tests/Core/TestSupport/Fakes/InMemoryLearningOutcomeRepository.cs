@@ -1,8 +1,8 @@
-﻿using Core.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Domain.Models;
 using System.Linq.Expressions;
 
-namespace Core.Tests.TestSupport.Fakes;
+namespace Tests.Core.TestSupport.Fakes;
 
 public class InMemoryLearningOutcomeRepository : IRepository<LearningOutcome>
 {

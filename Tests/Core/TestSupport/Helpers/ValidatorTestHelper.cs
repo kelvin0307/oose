@@ -1,7 +1,7 @@
-﻿using Domain.Models;
+using Domain.Models;
 using Domain.Enums;
 
-namespace Core.Tests.TestSupport.Helpers;
+namespace Tests.Core.TestSupport.Helpers;
 
 public static class ValidatorTestHelpers
 {

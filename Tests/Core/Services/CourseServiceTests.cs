@@ -7,7 +7,7 @@ using Domain.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace Core.Tests.Services;
+namespace Tests.Core.Services;
 
 [TestFixture]
 public class CourseServiceTests

@@ -7,7 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Server.Controllers;
 
-namespace Server.Tests.Controllers;
+namespace Tests.Server.Controllers;
 
 [TestFixture]
 public class AuthControllerTests

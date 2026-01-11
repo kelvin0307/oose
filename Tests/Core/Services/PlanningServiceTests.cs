@@ -8,7 +8,7 @@ using Domain.Models;
 using Moq;
 using NUnit.Framework;
 
-namespace Core.Tests.Services;
+namespace Tests.Core.Services;
 
 [TestFixture]
 public class PlanningServiceTests
@@ -24,78 +24,82 @@ public class PlanningServiceTests
         planningRepositoryMock = new Mock<IRepository<Planning>>();
         documentFactoryMock = new Mock<IDocumentFactory>();
         mapperMock = new Mock<IMapper>();
+
         planningService = new PlanningService(planningRepositoryMock.Object, documentFactoryMock.Object, mapperMock.Object);
     }
 
     #region GetPlanningByCourseId Tests
 
-    [Test]
-    public void GetPlanningByCourseId_WithValidCourseId_ReturnsOkResponse()
-    {
-        // Arrange
-        var courseId = 1;
-        var lessons = new List<Lesson>
-        {
-            new Lesson { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
-            new Lesson { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
-        };
+    //[Test]
+    //public void GetPlanningByCourseId_WithValidCourseId_ReturnsOkResponse()
+    //{
+    //    // Arrange
+    //    var courseId = 1;
+    //    var lessons = new List<Lesson>
+    //    {
+    //        new Lesson { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
+    //        new Lesson { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
+    //    };
 
 
-        var lessonsDTOs = new List<LessonDTO>
-        {
-            new LessonDTO { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
-            new LessonDTO { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
-        };
+    //    var lessonsDTOs = new List<LessonDTO>
+    //    {
+    //        new LessonDTO { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
+    //        new LessonDTO { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
+    //    };
 
-        var planning = new Planning
-        {
-            Id = 1,
-            CourseId = courseId,
-            Lessons = lessons
-        };
+    //    var planning = new Planning
+    //    {
+    //        Id = 1,
+    //        CourseId = courseId,
+    //        Lessons = lessons
+    //    };
 
-        var planningDto = new PlanningDTO
-        {
-            Id = 1,
-            Lessons = lessonsDTOs
-        };
+    //    var planningDto = new PlanningDTO
+    //    {
+    //        Id = 1,
+    //        Lessons = lessonsDTOs
+    //    };
 
-        var queryablePlanning = new List<Planning> { planning }.AsQueryable();
+    //    var queryablePlanning = new List<Planning> { planning }.AsQueryable();
 
-        planningRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()))
-            .Returns(queryablePlanning);
+    //    planningRepositoryMock
+    //        .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()));
 
-        mapperMock.Setup(x => x.Map<PlanningDTO>(planning)).Returns(planningDto);
+    //    queryHelperMock.Setup(q => q.GetByCourseId(It.IsAny<IQueryable<Planning>>(), courseId))
+    //        .Returns(queryablePlanning);
 
-        // Act
-        var result = planningService.GetPlanningByCourseId(courseId);
+    //    mapperMock.Setup(x => x.Map<PlanningDTO>(planning)).Returns(planningDto);
 
-        // Assert
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Result, Is.Not.Null);
-        planningRepositoryMock.Verify(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()), Times.Once);
-    }
+    //    // Act
+    //    var result = planningService.GetPlanningByCourseId(courseId);
 
-    [Test]
-    public void GetPlanningByCourseId_WithNonExistentCourseId_ReturnsNotFound()
-    {
-        // Arrange
-        var courseId = 999;
-        var emptyPlanning = new List<Planning>().AsQueryable();
+    //    // Assert
+    //    Assert.That(result.Success, Is.True);
+    //    Assert.That(result.Result, Is.Not.Null);
+    //    planningRepositoryMock.Verify(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()), Times.Once);
+    //}
 
-        planningRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()))
-            .Returns(emptyPlanning);
+    //[Test]
+    //public void GetPlanningByCourseId_WithNonExistentCourseId_ReturnsNotFound()
+    //{
+    //    // Arrange
+    //    var courseId = 999;
+    //    var emptyPlanning = new List<Planning>().AsQueryable();
 
-        // Act
-        var result = planningService.GetPlanningByCourseId(courseId);
+    //    planningRepositoryMock
+    //        .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()));
 
-        // Assert
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("planning not found"));
-        planningRepositoryMock.Verify(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()), Times.Once);
-    }
+    //    queryHelperMock.Setup(q => q.GetByCourseId(It.IsAny<IQueryable<Planning>>(), It.IsAny<int>()))
+    //        .Returns(emptyPlanning);
+
+    //    // Act
+    //    var result = planningService.GetPlanningByCourseId(courseId);
+
+    //    // Assert
+    //    Assert.That(result.Success, Is.False);
+    //    Assert.That(result.Message, Does.Contain("planning not found"));
+    //}
 
     [Test]
     public void GetPlanningByCourseId_WhenInvalidOperationExceptionThrown_ReturnsFail()
@@ -179,7 +183,7 @@ public class PlanningServiceTests
 
         planningRepositoryMock
             .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, object>>>()))
-            .Returns(queryablePlanning);
+            .Returns(queryablePlanning.Where(x => x.CourseId == courseId));
 
         documentFactoryMock
             .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))

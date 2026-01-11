@@ -1,13 +1,12 @@
 using Core.Common;
 using Core.DTOs;
 using Core.Interfaces.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Server.Controllers;
 
-namespace Server.Tests.Controllers;
+namespace Tests.Server.Controllers;
 
 [TestFixture]
 public class LearningOutcomeControllerTests
@@ -417,5 +416,4 @@ public class LearningOutcomeControllerTests
     }
 
     #endregion
-
 }

@@ -7,7 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Core.Interfaces.Repositories;
 
-namespace Core.Tests.Services;
+namespace Tests.Core.Services;
 
 [TestFixture]
 public class MaterialServiceTests
