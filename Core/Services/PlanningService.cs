@@ -29,10 +29,13 @@ public class PlanningService : Generatable<Planning>, IPlanningService
     {
         try
         {
-            var planning = planningRepository
-                .Include(x => x.Lessons)
-                .GetByCourseId(courseId)
-                .FirstOrDefault()?
+            var planningwithlessons = planningRepository
+                .Include(x => x.Lessons);
+
+            var planningbyCourse = planningwithlessons.GetByCourseId(courseId);
+
+
+            var planning = planningbyCourse.FirstOrDefault()?
                 .ToDto(mapper);
 
             return planning != null

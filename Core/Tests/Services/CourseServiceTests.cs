@@ -1,11 +1,11 @@
+using AutoMapper;
 using Core.DTOs;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
-using AutoMapper;
-using Core.Interfaces.Repositories;
 
 namespace Core.Tests.Services;
 
@@ -230,6 +230,7 @@ public class CourseServiceTests
             .ReturnsAsync(course);
 
         mapperMock.Setup(m => m.Map<CourseDto>(course)).Returns(courseDto);
+        mapperMock.Setup(m => m.Map<Course>(createCourseDto)).Returns(course);
 
         // Act
         var result = await courseService.CreateCourse(createCourseDto);
@@ -254,9 +255,20 @@ public class CourseServiceTests
             Description = "Test Description"
         };
 
+        var course = new Course
+        {
+            Id = 1,
+            Name = createCourseDto.Name,
+            Description = createCourseDto.Description,
+            Status = Domain.Enums.CourseStatus.Concept
+        };
+
         courseRepositoryMock
             .Setup(r => r.CreateAndCommit(It.IsAny<Course>()))
             .ThrowsAsync(new InvalidOperationException("Invalid operation"));
+
+        mapperMock.Setup(m => m.Map<Course>(createCourseDto)).Returns(course);
+
 
         // Act
         var result = await courseService.CreateCourse(createCourseDto);
@@ -288,7 +300,7 @@ public class CourseServiceTests
         Assert.That(result.Message, Is.EqualTo("An unexpected error occurred while updating the course"));
     }
     #endregion
-    
+
     #region UpdateCourse Tests
     [Test]
     public async Task UpdateCourse_WithValidIdAndData_ReturnsOkResponse()
@@ -389,7 +401,7 @@ public class CourseServiceTests
         courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
     }
     #endregion
-    
+
     #region DeleteCourse Tests
     [Test]
     public async Task DeleteCourse_WithValidId_ReturnsOkResponse()

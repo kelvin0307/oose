@@ -1,6 +1,5 @@
 using Core.Common;
 using Core.DTOs;
-using Core.Extensions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
@@ -102,7 +101,7 @@ public class LearningOutcomeServiceTests
         learningOutcomeRepositoryMock.Verify(r => r.GetAll(), Times.Once);
     }
     #endregion
-    
+
     #region GetLearningOutcomeById Tests
 
     [Test]
@@ -186,7 +185,7 @@ public class LearningOutcomeServiceTests
     #endregion
 
     #region GetAllLearningOutcomesByCourseId Tests
-    
+
     [Test]
     public async Task GetAllLearningOutcomesByCourseId_WithInvalidCourseId_ReturnsNotFoundResponse()
     {
@@ -206,7 +205,7 @@ public class LearningOutcomeServiceTests
         courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
     }
     #endregion
-    
+
     #region CreateLearningOutcome Tests
 
     [Test]
@@ -271,7 +270,7 @@ public class LearningOutcomeServiceTests
 
         // Assert
         Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Is.EqualTo("Course not found"));
+        Assert.That(result.Message, Is.EqualTo("Could not add learning outcome for this course (Course not found)"));
         courseRepositoryMock.Verify(r => r.Get(createDto.CourseId), Times.Once);
         learningOutcomeRepositoryMock.Verify(r => r.CreateAndCommit(It.IsAny<LearningOutcome>()), Times.Never);
     }
@@ -339,7 +338,7 @@ public class LearningOutcomeServiceTests
     }
 
     #endregion
-    
+
     #region UpdateLearningOutcome Tests
 
     [Test]
@@ -498,7 +497,7 @@ public class LearningOutcomeServiceTests
     }
 
     #endregion
-    
+
     #region DeleteLearningOutcome Tests
 
     [Test]

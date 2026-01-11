@@ -6,7 +6,9 @@ namespace Core.Interfaces.Repositories
         TEntity : class
     {
         Task<List<TEntity>> GetAll();
+        Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> action);
         Task<TEntity?> Get(int id);
+        Task<TEntity?> Get(Expression<Func<TEntity, bool>> action);
         Task<TEntity> CreateAndCommit(TEntity entity);
         void Create(List<TEntity> entity);
         void Update(TEntity entity);

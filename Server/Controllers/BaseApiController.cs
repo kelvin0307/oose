@@ -1,10 +1,12 @@
 using Core.Common;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public abstract class BaseApiController : ControllerBase
     {
         protected IActionResult HandleResponse<T>(Response<T> response, bool noContentOnSuccess = false)
