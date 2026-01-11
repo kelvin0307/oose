@@ -13,5 +13,6 @@ public class Lesson
     public Planning? Planning { get; set; }
     public int? PlanningId { get; set; }
 
+    public IList<Material>? Materials { get; set; } = [];
     public ICollection<LearningOutcome> LearningOutcomes { get; set; } = new List<LearningOutcome>();
 }

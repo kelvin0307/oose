@@ -5,27 +5,23 @@ using Core.DTOs;
 using Core.Extensions.ModelExtensions;
 using Core.Interfaces;
 using Core.Interfaces.Repositories;
+using Core.Services.Abstractions;
 using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
-public class PlanningService : Generatable<PlanningDTO>, IPlanningService
+public class PlanningService : Generatable<Planning>, IPlanningService
 {
     private readonly IRepository<Planning> planningRepository;
-    private readonly IRepository<Lesson> lessonRepository;
-    private readonly IDocumentFactory documentFactory;
     private readonly IMapper mapper;
 
     public PlanningService(
         IRepository<Planning> planningRepository,
-        IRepository<Lesson> lessonRepository,
         IDocumentFactory documentFactory,
         IMapper mapper)
         : base(documentFactory)
     {
         this.planningRepository = planningRepository;
-        this.lessonRepository = lessonRepository;
-        this.documentFactory = documentFactory;
         this.mapper = mapper;
     }
 
@@ -33,7 +29,11 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
     {
         try
         {
-            var planning = GetByCourseId(courseId);
+            var planning = planningRepository
+                .Include(x => x.Lessons)
+                .GetByCourseId(courseId)
+                .FirstOrDefault()?
+                .ToDto(mapper);
 
             return planning != null
             ? Response<PlanningDTO>.Ok(planning)
@@ -53,29 +53,32 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
 
     #region Generatable Members
 
-    public override DocumentDTO GenerateDocument(int courseId, DocumentTypes documentType)
+    public override Task<Response<DocumentDTO>> GenerateDocument(int courseId, DocumentTypes documentType)
     {
         try
         {
-            var planning = GetByCourseId(courseId);
+            var planning = planningRepository
+                .Include(x => x.Lessons)
+                .GetByCourseId(courseId)
+                .FirstOrDefault();
 
             if (planning == null)
             {
-                throw new Exception("Error generating planning document");
+                return Task.FromResult(Response<DocumentDTO>.Fail("Error generating planning document"));
             }
 
             var documentData = MapToDocumentDataDTO(planning);
 
-            return documentFactory.GenerateDocument(documentData, documentType);
+            return Task.FromResult(Response<DocumentDTO>.Ok(CreateDocument(documentData, documentType)));
         }
         catch (Exception ex)
         {
             //TODO: Add logging here.
-            throw new Exception("Error generating planning document", ex);
+            return Task.FromResult(Response<DocumentDTO>.Fail("Error generating planning document" + ex.Message));
         }
     }
 
-    protected override DocumentDataDTO MapToDocumentDataDTO(PlanningDTO planning)
+    protected override DocumentDataDTO MapToDocumentDataDTO(Planning planning)
     {
         var paragraphs = planning.Lessons?.ToDictionary(x => x.SequenceNumber + ". " + x.Name, x => "Week " + x.WeekNumber.ToString());
 
@@ -83,24 +86,6 @@ public class PlanningService : Generatable<PlanningDTO>, IPlanningService
         {
             Title = "Planning",
             Paragraphs = paragraphs ?? [],
-        };
-    }
-
-    private PlanningDTO? GetByCourseId(int courseId)
-    {
-        var planning = planningRepository.GetByCourseId(courseId).FirstOrDefault();
-
-        if (planning == null)
-        {
-            return null;
-        }
-
-        var lessons = lessonRepository.GetByPlanningId(planning.Id).ToArray();
-
-        return new PlanningDTO
-        {
-            Id = planning.Id,
-            Lessons = lessons.Select(x => x.ToDto(mapper)).ToArray()
         };
     }
     #endregion

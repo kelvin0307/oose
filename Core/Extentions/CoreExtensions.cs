@@ -21,6 +21,7 @@ public static class CoreExtensions
         services.AddTransient<IValidatorService, ValidatorService>();
         services.AddTransient<IPlanningService, PlanningService>();
         services.AddTransient<IDocumentFactory, DocumentFactory>();
+        services.AddTransient<IMaterialService, MaterialService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }

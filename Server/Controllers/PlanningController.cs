@@ -14,16 +14,14 @@ public class PlanningController(IPlanningService planningService) : ControllerBa
         return Ok(planningService.GetPlanningByCourseId(courseId));
     }
 
-    [HttpGet("[action]/{courseId}/{DocumentType}")]
-    public IActionResult GenerateDocument(int courseId, DocumentTypes DocumentType)
+    [HttpGet("[action]/{courseId}/{documentType}")]
+    public async Task<IActionResult> GenerateDocument(int courseId, DocumentTypes documentType)
     {
-        var doc = planningService.GenerateDocument(courseId, DocumentType);
+        var doc = await planningService.GenerateDocument(courseId, documentType);
         return File(
-            doc.Document,
-            doc.ContentType,
-            doc.DocumentName
+            doc.Result.Document,
+            doc.Result.ContentType,
+            doc.Result.DocumentName
         );
     }
-
-
 }
