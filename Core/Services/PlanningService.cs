@@ -29,14 +29,10 @@ public class PlanningService : Generatable<Planning>, IPlanningService
     {
         try
         {
-            var planningwithlessons = planningRepository
-                .Include(x => x.Lessons);
-
-            var planningbyCourse = planningwithlessons.GetByCourseId(courseId);
-
-
-            var planning = planningbyCourse.FirstOrDefault()?
-                .ToDto(mapper);
+            var planning = planningRepository
+                .Include(x => x.Lessons)
+                .FirstOrDefault(x => x.CourseId == courseId)
+                ?.ToDto(mapper);
 
             return planning != null
             ? Response<PlanningDTO>.Ok(planning)
@@ -54,6 +50,27 @@ public class PlanningService : Generatable<Planning>, IPlanningService
         }
     }
 
+    //public async Task<Response<PlanningDTO>> CreatePlanning(CreatePlanningDTO planningDTO)
+    //{
+    //    try
+    //    {
+    //        var domainLessons = planningDTO.Lessons
+    //        .Select(mapper.Map<Lesson>)
+    //        .ToList();
+
+    //        var planning = await planningRepository.CreateAndCommit(new Planning() { CourseId = planningDTO.CourseId, Lessons = domainLessons });
+
+    //        return Response<PlanningDTO>.Ok(planning.ToDto(mapper));
+    //    }
+    //    catch (Exception)
+    //    {
+    //        //TODO: Log exception
+    //        return Response<PlanningDTO>.Fail("An unexpected error occurred while fetching the course");
+    //    }
+    //}
+
+
+
     #region Generatable Members
 
     public override Task<Response<DocumentDTO>> GenerateDocument(int courseId, DocumentTypes documentType)
@@ -62,8 +79,7 @@ public class PlanningService : Generatable<Planning>, IPlanningService
         {
             var planning = planningRepository
                 .Include(x => x.Lessons)
-                .GetByCourseId(courseId)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.CourseId == courseId);
 
             if (planning == null)
             {

@@ -66,7 +66,7 @@ public class RepositoryTests
         var courseId = 1;
         var course = new Course { Id = courseId, Name = "Test Course" };
 
-        courseDbSetMock.Setup(c => c.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+        courseDbSetMock.Setup(c => c.FindAsync(courseId))
             .ReturnsAsync(course);
 
         // Act

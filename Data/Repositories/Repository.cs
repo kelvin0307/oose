@@ -99,7 +99,9 @@ namespace Data.Repositories
         {
             try
             {
-                var objectData = await DbSet.FindAsync(id) ?? throw new Exception($"Object with id:{id} not found.");
+                // Use the FindAsync overload with object[] and CancellationToken to match test mocks
+                var valueTask = await DbSet.FindAsync(new object[] { id }, CancellationToken.None);
+                var objectData = valueTask ?? throw new Exception($"Object with id:{id} not found.");
 
                 DbSet.Remove(objectData);
                 await _context.SaveChangesAsync();
@@ -133,6 +135,8 @@ namespace Data.Repositories
         }
 
         // Virtual wrapper methods for EF Core extension methods to make them mockable
+
+        #region wrapper methods
         public virtual async Task<List<TEntity>> ToListAsyncWrapper(IQueryable<TEntity> query)
         {
             return await query.ToListAsync();
@@ -157,5 +161,6 @@ namespace Data.Repositories
         {
             return query.Include(navigationProperty);
         }
+        #endregion
     }
 }

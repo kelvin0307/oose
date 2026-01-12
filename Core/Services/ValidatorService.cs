@@ -1,5 +1,4 @@
 ﻿using Core.Common;
-using Core.Extentions.ModelExtensions;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Models;
@@ -16,8 +15,9 @@ public class ValidatorService(
     {
         var validationErrors = new Dictionary<string, string[]>();
 
-        var learningOutcomesAndLessons = learningOutcomeRepository.Include(x => x.Lessons)
-            .FindByCourseId(courseId)
+        var learningOutcomesAndLessons = learningOutcomeRepository
+            .Include(x => x.Lessons)
+            .Where(x => x.CourseId == courseId)
             .ToList();
 
         if (!learningOutcomesAndLessons.Any())

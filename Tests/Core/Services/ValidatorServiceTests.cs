@@ -1,33 +1,41 @@
 using Core.Services;
 using Domain.Enums;
 using Domain.Models;
+using Moq;
 using NUnit.Framework;
-using Tests.Core.TestSupport.Fakes;
-using Tests.Core.TestSupport.Helpers;
+using Core.Interfaces.Repositories;
 
 namespace Tests.Core.Services;
 
 [TestFixture]
 public class ValidatorServiceTests
 {
+    private Mock<IRepository<LearningOutcome>> learningOutcomeRepositoryMock;
     private ValidatorService validatorService;
-    private List<LearningOutcome> learningOutcomes;
 
     private const int COURSE_ID = 1;
 
     [SetUp]
     public void Setup()
     {
-        var fakeRepo = new InMemoryLearningOutcomeRepository(() => learningOutcomes);
-        validatorService = new ValidatorService(fakeRepo);
+        learningOutcomeRepositoryMock = new Mock<IRepository<LearningOutcome>>();
+        validatorService = new ValidatorService(learningOutcomeRepositoryMock.Object);
     }
 
     [Test]
     public void ValidateCoursePlanning_NoLearningOutcomes_ReturnsValidationFail()
     {
-        learningOutcomes = ValidatorTestHelpers.SetupLearningOutcomes();
+        // Arrange
+        var learningOutcomes = new List<LearningOutcome>().AsQueryable();
+
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
+            .Returns(learningOutcomes);
+
+        // Act
         var result = validatorService.ValidateCoursePlanning(COURSE_ID);
 
+        // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("Course"), Is.True);
     }
@@ -35,16 +43,26 @@ public class ValidatorServiceTests
     [Test]
     public void ValidateCoursePlanning_LearningOutcomeWithoutLessons_ReturnsValidationFail()
     {
-        learningOutcomes = ValidatorTestHelpers.SetupLearningOutcomes(new LearningOutcome
+        // Arrange
+        var learningOutcomes = new List<LearningOutcome>
         {
-            Id = 1,
-            CourseId = COURSE_ID,
-            Name = "LO1",
-            Lessons = new List<Lesson>()
-        });
+            new LearningOutcome
+            {
+                Id = 1,
+                CourseId = COURSE_ID,
+                Name = "LO1",
+                Lessons = new List<Lesson>()
+            }
+        }.AsQueryable();
 
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
+            .Returns(learningOutcomes);
+
+        // Act
         var result = validatorService.ValidateCoursePlanning(COURSE_ID);
 
+        // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.True);
     }
@@ -52,20 +70,30 @@ public class ValidatorServiceTests
     [Test]
     public void ValidateCoursePlanning_LastLessonIsNotTest_ReturnsValidationFail()
     {
-        learningOutcomes = ValidatorTestHelpers.SetupLearningOutcomes(new LearningOutcome
+        // Arrange
+        var learningOutcomes = new List<LearningOutcome>
         {
-            Id = 1,
-            CourseId = COURSE_ID,
-            Name = "LO1",
-            Lessons = new List<Lesson>
+            new LearningOutcome
             {
-                ValidatorTestHelpers.CreateLesson(1, 1, TestType.Written),
-                ValidatorTestHelpers.CreateLesson(2, 1) // geen test
+                Id = 1,
+                CourseId = COURSE_ID,
+                Name = "LO1",
+                Lessons = new List<Lesson>
+                {
+                    new Lesson { WeekNumber = 1, SequenceNumber = 1, TestType = TestType.Written },
+                    new Lesson { WeekNumber = 2, SequenceNumber = 1 }
+                }
             }
-        });
+        }.AsQueryable();
 
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
+            .Returns(learningOutcomes);
+
+        // Act
         var result = validatorService.ValidateCoursePlanning(COURSE_ID);
 
+        // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.True);
     }
@@ -73,20 +101,30 @@ public class ValidatorServiceTests
     [Test]
     public void ValidateCoursePlanning_ValidCourse_ReturnsOk()
     {
-        learningOutcomes = ValidatorTestHelpers.SetupLearningOutcomes(new LearningOutcome
+        // Arrange
+        var learningOutcomes = new List<LearningOutcome>
         {
-            Id = 1,
-            CourseId = COURSE_ID,
-            Name = "LO1",
-            Lessons = new List<Lesson>
+            new LearningOutcome
             {
-                ValidatorTestHelpers.CreateLesson(1, 1),
-                ValidatorTestHelpers.CreateLesson(2, 1, TestType.Practical)
+                Id = 1,
+                CourseId = COURSE_ID,
+                Name = "LO1",
+                Lessons = new List<Lesson>
+                {
+                    new Lesson { WeekNumber = 1, SequenceNumber = 1 },
+                    new Lesson { WeekNumber = 2, SequenceNumber = 1, TestType = TestType.Practical }
+                }
             }
-        });
+        }.AsQueryable();
 
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
+            .Returns(learningOutcomes);
+
+        // Act
         var result = validatorService.ValidateCoursePlanning(COURSE_ID);
 
+        // Assert
         Assert.That(result.Success, Is.True);
         Assert.That(result.Result, Is.EqualTo("Course planning is valid."));
     }
@@ -94,32 +132,40 @@ public class ValidatorServiceTests
     [Test]
     public void ValidateCoursePlanning_MultipleLearningOutcomes_OnlyInvalidReturned()
     {
-        var validLo = new LearningOutcome
+        // Arrange
+        var learningOutcomes = new List<LearningOutcome>
         {
-            Id = 1,
-            CourseId = COURSE_ID,
-            Name = "Valid LO",
-            Lessons = new List<Lesson>
+            new LearningOutcome
             {
-                ValidatorTestHelpers.CreateLesson(1, 1),
-                ValidatorTestHelpers.CreateLesson(2, 1, TestType.Practical)
-            }
-        };
-
-        var invalidLo = new LearningOutcome
-        {
-            Id = 2,
-            CourseId = COURSE_ID,
-            Name = "Invalid LO",
-            Lessons = new List<Lesson>
+                Id = 1,
+                CourseId = COURSE_ID,
+                Name = "Valid LO",
+                Lessons = new List<Lesson>
+                {
+                    new Lesson { WeekNumber = 1, SequenceNumber = 1 },
+                    new Lesson { WeekNumber = 2, SequenceNumber = 1, TestType = TestType.Practical }
+                }
+            },
+            new LearningOutcome
             {
-                ValidatorTestHelpers.CreateLesson(1, 1) // laatste is geen test
+                Id = 2,
+                CourseId = COURSE_ID,
+                Name = "Invalid LO",
+                Lessons = new List<Lesson>
+                {
+                    new Lesson { WeekNumber = 1, SequenceNumber = 1 }
+                }
             }
-        };
+        }.AsQueryable();
 
-        learningOutcomes = ValidatorTestHelpers.SetupLearningOutcomes(validLo, invalidLo);
+        learningOutcomeRepositoryMock
+            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
+            .Returns(learningOutcomes);
+
+        // Act
         var result = validatorService.ValidateCoursePlanning(COURSE_ID);
 
+        // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_2"), Is.True);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.False);
