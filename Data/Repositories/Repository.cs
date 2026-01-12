@@ -69,17 +69,17 @@ namespace Data.Repositories
 
         public async Task<TEntity?> Get(Expression<Func<TEntity, bool>> action)
         {
-            return await DbSet.FirstOrDefaultAsync(action);
+            return await FirstOrDefaultAsyncWrapper(DbSet, action);
         }
 
         public async Task<List<TEntity>> GetAll()
         {
-            return await DbSet.ToListAsync();
+            return await ToListAsyncWrapper(DbSet);
         }
 
         public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> action)
         {
-            return await DbSet.Where(action).ToListAsync();
+            return await ToListAsyncWrapper(WhereWrapper(DbSet, action));
         }
 
         public async Task SaveManually()
@@ -99,7 +99,9 @@ namespace Data.Repositories
         {
             try
             {
-                var objectData = await DbSet.FindAsync(id) ?? throw new Exception($"Object with id:{id} not found.");
+                // Use the FindAsync overload with object[] and CancellationToken to match test mocks
+                var valueTask = await DbSet.FindAsync(new object[] { id }, CancellationToken.None);
+                var objectData = valueTask ?? throw new Exception($"Object with id:{id} not found.");
 
                 DbSet.Remove(objectData);
                 await _context.SaveChangesAsync();
@@ -114,22 +116,51 @@ namespace Data.Repositories
 
         public async Task<List<TEntity>> ToListAsync(IQueryable<TEntity> query)
         {
-            return await query.ToListAsync();
+            return await ToListAsyncWrapper(query);
         }
 
         public async Task<TEntity?> FirstOrDefaultAsync(IQueryable<TEntity> query)
         {
-            return await query.FirstOrDefaultAsync(); // EF Core extension
+            return await FirstOrDefaultAsyncWrapper(query);
         }
 
         public IQueryable<TEntity> Include<TProperty>(Expression<Func<TEntity, TProperty>> navigationProperty)
         {
-            return DbSet.Include(navigationProperty);
+            return IncludeWrapper(DbSet, navigationProperty);
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
-            return DbSet.Where(predicate);
+            return WhereWrapper(DbSet, predicate);
         }
+
+        // Virtual wrapper methods for EF Core extension methods to make them mockable
+
+        #region wrapper methods
+        public virtual async Task<List<TEntity>> ToListAsyncWrapper(IQueryable<TEntity> query)
+        {
+            return await query.ToListAsync();
+        }
+
+        public virtual async Task<TEntity?> FirstOrDefaultAsyncWrapper(IQueryable<TEntity> query)
+        {
+            return await query.FirstOrDefaultAsync();
+        }
+
+        public virtual async Task<TEntity?> FirstOrDefaultAsyncWrapper(IQueryable<TEntity> query, Expression<Func<TEntity, bool>> predicate)
+        {
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public virtual IQueryable<TEntity> WhereWrapper(IQueryable<TEntity> query, Expression<Func<TEntity, bool>> predicate)
+        {
+            return query.Where(predicate);
+        }
+
+        public virtual IQueryable<TEntity> IncludeWrapper<TProperty>(IQueryable<TEntity> query, Expression<Func<TEntity, TProperty>> navigationProperty)
+        {
+            return query.Include(navigationProperty);
+        }
+        #endregion
     }
 }

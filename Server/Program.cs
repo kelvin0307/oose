@@ -2,7 +2,7 @@ using Core.Extensions;
 using Data.Extensions;
 using Data.Extensions.ExtensionModels;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -10,6 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
 
 builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
+// Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/api/auth/login"; // Not used by API but set for completeness
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -32,6 +41,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

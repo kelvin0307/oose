@@ -6,7 +6,7 @@ namespace Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PlanningController(IPlanningService planningService) : ControllerBase
+public class PlanningController(IPlanningService planningService) : BaseApiController
 {
     [HttpGet("{courseId}")]
     public IActionResult Get(int courseId)
@@ -18,6 +18,12 @@ public class PlanningController(IPlanningService planningService) : ControllerBa
     public async Task<IActionResult> GenerateDocument(int courseId, DocumentTypes documentType)
     {
         var doc = await planningService.GenerateDocument(courseId, documentType);
+
+        if (!doc.Success)
+        {
+            return HandleResponse(doc);
+        }
+
         return File(
             doc.Result.Document,
             doc.Result.ContentType,
