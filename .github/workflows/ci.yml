@@ -41,7 +41,7 @@ jobs:
 
     - name: Publish API
       run: |
-        dotnet publish SchoolProject.Api.csproj \
+        dotnet publish Server/Server.csproj \
         --configuration Release \
         --output ./publish
 
