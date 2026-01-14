@@ -46,6 +46,13 @@ namespace Data.Context
                           .HasForeignKey("LearningOutcomeId")
                           .OnDelete(DeleteBehavior.Cascade)
                 );
+            modelBuilder.Entity<Material>()
+                .HasKey(x => new { x.Id, x.Version });
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.LogTo(Console.WriteLine);
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

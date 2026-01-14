@@ -7,7 +7,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Course, CourseDto>().ReverseMap();
+        CreateMap<Material, MaterialDTO>().ReverseMap();
+        CreateMap<Course, CourseDTO>().ReverseMap();
         CreateMap<CreateCourseDto, Course>();
         CreateMap<Lesson, LessonDTO>();
     }
