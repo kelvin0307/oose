@@ -89,6 +89,16 @@ public class RubricService(
 
             var rubric = createRubricDto.ToModel(mapper);
             
+            // check if there are atleast 1 assessment dimension
+            if (rubric.AssessmentDimensions.Count == 0)
+            {
+                return Response<RubricDto>.Fail("Could not create Rubric. There must be at least one assessment dimension");
+            }
+            if (createRubricDto.AssessmentDimensions.Any(dimension => dimension.AssessmentDimensionScores.Count < 2))
+            {
+                return Response<RubricDto>.Fail("Could not create Rubric. Every assessment dimension requires at least 2 assessment dimension scores");
+            }
+            
             var createdRubric = await rubricRepository.CreateAndCommit(rubric);
             return Response<RubricDto>.Ok(createdRubric.ToDto(mapper));
         }
@@ -118,10 +128,21 @@ public class RubricService(
             var existingDimensions = rubric.AssessmentDimensions
                 .ToDictionary(d => d.Id);
 
+            // check if there is atleast 1 assessmentDimension 
+            if (existingDimensions.Count == 0)
+            {
+                return Response<RubricDto>.Fail("Could not update Rubric. There must be at least one assessment dimension");
+            }
+
             var incomingDimensionIds = new HashSet<int>();
 
             foreach (var dimDto in dto.AssessmentDimensions)
             {
+                // check if there are atleast 2 assessmentDimensionScore
+                if (dimDto.AssessmentDimensionScores.Count < 2)
+                {
+                    return Response<RubricDto>.Fail("Could not update Rubric. There is at least 1 assessment dimension with less then 2 assessment dimension scores");
+                }
                 if (dimDto.Id != 0 &&
                     existingDimensions.TryGetValue(dimDto.Id, out var dimension))
                 {
