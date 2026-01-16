@@ -9,5 +9,6 @@ public class AssessmentDimension
     public int MinimumScore { get; set; }
     
     public Rubric? Rubric { get; set; }
-    public List<AssessmentDimensionScore>? AssessmentDimensionScores { get; set; }
+    public int RubricId { get; set; }
+    public ICollection<AssessmentDimensionScore> AssessmentDimensionScores { get; set; } = new List<AssessmentDimensionScore>();
 }

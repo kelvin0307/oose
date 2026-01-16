@@ -12,13 +12,15 @@ namespace Tests.Server.Controllers;
 public class LearningOutcomeControllerTests
 {
     private Mock<ILearningOutcomeService> learningOutcomeServiceMock;
+    private Mock<IRubricService> rubricServiceMock;
     private LearningOutcomeController controller;
 
     [SetUp]
     public void Setup()
     {
         learningOutcomeServiceMock = new Mock<ILearningOutcomeService>();
-        controller = new LearningOutcomeController(learningOutcomeServiceMock.Object);
+        rubricServiceMock = new Mock<IRubricService>();
+        controller = new LearningOutcomeController(learningOutcomeServiceMock.Object, rubricServiceMock.Object);
     }
 
     #region GetAll Tests

@@ -1,4 +1,5 @@
 using Core.DTOs;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace Server.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class LearningOutcomeController(ILearningOutcomeService learningOutcomeService) : BaseApiController
+public class LearningOutcomeController(ILearningOutcomeService learningOutcomeService, IRubricService rubricService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -19,6 +20,13 @@ public class LearningOutcomeController(ILearningOutcomeService learningOutcomeSe
     public async Task<IActionResult> Get(int id)
     {
         var response = await learningOutcomeService.GetLearningOutcomeById(id);
+        return HandleResponse(response);
+    }
+    
+    [HttpGet("{id}/rubrics")]
+    public async Task<IActionResult> GetRubricsByLearningOutcomeId(int id)
+    {
+        var response = await rubricService.GetRubricsByLearningOutcomeId(id);
         return HandleResponse(response);
     }
 

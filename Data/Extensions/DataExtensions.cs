@@ -16,5 +16,6 @@ public static class DataExtensions
         });
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IRubricRepository), typeof(RubricRepository));
     }
 }
