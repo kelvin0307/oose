@@ -291,3 +291,4 @@ __pycache__/
 
 *.vs
 Server/appsettings.Development.json
+Data/Migrations/*
