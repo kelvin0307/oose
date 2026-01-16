@@ -35,18 +35,18 @@ public class CourseServiceTests
             new Course { Id = 2, Name = "Course 2", Description = "Description 2" }
         };
 
-        var courseDtos = new List<CourseDto>
+        var courseDtos = new List<CourseDTO>
         {
-            new CourseDto { Id = 1, Name = "Course 1", Description = "Description 1" },
-            new CourseDto { Id = 2, Name = "Course 2", Description = "Description 2" }
+            new CourseDTO { Id = 1, Name = "Course 1", Description = "Description 1" },
+            new CourseDTO { Id = 2, Name = "Course 2", Description = "Description 2" }
         };
 
         courseRepositoryMock
             .Setup(r => r.GetAll())
             .ReturnsAsync(courses);
 
-        mapperMock.Setup(m => m.Map<CourseDto>(courses[0])).Returns(courseDtos[0]);
-        mapperMock.Setup(m => m.Map<CourseDto>(courses[1])).Returns(courseDtos[1]);
+        mapperMock.Setup(m => m.Map<CourseDTO>(courses[0])).Returns(courseDtos[0]);
+        mapperMock.Setup(m => m.Map<CourseDTO>(courses[1])).Returns(courseDtos[1]);
 
         // Act
         var result = await courseService.GetAllCourses();
@@ -57,7 +57,7 @@ public class CourseServiceTests
         Assert.That(result.Result[0].Name, Is.EqualTo("Course 1"));
         Assert.That(result.Result[1].Name, Is.EqualTo("Course 2"));
         courseRepositoryMock.Verify(r => r.GetAll(), Times.Once);
-        mapperMock.Verify(m => m.Map<CourseDto>(It.IsAny<Course>()), Times.Exactly(2));
+        mapperMock.Verify(m => m.Map<CourseDTO>(It.IsAny<Course>()), Times.Exactly(2));
     }
 
     [Test]
@@ -121,13 +121,13 @@ public class CourseServiceTests
         // Arrange
         var courseId = 1;
         var course = new Course { Id = courseId, Name = "Test Course", Description = "Test Description" };
-        var courseDto = new CourseDto { Id = courseId, Name = "Test Course", Description = "Test Description" };
+        var courseDto = new CourseDTO { Id = courseId, Name = "Test Course", Description = "Test Description" };
 
         courseRepositoryMock
             .Setup(r => r.Get(courseId))
             .ReturnsAsync(course);
 
-        mapperMock.Setup(m => m.Map<CourseDto>(course)).Returns(courseDto);
+        mapperMock.Setup(m => m.Map<CourseDTO>(course)).Returns(courseDto);
 
         // Act
         var result = await courseService.GetCourseById(courseId);
@@ -137,7 +137,7 @@ public class CourseServiceTests
         Assert.That(result.Result.Id, Is.EqualTo(courseId));
         Assert.That(result.Result.Name, Is.EqualTo("Test Course"));
         courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
-        mapperMock.Verify(m => m.Map<CourseDto>(course), Times.Once);
+        mapperMock.Verify(m => m.Map<CourseDTO>(course), Times.Once);
     }
 
     [Test]
@@ -217,7 +217,7 @@ public class CourseServiceTests
             Status = Domain.Enums.CourseStatus.Concept
         };
 
-        var courseDto = new CourseDto
+        var courseDto = new CourseDTO
         {
             Id = 1,
             Name = "Test Course",
@@ -229,7 +229,7 @@ public class CourseServiceTests
             .Setup(r => r.CreateAndCommit(It.IsAny<Course>()))
             .ReturnsAsync(course);
 
-        mapperMock.Setup(m => m.Map<CourseDto>(course)).Returns(courseDto);
+        mapperMock.Setup(m => m.Map<CourseDTO>(course)).Returns(courseDto);
         mapperMock.Setup(m => m.Map<Course>(createCourseDto)).Returns(course);
 
         // Act
@@ -242,7 +242,7 @@ public class CourseServiceTests
         Assert.That(result.Result.Name, Is.EqualTo(createCourseDto.Name));
         Assert.That(result.Result.Description, Is.EqualTo(createCourseDto.Description));
         courseRepositoryMock.Verify(r => r.CreateAndCommit(It.IsAny<Course>()), Times.Once);
-        mapperMock.Verify(m => m.Map<CourseDto>(course), Times.Once);
+        mapperMock.Verify(m => m.Map<CourseDTO>(course), Times.Once);
     }
 
     [Test]
@@ -310,7 +310,7 @@ public class CourseServiceTests
         var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
         var existingCourse = new Course { Id = courseId, Name = "Old Course", Description = "Old Description" };
         var updatedCourse = new Course { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
-        var courseDto = new CourseDto { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
+        var courseDto = new CourseDTO { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
 
         courseRepositoryMock
             .Setup(r => r.Get(courseId))
@@ -320,7 +320,7 @@ public class CourseServiceTests
             .Setup(r => r.UpdateAndCommit(It.IsAny<Course>()))
             .ReturnsAsync(updatedCourse);
 
-        mapperMock.Setup(m => m.Map<CourseDto>(updatedCourse)).Returns(courseDto);
+        mapperMock.Setup(m => m.Map<CourseDTO>(updatedCourse)).Returns(courseDto);
 
         // Act
         var result = await courseService.UpdateCourse(courseId, updateDto);
@@ -331,7 +331,7 @@ public class CourseServiceTests
         Assert.That(result.Result.Description, Is.EqualTo("Updated Description"));
         courseRepositoryMock.Verify(r => r.Get(courseId), Times.Once);
         courseRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Course>()), Times.Once);
-        mapperMock.Verify(m => m.Map<CourseDto>(updatedCourse), Times.Once);
+        mapperMock.Verify(m => m.Map<CourseDTO>(updatedCourse), Times.Once);
     }
 
     [Test]
