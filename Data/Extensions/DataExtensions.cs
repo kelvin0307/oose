@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces.Repositories;
+using Data.Adapters.Nijmegen;
 using Data.Context;
 using Data.Extensions.ExtensionModels;
 using Data.Repositories;
@@ -16,5 +17,24 @@ public static class DataExtensions
         });
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        // ==============================
+        // Nijmegen adapters (HttpClients)
+        // ==============================
+
+        services.AddHttpClient<NijmegenCourseAdapter>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.nijmegen.nl/");
+        });
+
+        services.AddHttpClient<NijmegenLessonAdapter>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.nijmegen.nl/");
+        });
+
+        services.AddHttpClient<NijmegenLearningOutcomeAdapter>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.nijmegen.nl/");
+        });
     }
 }
