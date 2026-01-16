@@ -2,95 +2,98 @@
 config:
   look: neo
   theme: redux
-  layout: dagre
+  layout: elk
+  flowchart:
+    nodeSpacing: 300
+    rankSpacing: 100
 ---
 classDiagram
 direction LR
+    class ControllerBase
     namespace Server.Controllers {
-        class ControllerBase {
-            <<external>>
-        }
-
-        class BaseApiController {
-            <<abstract>>
-            #HandleResponse~T~(Response~T~ response, bool noContentOnSuccess) IActionResult
-            #HandleCreatedResponse~T~(Response~T~ response, string actionName, object routeValues) IActionResult
-        }
-
-        class CourseController {
-            -ICourseService courseService
-            -ILearningOutcomeService learningOutcomeService
-            +CourseController(ICourseService courseService, ILearningOutcomeService learningOutcomeService)
-            +GetAll() Task~IActionResult~
-            +Get(int id) Task~IActionResult~
-            +GetLearningOutcomesByCourseId(int id) Task~IActionResult~
-            +Create(CreateCourseDto dto) Task~IActionResult~
-            +Update(int id, UpdateCourseDto dto) Task~IActionResult~
-            +Delete(int id) Task~IActionResult~
-        }
-
-        class LearningOutcomeController {
-            -ILearningOutcomeService learningOutcomeService
-            +CourseController(ILearningOutcomeService learningOutcomeService)
-            +GetAll() Task~IActionResult~
-            +Get(int id) Task~IActionResult~
-            +Create(CreateLearningOutcome createLearningOutcome) Task~IActionResult~
-            +Update(int id, UpdateLearningOutcome updateLearningOutcome) Task~IActionResult~
-            +Delete(int id) Task~IActionResult~
-        }
+        class BaseApiController
+        class CourseController
+        class LearningOutcomeController
+        class MaterialController
+    class BaseApiController
+        class PlanningController
+    class CourseController
+        class AuthController
+    class LearningOutcomeController
+        class ClassController
+        class StudentController
+        class GradeController
     }
 
-
-    namespace Core.Dto{
-        class CourseDto {
-            <<external>>
-        }
-
-        class CreateCourseDto {
-            <<external>>
-        }
-
-        class UpdateCourseDto {
-            <<external>>
-        }
-
-        class LearningOutcomeDto {
-            <<external>>
-        }
-
-        class CreateLearningOutcomeDto {
-            <<external>>
-        }
-
-        class UpdateLearningOutcomeDto {
-            <<external>>
-        }
+    namespace Core.DTOs {
+        class CourseDTO
+        class CreateCourseDto
+        class UpdateCourseDto
+        class LearningOutcomeDto
+        class CreateLearningOutcomeDto
+        class UpdateLearningOutcomeDto
+        class MaterialDTO
+        class CreateMaterialDTO
+        class UpdateMaterialDTO
+        class PlanningDTO
+        class LoginDTO
+        class TeacherLoginDTO
+        class ClassDTO
+        class StudentDTO
+        class GradeDTO
+        class CreateGradeDTO
+        class UpdateGradeDTO
     }
-
-    namespace Core.Interfaces.Services{
-        class ICourseService {
-            <<external>>
-        }
-
-        class ILearningOutcomeService {
-            <<external>>
-        }
+    BaseApiController --|> ControllerBase
+    namespace Core.Interfaces.Services {
+        class ICourseService
+        class ILearningOutcomeService
+        class IMaterialService
+        class IPlanningService
+        class IAuthService
+        class IClassService
+        class IStudentService
+        class IGradeService
     }
+    BaseApiController --|> Microsoft.AspNetCore.Mvc.ControllerBase
+    CourseController --|> BaseApiController
+    LearningOutcomeController --|> BaseApiController
+    MaterialController --|> BaseApiController
+    PlanningController --|> BaseApiController
+    AuthController --|> BaseApiController
+    ClassController --|> BaseApiController
+    StudentController --|> BaseApiController
+    GradeController --|> BaseApiController
+    CourseController ..> ICourseService
+    CourseController ..> ILearningOutcomeService
+    CourseController ..> CourseDTO
+    CourseController ..> CreateCourseDto
+    CourseController ..> UpdateCourseDto
 
-    %% Base Controller
-    BaseApiController --|> ControllerBase : inherits
-    CourseController --|> BaseApiController : inherits
-    LearningOutcomeController --|> BaseApiController : inherits
+    LearningOutcomeController ..> ILearningOutcomeService
+    LearningOutcomeController ..> LearningOutcomeDto
+    LearningOutcomeController ..> CreateLearningOutcomeDto
+    LearningOutcomeController ..> UpdateLearningOutcomeDto
 
-    %% Course
-    CourseController --> ICourseService : delegates to
-    CourseController --> ILearningOutcomeService : delegates to
-    CourseController ..> CreateCourseDto : receives
-    CourseController ..> UpdateCourseDto : receives
-    CourseController ..> CourseDto : returns
+    MaterialController ..> IMaterialService
+    MaterialController ..> MaterialDTO
+    MaterialController ..> CreateMaterialDTO
+    MaterialController ..> UpdateMaterialDTO
 
-    %% LearningOutcome
-    LearningOutcomeController --> ILearningOutcomeService : delegates to
-    LearningOutcomeController ..> CreateLearningOutcomeDto : receives
-    LearningOutcomeController ..> UpdateLearningOutcomeDto : receives
-    LearningOutcomeController ..> LearningOutcomeDto : returns
+    PlanningController ..> IPlanningService
+    PlanningController ..> PlanningDTO
+
+    AuthController ..> IAuthService
+    AuthController ..> LoginDTO
+    AuthController ..> TeacherLoginDTO
+
+    ClassController ..> IClassService
+    ClassController ..> ClassDTO
+
+    StudentController ..> IStudentService
+    StudentController ..> StudentDTO
+
+    GradeController ..> IGradeService
+    GradeController ..> GradeDTO
+    GradeController ..> CreateGradeDTO
+    GradeController ..> UpdateGradeDTO

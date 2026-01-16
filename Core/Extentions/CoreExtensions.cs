@@ -25,6 +25,7 @@ public static class CoreExtensions
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<IClassService, ClassService>();
         services.AddTransient<IStudentService, StudentService>();
+        services.AddTransient<IGradeService, GradeService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }
