@@ -9,10 +9,9 @@ public class Lesson
     public string Name { get; set; } = string.Empty;
     public int SequenceNumber { get; set; }
     public TestType? TestType { get; set; }
-
+    public int PlanningId { get; set; }
     public Planning? Planning { get; set; }
-    public int? PlanningId { get; set; }
-
     public IList<Material>? Materials { get; set; } = [];
-    public ICollection<LearningOutcome> LearningOutcomes { get; set; } = new List<LearningOutcome>();
+    public IList<LearningOutcome> LearningOutcomes { get; set; } = [];
+    public IList<Grade> Grades { get; set; } = [];
 }

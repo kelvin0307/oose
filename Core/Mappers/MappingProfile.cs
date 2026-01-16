@@ -11,5 +11,7 @@ public class MappingProfile : Profile
         CreateMap<Course, CourseDTO>().ReverseMap();
         CreateMap<CreateCourseDto, Course>();
         CreateMap<Lesson, LessonDTO>();
+        CreateMap<Student, StudentDTO>().ReverseMap();
+        CreateMap<Class, ClassDTO>().ReverseMap();
     }
 }
