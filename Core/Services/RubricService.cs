@@ -59,11 +59,11 @@ public class RubricService(
         }
     }
 
-    public async Task<Response<List<RubricDto>>> GetRubricsByLearningOutcomeId(int assessmentId)
+    public async Task<Response<List<RubricDto>>> GetRubricsByLearningOutcomeId(int learningOutcomeId)
     {
         try
         {
-            var rubrics = await rubricRepository.GetAggregatesByLearningOutcomeId(assessmentId);
+            var rubrics = await rubricRepository.GetAggregatesByLearningOutcomeId(learningOutcomeId);
             var rubricDtos = rubrics.Select((rubric)=> rubric.ToDto(mapper)).ToList();
             return Response<List<RubricDto>>.Ok(rubricDtos);
         }
