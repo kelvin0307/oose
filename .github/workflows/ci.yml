@@ -63,4 +63,4 @@ jobs:
         git status
         git add BuildOutput/MyApi
         git commit -m "Publish API (CI)" || echo "Nothing to commit"
-        git push
+        git push origin main --force-with-lease
