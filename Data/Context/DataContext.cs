@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-
+ 
 namespace Data.Context
 {
     public class DataContext : DbContext
@@ -12,12 +12,12 @@ namespace Data.Context
         public virtual DbSet<Lesson> Lessons { get; set; }
         public virtual DbSet<Material> Materials { get; set; }
         public virtual DbSet<LearningOutcome> LearningOutcomes { get; set; }
-
+ 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
-
+ 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+ 
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Planning)
                 .WithOne(p => p.Course)
@@ -33,8 +33,8 @@ namespace Data.Context
                 .WithMany(p => p.Lessons)
                 .HasForeignKey(l => l.PlanningId);
             modelBuilder.Entity<Lesson>()
-                .HasMany(lo => lo.LearningOutcomes)
-                .WithMany(l => l.Lessons)
+                .HasMany(l => l.LearningOutcomes)
+                .WithMany(lo => lo.Lessons)
                 .UsingEntity<Dictionary<string, object>>(
                     "LessonLearningOutcome",
                     j => j.HasOne<LearningOutcome>()
@@ -46,6 +46,13 @@ namespace Data.Context
                           .HasForeignKey("LearningOutcomeId")
                           .OnDelete(DeleteBehavior.Cascade)
                 );
+            modelBuilder.Entity<AssessmentDimension>().HasMany(x => x.AssessmentDimensionScores);
+        }
+ 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.LogTo(x => Console.WriteLine(x));
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }

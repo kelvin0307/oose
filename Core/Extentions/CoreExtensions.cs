@@ -18,6 +18,7 @@ public static class CoreExtensions
 
         services.AddTransient<ICourseService, CourseService>();
         services.AddTransient<ILearningOutcomeService, LearningOutcomeService>();
+        services.AddTransient<IRubricService, RubricService>();
         services.AddTransient<IValidatorService, ValidatorService>();
         services.AddTransient<IPlanningService, PlanningService>();
         services.AddTransient<IDocumentFactory, DocumentFactory>();

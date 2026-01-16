@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public abstract class BaseApiController : ControllerBase
     {
         protected IActionResult HandleResponse<T>(Response<T> response, bool noContentOnSuccess = false)
