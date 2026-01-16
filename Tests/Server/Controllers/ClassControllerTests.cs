@@ -49,17 +49,4 @@ public class ClassControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(200));
         Assert.That(result.Value, Is.EqualTo(students));
     }
-
-    //[Test]
-    //public async Task GetStudent_ReturnsOk_WhenStudentExistsInClass()
-    //{
-    //    var student = new StudentDTO { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 };
-    //    classServiceMock.Setup(s => s.GetStudentById(1, 1)).ReturnsAsync(Response<StudentDTO>.Ok(student));
-
-    //    var result = await controller.GetStudent(1, 1) as OkObjectResult;
-
-    //    Assert.That(result, Is.Not.Null);
-    //    Assert.That(result.StatusCode, Is.EqualTo(200));
-    //    Assert.That(result.Value, Is.EqualTo(student));
-    //}
 }
