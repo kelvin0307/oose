@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
@@ -7,7 +8,6 @@ using Domain.Enums;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
-using System.Linq.Expressions;
 
 namespace Tests.Core.Services;
 
@@ -251,7 +251,7 @@ public class MaterialServiceTests
         var materials = new List<Material>
         {
             new Material { Id = 0, Name = "Test", Content = "Test", Version = 1, LessonId = 1 }
-        }.AsQueryable();
+        };
 
         var createdMaterial = new Material
         {
@@ -275,15 +275,15 @@ public class MaterialServiceTests
             .ReturnsAsync(lesson);
 
         materialRepositoryMock
-            .Setup(r => r.OrderByDescending(It.IsAny<Expression<Func<Material, int>>>()))
-            .Returns(materials.OrderByDescending(m => m.Id));
+            .Setup(r => r.GetAll())
+            .ReturnsAsync(materials);
 
         materialRepositoryMock
             .Setup(r => r.CreateAndCommit(It.IsAny<Material>()))
             .ReturnsAsync(createdMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(createdMaterial))
+            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act
@@ -345,7 +345,7 @@ public class MaterialServiceTests
             .ReturnsAsync(lesson);
 
         materialRepositoryMock
-            .Setup(r => r.OrderByDescending(It.IsAny<Expression<Func<Material, int>>>()))
+            .Setup(r => r.GetAll())
             .Throws(new Exception("Database error"));
 
         // Act
@@ -375,7 +375,7 @@ public class MaterialServiceTests
             SequenceNumber = 1
         };
 
-        var materials = new List<Material>().AsQueryable();
+        var materials = new List<Material>();
 
         var createdMaterial = new Material
         {
@@ -399,8 +399,8 @@ public class MaterialServiceTests
             .ReturnsAsync(lesson);
 
         materialRepositoryMock
-            .Setup(r => r.OrderByDescending(It.IsAny<Expression<Func<Material, int>>>()))
-            .Returns(materials.OrderByDescending(m => m.Id));
+            .Setup(r => r.GetAll())
+            .ReturnsAsync(materials);
 
         materialRepositoryMock
             .Setup(r => r.CreateAndCommit(It.IsAny<Material>()))
@@ -468,7 +468,7 @@ public class MaterialServiceTests
             .ReturnsAsync(updatedMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(updatedMaterial))
+            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act
@@ -623,7 +623,7 @@ public class MaterialServiceTests
             .ReturnsAsync(updatedMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(updatedMaterial))
+            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act

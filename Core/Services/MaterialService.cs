@@ -99,14 +99,12 @@ public class MaterialService : Generatable<Material>, IMaterialService
             {
                 return Response<MaterialDTO>.Fail("Lesson not found");
             }
-            var latestmaterialId = materialRepository
-                .OrderByDescending(x => x.Id)
-                .Select(x => x.Id)
-                .FirstOrDefault();
+            var allMaterials = await materialRepository.GetAll();
+            var newId = allMaterials.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
 
             var newMaterial = new Material
             {
-                Id = latestmaterialId + 1,
+                Id = newId + 1,
                 Name = createMaterialDTO.Name,
                 Content = createMaterialDTO.Content,
                 Version = 1,
