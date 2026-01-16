@@ -8,7 +8,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Course, CourseDto>().ReverseMap();
+        CreateMap<Material, MaterialDTO>().ReverseMap();
+        CreateMap<Course, CourseDTO>().ReverseMap();
         CreateMap<CreateCourseDto, Course>();
         CreateMap<Lesson, LessonDTO>();
         
@@ -24,5 +25,7 @@ public class MappingProfile : Profile
         CreateMap<UpdateAssessmentDimensionDto, AssessmentDimension>().ReverseMap();
         CreateMap<UpdateAssessmentDimensionScoreDto, AssessmentDimensionScore>().ReverseMap();
 
+        CreateMap<Student, StudentDTO>().ReverseMap();
+        CreateMap<Class, ClassDTO>().ReverseMap();
     }
 }

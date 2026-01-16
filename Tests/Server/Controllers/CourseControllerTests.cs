@@ -32,13 +32,13 @@ public class CourseControllerTests
     public async Task GetAll_WhenServiceReturnsSuccess_ReturnsOkResponse()
     {
         // Arrange
-        var courses = new List<CourseDto>
+        var courses = new List<CourseDTO>
         {
-            new CourseDto { Id = 1, Name = "Course 1", Description = "Description 1" },
-            new CourseDto { Id = 2, Name = "Course 2", Description = "Description 2" }
+            new CourseDTO { Id = 1, Name = "Course 1", Description = "Description 1" },
+            new CourseDTO { Id = 2, Name = "Course 2", Description = "Description 2" }
         };
 
-        var response = Response<List<CourseDto>>.Ok(courses);
+        var response = Response<List<CourseDTO>>.Ok(courses);
 
         courseServiceMock
             .Setup(s => s.GetAllCourses())
@@ -58,7 +58,7 @@ public class CourseControllerTests
     public async Task GetAll_WhenServiceReturnsEmptyList_ReturnsOkResponse()
     {
         // Arrange
-        var response = Response<List<CourseDto>>.Ok(new List<CourseDto>());
+        var response = Response<List<CourseDTO>>.Ok(new List<CourseDTO>());
 
         courseServiceMock
             .Setup(s => s.GetAllCourses())
@@ -78,7 +78,7 @@ public class CourseControllerTests
     public async Task GetAll_WhenServiceReturnsFail_ReturnsErrorResponse()
     {
         // Arrange
-        var response = new Response<List<CourseDto>>
+        var response = new Response<List<CourseDTO>>
         {
             Success = false,
             Message = "Failed to fetch courses"
@@ -179,8 +179,8 @@ public class CourseControllerTests
     {
         // Arrange
         var courseId = 1;
-        var courseDto = new CourseDto { Id = courseId, Name = "Test Course", Description = "Test Description" };
-        var response = Response<CourseDto>.Ok(courseDto);
+        var courseDto = new CourseDTO { Id = courseId, Name = "Test Course", Description = "Test Description" };
+        var response = Response<CourseDTO>.Ok(courseDto);
 
         courseServiceMock
             .Setup(s => s.GetCourseById(courseId))
@@ -201,7 +201,7 @@ public class CourseControllerTests
     {
         // Arrange
         var courseId = 999;
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = false,
             Message = "Course not found"
@@ -226,7 +226,7 @@ public class CourseControllerTests
     {
         // Arrange
         var courseId = 1;
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = false,
             Message = "An unexpected error occurred while fetching the course"
@@ -258,14 +258,14 @@ public class CourseControllerTests
             Description = "Test Description"
         };
 
-        var courseDto = new CourseDto
+        var courseDto = new CourseDTO
         {
             Id = 1,
             Name = createCourseDto.Name,
             Description = createCourseDto.Description
         };
 
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = true,
             Result = courseDto,
@@ -316,7 +316,7 @@ public class CourseControllerTests
             Description = "Test Description"
         };
 
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = false,
             Message = "Failed to create course"
@@ -344,8 +344,8 @@ public class CourseControllerTests
         // Arrange
         var courseId = 1;
         var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
-        var courseDto = new CourseDto { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
-        var response = Response<CourseDto>.Ok(courseDto);
+        var courseDto = new CourseDTO { Id = courseId, Name = "Updated Course", Description = "Updated Description" };
+        var response = Response<CourseDTO>.Ok(courseDto);
 
         courseServiceMock
             .Setup(s => s.UpdateCourse(courseId, updateDto))
@@ -367,7 +367,7 @@ public class CourseControllerTests
         // Arrange
         var courseId = 999;
         var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = false,
             Message = "Course not found"
@@ -393,7 +393,7 @@ public class CourseControllerTests
         // Arrange
         var courseId = 1;
         var updateDto = new UpdateCourseDto { Name = "Updated Course", Description = "Updated Description" };
-        var response = new Response<CourseDto>
+        var response = new Response<CourseDTO>
         {
             Success = false,
             Message = "An unexpected error occurred while updating the course"

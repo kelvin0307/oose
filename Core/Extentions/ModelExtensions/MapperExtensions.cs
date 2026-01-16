@@ -18,9 +18,9 @@ public static class MapperExtensions
         return mapper.Map<LessonDTO>(lesson);
     }
 
-    public static CourseDto ToDto(this Course course, IMapper mapper)
+    public static CourseDTO ToDto(this Course course, IMapper mapper)
     {
-        return mapper.Map<CourseDto>(course);
+        return mapper.Map<CourseDTO>(course);
     }
     
     public static RubricDto ToDto(this Rubric rubric, IMapper mapper)
