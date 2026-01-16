@@ -43,10 +43,10 @@ jobs:
       run: |
         dotnet publish Server/Server.csproj \
         --configuration Release \
-        --output /BuildOutput/MyApi
+        --output BuildOutput/MyApi
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v4
       with:
         name: MyApi-DLL
-        path: /BuildOutput/MyApi  
+        path: BuildOutput/MyApi  
