@@ -26,8 +26,14 @@ public class RubricController(IRubricService rubricService) : BaseApiController
     public async Task<IActionResult> Create([FromBody] CreateRubricDto createRubricDto)
     {
         var response = await rubricService.CreateRubric(createRubricDto);
-        return HandleCreatedResponse(response, nameof(Get), new { id = response.Result.Id });
-    }
+        if (!response.Success || response.Result == null)
+            return HandleResponse(response);
+
+        return HandleCreatedResponse(
+            response,
+            nameof(Get),
+            new { id = response.Result.Id }
+        );    }
     
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateRubricDto updateRubricDto)
