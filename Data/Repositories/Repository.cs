@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Linq.Expressions;
-using Core.Interfaces.Repositories;
+using Data.Interfaces.Repositories;
 using Data.Context;
 using Data.Interfaces;
-using DocumentFormat.OpenXml.Vml.Office;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
@@ -13,7 +12,6 @@ namespace Data.Repositories
     {
         protected DbSet<TEntity> DbSet;
         private readonly DataContext _context;
-        private readonly IDataSource<TEntity> _dataSource;
         private IQueryable<TEntity> _queryable => DbSet;
         public Type ElementType => _queryable.ElementType;
 
@@ -31,17 +29,11 @@ namespace Data.Repositories
             return _queryable.GetEnumerator();
         }
 
-        public Repository(DataContext context, IDataSource<TEntity> dataSource)
+        public Repository(DataContext context)
         {
             _context = context;
-            _dataSource = dataSource;
 
             DbSet = context.Set<TEntity>();
-        }
-
-        public Task<IEnumerable<TEntity>> GetAllAsync()
-        {
-            return _dataSource.GetAllAsync();
         }
 
         public async Task<TEntity> CreateAndCommit(TEntity entity)

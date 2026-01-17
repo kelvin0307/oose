@@ -24,7 +24,7 @@ public class RepositoryTests
 
         dataContextMock.Setup(c => c.Set<Course>()).Returns(courseDbSetMock.Object);
 
-        courseRepository = new Repository<Course>(dataContextMock.Object, null);
+        courseRepository = new Repository<Course>(dataContextMock.Object);
         courseRepositoryMock = new Mock<Repository<Course>>(dataContextMock.Object);
     }
 

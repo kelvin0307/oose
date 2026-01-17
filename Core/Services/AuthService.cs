@@ -1,6 +1,6 @@
 using Core.Common;
 using Core.DTOs;
-using Core.Interfaces.Repositories;
+using Data.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Models;
 

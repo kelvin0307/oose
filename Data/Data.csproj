@@ -7,12 +7,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Adapters\Arnhem\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

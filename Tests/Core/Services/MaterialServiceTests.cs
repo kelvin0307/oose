@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
-using Core.Interfaces.Repositories;
+using Data.Interfaces.Repositories;
 using Core.Services;
 using Domain.Enums;
 using Domain.Models;
