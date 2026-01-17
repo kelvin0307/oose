@@ -41,7 +41,7 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
                 return Response<DocumentDTO>.NotFound("Error generating assessment document: Id is not a Test");
             }
 
-
+            var loIds = test.LearningOutcomes.Select(x => x.Id).ToArray();
             var rubrics = await rubricRepository.GetAggregatesByLearningOutcomeIds(test.LearningOutcomes.Select(x => x.Id).ToArray());
 
             var doc = MapToDocumentDataDTO(rubrics);
@@ -59,23 +59,52 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
     {
         var paragraphs = new Dictionary<string, string>();
 
+        var rubricIndex = 1;
+
         foreach (var rubric in rubrics)
         {
-            // rubric
-            paragraphs.Add($"{rubric.Id} - Rubric:", rubric.Name);
+            paragraphs.Add(
+                $"{rubricIndex}. Rubric",
+                rubric.Name
+            );
 
+            paragraphs.Add($"\t\t\t\t\t\t{MakeUniqueKey("Assessment dimensions", rubricIndex)}:", "");
+
+            var dimensionIndex = 1;
 
             foreach (var dimension in rubric.AssessmentDimensions)
             {
-                var scoreString = string.Join(", ", dimension.AssessmentDimensionScores.Select(s => s.Score.ToString()));
-                paragraphs.Add($"{dimension}:", scoreString);
-            }
-        }
+                paragraphs.Add(
+                    $"\t\t\t\t\t\t\t\t\t\t\t{dimensionIndex}. {dimension.Name}",
+                    $"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t{dimension.NameCriterium}"
+                );
 
+                var scoresText = string.Join(
+                    "\r\n",
+                    dimension.AssessmentDimensionScores.Select(s =>
+                        $"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t Score {s.Score}: {s.Description}"
+                    )
+                );
+
+                paragraphs.Add(
+                    $"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t{MakeUniqueKey("Scores", rubricIndex * dimensionIndex * new Random().Next(0, 10))}: ",
+                    MakeUniqueKey(scoresText, rubricIndex * dimensionIndex * new Random().Next(0, 10))
+                );
+
+                dimensionIndex++;
+            }
+
+            rubricIndex++;
+        }
+        
         return new DocumentDataDTO()
         {
             Title = "AssessmentDocument",
             Paragraphs = paragraphs ?? [],
         };
     }
-}
+    
+    private static string MakeUniqueKey(string baseText, int uniqueIndex)
+    {
+        return baseText + new string('\u200B', uniqueIndex);
+    }}
