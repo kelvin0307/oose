@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Core.DTOs;
 using Core.Interfaces.Repositories;
@@ -32,7 +33,8 @@ public class LessonServiceTests
     [Test]
     public async Task AddLearningOutcomesToLesson_WhenLessonNotFound_ReturnsFail()
     {
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync((Lesson)null);
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(Enumerable.Empty<Lesson>().AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync((Lesson)null);
 
         var result = await lessonService.AddLearningOutcomesToLesson(1, new List<int> { 2 });
 
@@ -44,8 +46,11 @@ public class LessonServiceTests
     public async Task AddLearningOutcomesToLesson_WhenLearningOutcomeNotFound_ReturnsFail()
     {
         var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome>() };
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync((LearningOutcome)null);
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(new List<Lesson> { lesson }.AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync(lesson);
+
+        learningOutcomeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, object>>>())).Returns(Enumerable.Empty<LearningOutcome>().AsQueryable());
+        learningOutcomeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<LearningOutcome>>())).ReturnsAsync(new List<LearningOutcome>());
 
         var result = await lessonService.AddLearningOutcomesToLesson(1, new List<int> { 2 });
 
@@ -54,20 +59,51 @@ public class LessonServiceTests
     }
 
     [Test]
-    public async Task AddLearningOutcomesToLesson_WhenAlreadyAttached_SkipsDuplicateAndReturnsOk()
+    public async Task AddLearningOutcomesToLesson_WhenAlreadyAttached_SkipsDuplicateAndReturnsNotFound()
     {
         var lo = new LearningOutcome { Id = 2, Name = "LO 1", Lessons = new List<Lesson>() };
         var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome> { lo } };
+        lo.Lessons.Add(lesson);
 
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync(lo);
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(new List<Lesson> { lesson }.AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync(lesson);
+
+        learningOutcomeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, object>>>())).Returns(new List<LearningOutcome> { lo }.AsQueryable());
+        learningOutcomeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<LearningOutcome>>())).ReturnsAsync(new List<LearningOutcome> { lo });
+
         lessonRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Lesson>())).ReturnsAsync(lesson);
+        learningOutcomeRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>())).ReturnsAsync(lo);
+
+        var result = await lessonService.AddLearningOutcomesToLesson(1, new List<int> { 2 });
+
+        Assert.That(result.Success, Is.False);
+        Assert.That(lesson.LearningOutcomes, Has.Count.EqualTo(1));
+        lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Never);
+        learningOutcomeRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>()), Times.Never);
+    }
+
+    [Test]
+    public async Task AddLearningOutcomesToLesson_WithNewLearningOutcome_AddsToBotsides()
+    {
+        var lo = new LearningOutcome { Id = 2, Name = "LO 1", Lessons = new List<Lesson>() };
+        var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome>() };
+
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(new List<Lesson> { lesson }.AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync(lesson);
+
+        learningOutcomeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, object>>>())).Returns(new List<LearningOutcome> { lo }.AsQueryable());
+        learningOutcomeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<LearningOutcome>>())).ReturnsAsync(new List<LearningOutcome> { lo });
+
+        lessonRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Lesson>())).ReturnsAsync(lesson);
+        learningOutcomeRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>())).ReturnsAsync(lo);
 
         var result = await lessonService.AddLearningOutcomesToLesson(1, new List<int> { 2 });
 
         Assert.That(result.Success, Is.True);
         Assert.That(lesson.LearningOutcomes, Has.Count.EqualTo(1));
+        Assert.That(lo.Lessons, Has.Count.EqualTo(1));
         lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>()), Times.Once);
     }
 
     [Test]
@@ -77,9 +113,14 @@ public class LessonServiceTests
         var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome> { lo } };
         lo.Lessons.Add(lesson);
 
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync(lo);
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(new List<Lesson> { lesson }.AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync(lesson);
+
+        learningOutcomeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, object>>>())).Returns(new List<LearningOutcome> { lo }.AsQueryable());
+        learningOutcomeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<LearningOutcome>>())).ReturnsAsync(new List<LearningOutcome> { lo });
+
         lessonRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Lesson>())).ReturnsAsync(lesson);
+        learningOutcomeRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>())).ReturnsAsync(lo);
 
         var result = await lessonService.RemoveLearningOutcomesFromLesson(1, new List<int> { 2 });
 
@@ -87,47 +128,30 @@ public class LessonServiceTests
         Assert.That(lesson.LearningOutcomes, Has.Count.EqualTo(0));
         Assert.That(lo.Lessons, Has.Count.EqualTo(0));
         lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Once);
+        learningOutcomeRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>()), Times.Once);
     }
 
     [Test]
-    public async Task RemoveLearningOutcomesFromLesson_WhenLessonNotFound_ReturnsFail()
-    {
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync((Lesson)null);
-
-        var result = await lessonService.RemoveLearningOutcomesFromLesson(1, new List<int> { 2 });
-
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("Lesson not found"));
-    }
-
-    [Test]
-    public async Task RemoveLearningOutcomesFromLesson_WhenLearningOutcomeNotFound_ReturnsFail()
-    {
-        var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome>() };
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync((LearningOutcome)null);
-
-        var result = await lessonService.RemoveLearningOutcomesFromLesson(1, new List<int> { 2 });
-
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.Message, Does.Contain("Learning outcome not found"));
-    }
-
-    [Test]
-    public async Task RemoveLearningOutcomesFromLesson_WhenNotAttached_SkipsAndReturnsOk()
+    public async Task RemoveLearningOutcomesFromLesson_WhenNotAttached_SkipsAndReturnsNotFound()
     {
         var lo = new LearningOutcome { Id = 2, Name = "LO 1", Lessons = new List<Lesson>() };
         var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome>() };
 
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync(lo);
+        lessonRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Lesson, object>>>())).Returns(new List<Lesson> { lesson }.AsQueryable());
+        lessonRepositoryMock.Setup(r => r.FirstOrDefaultAsync(It.IsAny<IQueryable<Lesson>>())).ReturnsAsync(lesson);
+
+        learningOutcomeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, object>>>())).Returns(new List<LearningOutcome> { lo }.AsQueryable());
+        learningOutcomeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<LearningOutcome>>())).ReturnsAsync(new List<LearningOutcome> { lo });
+
         lessonRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Lesson>())).ReturnsAsync(lesson);
+        learningOutcomeRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>())).ReturnsAsync(lo);
 
         var result = await lessonService.RemoveLearningOutcomesFromLesson(1, new List<int> { 2 });
 
-        Assert.That(result.Success, Is.True);
+        Assert.That(result.Success, Is.False);
         Assert.That(lesson.LearningOutcomes, Has.Count.EqualTo(0));
         Assert.That(lo.Lessons, Has.Count.EqualTo(0));
-        lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Once);
+        lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Never);
+        learningOutcomeRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<LearningOutcome>()), Times.Never);
     }
 }

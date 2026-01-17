@@ -136,88 +136,28 @@ public class LessonService : ILessonService
         }
     }
 
-    public async Task<Response<bool>> AddLearningOutcomeToLesson(int lessonId, int learningOutcomeId)
-    {
-        try
-        {
-            var lesson = await lessonRepository.Get(lessonId);
-            if (lesson == null)
-                return Response<bool>.Fail("Lesson not found");
-
-            var learningOutcome = await learningOutcomeRepository.Get(learningOutcomeId);
-            if (learningOutcome == null)
-                return Response<bool>.Fail("Learning outcome not found");
-
-            // ensure lists are initialized
-            lesson.LearningOutcomes ??= new List<LearningOutcome>();
-            learningOutcome.Lessons ??= new List<Lesson>();
-
-            // prevent duplicates
-            if (lesson.LearningOutcomes.Any(lo => lo.Id == learningOutcomeId))
-                return Response<bool>.Fail("Learning outcome already attached to lesson");
-
-            lesson.LearningOutcomes.Add(learningOutcome);
-            learningOutcome.Lessons.Add(lesson);
-
-            await lessonRepository.UpdateAndCommit(lesson);
-
-            return Response<bool>.Ok(true);
-        }
-        catch (Exception ex)
-        {
-            return Response<bool>.Fail("Error attaching learning outcome to lesson: " + ex.Message);
-        }
-    }
-
-    public async Task<Response<bool>> RemoveLearningOutcomeFromLesson(int lessonId, int learningOutcomeId)
-    {
-        try
-        {
-            var lesson = await lessonRepository.Get(lessonId);
-            if (lesson == null)
-                return Response<bool>.Fail("Lesson not found");
-
-            var learningOutcome = await learningOutcomeRepository.Get(learningOutcomeId);
-            if (learningOutcome == null)
-                return Response<bool>.Fail("Learning outcome not found");
-
-            lesson.LearningOutcomes ??= new List<LearningOutcome>();
-            learningOutcome.Lessons ??= new List<Lesson>();
-
-            var toRemoveFromLesson = lesson.LearningOutcomes.FirstOrDefault(lo => lo.Id == learningOutcomeId);
-            if (toRemoveFromLesson == null)
-                return Response<bool>.Fail("Learning outcome not attached to lesson");
-
-            lesson.LearningOutcomes.Remove(toRemoveFromLesson);
-
-            var toRemoveFromLO = learningOutcome.Lessons.FirstOrDefault(l => l.Id == lessonId);
-            if (toRemoveFromLO != null)
-                learningOutcome.Lessons.Remove(toRemoveFromLO);
-
-            await lessonRepository.UpdateAndCommit(lesson);
-
-            return Response<bool>.Ok(true);
-        }
-        catch (Exception ex)
-        {
-            return Response<bool>.Fail("Error detaching learning outcome from lesson: " + ex.Message);
-        }
-    }
 
     public async Task<Response<bool>> AddLearningOutcomesToLesson(int lessonId, IList<int> learningOutcomeIds)
     {
         try
         {
-            var lesson = await lessonRepository.Get(lessonId);
+            var lessonQuery = lessonRepository.Include(l => l.LearningOutcomes);
+            var lesson = await lessonRepository.FirstOrDefaultAsync(lessonQuery.Where(l => l.Id == lessonId));
             if (lesson == null)
                 return Response<bool>.Fail("Lesson not found");
 
             lesson.LearningOutcomes ??= new List<LearningOutcome>();
 
-            foreach (var loId in learningOutcomeIds)
+            // Load all requested learning outcomes in one call
+            var loQuery = learningOutcomeRepository.Include(lo => lo.Lessons).Where(lo => learningOutcomeIds.Contains(lo.Id));
+            var learningOutcomes = await learningOutcomeRepository.ToListAsync(loQuery);
+            var loById = learningOutcomes.ToDictionary(l => l.Id);
+
+            var toUpdateLOs = new List<LearningOutcome>();
+
+            foreach (var loId in learningOutcomeIds.Distinct())
             {
-                var learningOutcome = await learningOutcomeRepository.Get(loId);
-                if (learningOutcome == null)
+                if (!loById.TryGetValue(loId, out var learningOutcome))
                     return Response<bool>.Fail($"Learning outcome not found: {loId}");
 
                 learningOutcome.Lessons ??= new List<Lesson>();
@@ -225,7 +165,23 @@ public class LessonService : ILessonService
                 if (!lesson.LearningOutcomes.Any(lo => lo.Id == loId))
                 {
                     lesson.LearningOutcomes.Add(learningOutcome);
+                    if (!learningOutcome.Lessons.Any(l => l.Id == lessonId))
+                    {
+                        learningOutcome.Lessons.Add(lesson);
+                        toUpdateLOs.Add(learningOutcome);
+                    }
                 }
+            }
+
+            if (toUpdateLOs.Count == 0)
+            {
+                return Response<bool>.NotFound($"No records found to update");
+            }
+
+            // Persist changed learning outcomes first (reduces risk of join not being created)
+            foreach (var lo in toUpdateLOs)
+            {
+                await learningOutcomeRepository.UpdateAndCommit(lo);
             }
 
             await lessonRepository.UpdateAndCommit(lesson);
@@ -242,16 +198,23 @@ public class LessonService : ILessonService
     {
         try
         {
-            var lesson = await lessonRepository.Get(lessonId);
+            var lessonQuery = lessonRepository.Include(l => l.LearningOutcomes);
+            var lesson = await lessonRepository.FirstOrDefaultAsync(lessonQuery.Where(l => l.Id == lessonId));
             if (lesson == null)
                 return Response<bool>.Fail("Lesson not found");
 
             lesson.LearningOutcomes ??= new List<LearningOutcome>();
 
-            foreach (var loId in learningOutcomeIds)
+            // Load all requested learning outcomes in one call
+            var loQuery = learningOutcomeRepository.Include(lo => lo.Lessons).Where(lo => learningOutcomeIds.Contains(lo.Id));
+            var learningOutcomes = await learningOutcomeRepository.ToListAsync(loQuery);
+            var loById = learningOutcomes.ToDictionary(l => l.Id);
+
+            var toUpdateLOs = new List<LearningOutcome>();
+
+            foreach (var loId in learningOutcomeIds.Distinct())
             {
-                var learningOutcome = await learningOutcomeRepository.Get(loId);
-                if (learningOutcome == null)
+                if (!loById.TryGetValue(loId, out var learningOutcome))
                     return Response<bool>.Fail($"Learning outcome not found: {loId}");
 
                 learningOutcome.Lessons ??= new List<Lesson>();
@@ -262,7 +225,19 @@ public class LessonService : ILessonService
 
                 var toRemoveFromLO = learningOutcome.Lessons.FirstOrDefault(l => l.Id == lessonId);
                 if (toRemoveFromLO != null)
+                {
                     learningOutcome.Lessons.Remove(toRemoveFromLO);
+                    toUpdateLOs.Add(learningOutcome);
+                }
+            }
+            if (toUpdateLOs.Count == 0)
+            {
+                return Response<bool>.NotFound($"No records found to update");
+            }
+            // Persist changed learning outcomes
+            foreach (var lo in toUpdateLOs)
+            {
+                await learningOutcomeRepository.UpdateAndCommit(lo);
             }
 
             await lessonRepository.UpdateAndCommit(lesson);
