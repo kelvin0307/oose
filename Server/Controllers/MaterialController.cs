@@ -12,7 +12,7 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
     public async Task<IActionResult> CreateMaterial([FromBody] CreateMaterialDTO createMaterialdto)
     {
         var result = await materialService.CreateMaterial(createMaterialdto);
-        
+
         if (!result.Success)
             return HandleResponse(result);
 
@@ -41,9 +41,8 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
         return HandleResponse(result, noContentOnSuccess: true);
     }
 
-    [HttpGet("{materialId}/document/{documentType}")]
-    public async Task<IActionResult> GenerateDocument(int materialId, DocumentTypes documentType)
-    {
+    [HttpPost("document/{documentType}")]
+    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDTO materialId, DocumentTypes documentType) { 
         var doc = await materialService.GenerateDocument(materialId, documentType);
 
         if (!doc.Success)

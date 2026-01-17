@@ -23,6 +23,13 @@ direction LR
             +DbSet~Planning~ Plannings
             +DbSet~Lesson~ Lessons
             +DbSet~LearningOutcome~ LearningOutcomes
+            #OnModelCreating(ModelBuilder) void
+        }
+    }
+
+    namespace Data.Interfaces.Repositories {
+        class IRepository~TEntity~{
+            <<external>>
             +DbSet~Material~ Materials
             +DbSet~CourseExecution~ CourseExecutions
             +DbSet~Teacher~ Teachers

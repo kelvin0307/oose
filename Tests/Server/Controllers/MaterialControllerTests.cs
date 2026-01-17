@@ -28,7 +28,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndPdfType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
@@ -61,7 +61,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndCsvType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Csv;
         var documentBytes = new byte[] { 1, 2, 3 };
 
@@ -93,7 +93,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndDocxType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Docx;
         var documentBytes = new byte[] { 1, 2, 3 };
 
@@ -124,7 +124,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithNonExistentMaterialId_ThrowsExceptionOrReturnsError()
     {
         // Arrange
-        var materialId = 999;
+        var materialId = new MaterialIdDTO() { MaterialId = 999, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var response = Response<DocumentDTO>.Fail("Error generating material document");
 
@@ -144,39 +144,68 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithDifferentMaterialIds_ReturnsCorrectDocuments()
     {
         // Arrange
-        var materialIds = new[] { 1, 2, 3 };
         var documentType = DocumentTypes.Pdf;
 
-        foreach (var id in materialIds)
-        {
-            var documentBytes = new byte[] { (byte)id, 2, 3 };
-            var documentDto = new DocumentDTO
-            {
-                Document = documentBytes,
-                ContentType = "application/pdf",
-                DocumentName = $"material{id}.pdf"
-            };
+        var materialId1 = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId2 = new MaterialIdDTO() { MaterialId = 2, Version = 1 };
+        var materialId3 = new MaterialIdDTO() { MaterialId = 3, Version = 1 };
 
-            materialServiceMock
-                .Setup(s => s.GenerateDocument(id, documentType))
-                .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto));
-        }
+        var documentDto1 = new DocumentDTO
+        {
+            Document = new byte[] { 1, 2, 3 },
+            ContentType = "application/pdf",
+            DocumentName = "material1.pdf"
+        };
+
+        var documentDto2 = new DocumentDTO
+        {
+            Document = new byte[] { 2, 2, 3 },
+            ContentType = "application/pdf",
+            DocumentName = "material2.pdf"
+        };
+
+        var documentDto3 = new DocumentDTO
+        {
+            Document = new byte[] { 3, 2, 3 },
+            ContentType = "application/pdf",
+            DocumentName = "material3.pdf"
+        };
+
+        materialServiceMock
+            .Setup(s => s.GenerateDocument(materialId1, documentType))
+            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto1));
+
+        materialServiceMock
+            .Setup(s => s.GenerateDocument(materialId2, documentType))
+            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto2));
+
+        materialServiceMock
+            .Setup(s => s.GenerateDocument(materialId3, documentType))
+            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto3));
 
         // Act & Assert
-        foreach (var id in materialIds)
-        {
-            var result = await materialController.GenerateDocument(id, documentType);
-            Assert.That(result, Is.TypeOf<FileContentResult>());
-            var fileResult = result as FileContentResult;
-            Assert.That(fileResult!.FileDownloadName, Is.EqualTo($"material{id}.pdf"));
-        }
+        var result1 = await materialController.GenerateDocument(materialId1, documentType);
+        var result2 = await materialController.GenerateDocument(materialId2, documentType);
+        var result3 = await materialController.GenerateDocument(materialId3, documentType);
+
+        Assert.That(result1, Is.TypeOf<FileContentResult>());
+        Assert.That(result2, Is.TypeOf<FileContentResult>());
+        Assert.That(result3, Is.TypeOf<FileContentResult>());
+
+        var fileResult1 = result1 as FileContentResult;
+        var fileResult2 = result2 as FileContentResult;
+        var fileResult3 = result3 as FileContentResult;
+
+        Assert.That(fileResult1!.FileDownloadName, Is.EqualTo("material1.pdf"));
+        Assert.That(fileResult2!.FileDownloadName, Is.EqualTo("material2.pdf"));
+        Assert.That(fileResult3!.FileDownloadName, Is.EqualTo("material3.pdf"));
     }
 
     [Test]
     public async Task GenerateDocument_WithLargeDocument_ReturnsFileWithCorrectSize()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes = new byte[10000]; // 10KB document
         for (int i = 0; i < documentBytes.Length; i++)
@@ -210,7 +239,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithMultipleCalls_EachReturnsSeparateFile()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes1 = new byte[] { 1, 2, 3 };
         var documentBytes2 = new byte[] { 4, 5, 6 };

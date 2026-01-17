@@ -3,14 +3,14 @@ using Core.Common;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
 using Core.Extensions.ModelExtensions;
-using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services.Abstractions;
+using Data.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
-public class PlanningService : Generatable<Planning>, IPlanningService
+public class PlanningService : Generatable<Planning, int>, IPlanningService
 {
     private readonly IRepository<Planning> planningRepository;
     private readonly IMapper mapper;
