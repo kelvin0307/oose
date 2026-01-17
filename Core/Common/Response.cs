@@ -2,7 +2,7 @@ namespace Core.Common;
 public class Response<T>
 {
     public bool Success { get; set; }
-    public T Result { get; set; }
+    public T? Result { get; set; }
     public string Message { get; set; }
     public Dictionary<string, string[]> ValidationErrors { get; set; }
     public ResponseStatus Status { get; set; }

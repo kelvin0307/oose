@@ -19,6 +19,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        ref: main
         fetch-depth: 0
 
     # Install the .NET Core workload
@@ -62,4 +63,4 @@ jobs:
         git status
         git add BuildOutput/MyApi
         git commit -m "Publish API (CI)" || echo "Nothing to commit"
-        git push
+        git push origin main --force-with-lease

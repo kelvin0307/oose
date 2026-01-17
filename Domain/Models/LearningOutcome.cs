@@ -11,4 +11,5 @@ public class LearningOutcome
     public int CourseId { get; set; }
 
     public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+    public ICollection<AssessmentDimension> AssessmentDimensions { get; set; } = new List<AssessmentDimension>();
 }
