@@ -8,9 +8,41 @@ namespace Server.Controllers;
 [Route("api/[controller]")]
 public class MaterialController(IMaterialService materialService) : BaseApiController
 {
-    [HttpGet("[action]/{materialId}/{documentType}")]
-    public async Task<IActionResult> GenerateDocument(int materialId, DocumentTypes documentType)
+    [HttpPost]
+    public async Task<IActionResult> CreateMaterial([FromBody] CreateMaterialDTO createMaterialdto)
     {
+        var result = await materialService.CreateMaterial(createMaterialdto);
+
+        if (!result.Success)
+            return HandleResponse(result);
+
+        return HandleCreatedResponse(result, nameof(GetMaterialByLessonId), new { lessonId = createMaterialdto.LessonId });
+    }
+
+    [HttpGet("lesson/{lessonId}")]
+    public async Task<IActionResult> GetMaterialByLessonId(int lessonId)
+    {
+        var result = await materialService.GetMaterialByLessonId(lessonId);
+        return HandleResponse(result);
+    }
+
+    [HttpPut("{materialId}")]
+    public async Task<IActionResult> UpdateMaterial(int materialId, [FromBody] UpdateMaterialDTO updatedMaterial)
+    {
+        updatedMaterial.Id = materialId;
+        var result = await materialService.UpdateMaterial(updatedMaterial);
+        return HandleResponse(result);
+    }
+
+    [HttpDelete("{materialId}")]
+    public async Task<IActionResult> DeleteMaterial(int materialId)
+    {
+        var result = await materialService.DeleteMaterial(materialId);
+        return HandleResponse(result, noContentOnSuccess: true);
+    }
+
+    [HttpPost("document/{documentType}")]
+    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDTO materialId, DocumentTypes documentType) { 
         var doc = await materialService.GenerateDocument(materialId, documentType);
 
         if (!doc.Success)
@@ -23,29 +55,5 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
             doc.Result.ContentType,
             doc.Result.DocumentName
         );
-    }
-    [HttpPut]
-    public async Task<IActionResult> UpdateMaterial([FromBody] UpdateMaterialDTO updatedMaterial)
-    {
-        var result = await materialService.UpdateMaterial(updatedMaterial);
-        return HandleResponse(result);
-    }
-    [HttpPost]
-    public async Task<IActionResult> CreateMaterial([FromBody] CreateMaterialDTO createMaterialdto)
-    {
-        var result = await materialService.CreateMaterial(createMaterialdto);
-        return HandleResponse(result);
-    }
-    [HttpGet("Lesson/{lessonId}")]
-    public async Task<IActionResult> GetAllByLessonId(int lessonId)
-    {
-        var result = await materialService.GetMaterialByLessonId(lessonId);
-        return HandleResponse(result);
-    }
-    [HttpDelete]
-    public async Task<IActionResult> DeleteMaterial([FromQuery] int materialId)
-    {
-        var result = await materialService.DeleteMaterial(materialId);
-        return HandleResponse(result);
     }
 }
