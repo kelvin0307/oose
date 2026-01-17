@@ -36,21 +36,22 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithValidMaterialId_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         var material = new Material
         {
-            Id = materialId,
+            Id = materialId.MaterialId,
             Name = "Test Material",
-            Content = "This is test content"
+            Content = "This is test content",
+            Version = materialId.Version
         };
 
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ReturnsAsync(material);
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
             .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
@@ -69,19 +70,19 @@ public class MaterialServiceTests
         Assert.That(result.Result, Is.Not.Null);
         Assert.That(result.Result.Document, Is.EqualTo(documentBytes));
         Assert.That(result.Result.ContentType, Is.EqualTo("application/pdf"));
-        materialRepositoryMock.Verify(r => r.Get(materialId), Times.Once);
+        materialRepositoryMock.Verify(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()), Times.Once);
     }
 
     [Test]
     public async Task GenerateDocument_WithNonExistentMaterialId_ReturnsFail()
     {
         // Arrange
-        var materialId = 999;
+        var materialId = new MaterialIdDTO() { MaterialId = 999, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ReturnsAsync((Material)null!);
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Returns(new List<Material>().AsQueryable());
 
         // Act
         var result = await materialService.GenerateDocument(materialId, documentType);
@@ -89,19 +90,19 @@ public class MaterialServiceTests
         // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.Message, Does.Contain("Error generating material document"));
-        materialRepositoryMock.Verify(r => r.Get(materialId), Times.Once);
+        materialRepositoryMock.Verify(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()), Times.Once);
     }
 
     [Test]
     public async Task GenerateDocument_WhenRepositoryThrowsException_ReturnsFail()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ThrowsAsync(new Exception("Database connection error"));
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Throws(new Exception("Database connection error"));
 
         // Act
         var result = await materialService.GenerateDocument(materialId, documentType);
@@ -109,26 +110,27 @@ public class MaterialServiceTests
         // Assert
         Assert.That(result.Success, Is.False);
         Assert.That(result.Message, Does.Contain("Error generating material document"));
-        materialRepositoryMock.Verify(r => r.Get(materialId), Times.Once);
+        materialRepositoryMock.Verify(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()), Times.Once);
     }
 
     [Test]
     public async Task GenerateDocument_WithDifferentDocumentTypes_CreatesCorrectDocument()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentTypes = new[] { DocumentTypes.Pdf, DocumentTypes.Csv, DocumentTypes.Docx };
 
         var material = new Material
         {
-            Id = materialId,
+            Id = materialId.MaterialId,
             Name = "Test Material",
-            Content = "This is test content"
+            Content = "This is test content",
+            Version = materialId.Version
         };
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ReturnsAsync(material);
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
             .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), It.IsAny<DocumentTypes>()))
@@ -154,22 +156,23 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithLargeMaterialContent_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var largeContent = string.Concat(Enumerable.Repeat("This is large content. ", 1000));
 
         var material = new Material
         {
-            Id = materialId,
+            Id = materialId.MaterialId,
             Name = "Large Material",
-            Content = largeContent
+            Content = largeContent,
+            Version = materialId.Version
         };
 
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ReturnsAsync(material);
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
             .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
@@ -192,21 +195,22 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithEmptyContent_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = 1;
+        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         var material = new Material
         {
-            Id = materialId,
+            Id = materialId.MaterialId,
             Name = "Empty Material",
-            Content = ""
+            Content = "",
+            Version = materialId.Version
         };
 
         var documentBytes = new byte[] { 1, 2, 3 };
 
         materialRepositoryMock
-            .Setup(r => r.Get(materialId))
-            .ReturnsAsync(material);
+            .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
+            .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
             .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))

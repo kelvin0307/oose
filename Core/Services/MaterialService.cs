@@ -10,7 +10,7 @@ using Domain.Models;
 
 namespace Core.Services;
 
-public class MaterialService : Generatable<Material>, IMaterialService
+public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialService
 {
     private readonly IRepository<Material> materialRepository;
     private readonly IRepository<Lesson> lessonRepository;
@@ -23,24 +23,24 @@ public class MaterialService : Generatable<Material>, IMaterialService
         this.mapper = mapper;
     }
 
-    public override async Task<Response<DocumentDTO>> GenerateDocument(int materialId, DocumentTypes documentType)
+    public override Task<Response<DocumentDTO>> GenerateDocument(MaterialIdDTO materialId, DocumentTypes documentType)
     {
         try
         {
-            var material = await materialRepository.Get(materialId);
+            var material = materialRepository.Find(x => x.Id == materialId.MaterialId && x.Version == materialId.Version).FirstOrDefault();
 
             if (material == null)
             {
-                return Response<DocumentDTO>.Fail("Error generating material document");
+                return Task.FromResult(Response<DocumentDTO>.Fail("Error generating material document"));
             }
 
             var documentData = MapToDocumentDataDTO(material);
 
-            return Response<DocumentDTO>.Ok(CreateDocument(documentData, documentType));
+            return Task.FromResult(Response<DocumentDTO>.Ok(CreateDocument(documentData, documentType)));
         }
         catch (Exception ex)
         {
-            return Response<DocumentDTO>.Fail("Error generating material document" + ex.Message);
+            return Task.FromResult(Response<DocumentDTO>.Fail("Error generating material document" + ex.Message));
         }
     }
 

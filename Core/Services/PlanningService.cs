@@ -10,7 +10,7 @@ using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
-public class PlanningService : Generatable<Planning>, IPlanningService
+public class PlanningService : Generatable<Planning, int>, IPlanningService
 {
     private readonly IRepository<Planning> planningRepository;
     private readonly IMapper mapper;
