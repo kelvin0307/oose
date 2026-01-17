@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260116142624_addFeedbackToGrade")]
+    partial class addFeedbackToGrade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,68 +41,6 @@ namespace Data.Migrations
                     b.HasIndex("MaterialsId", "MaterialsVersion");
 
                     b.ToTable("CourseExecutionMaterial");
-                });
-
-            modelBuilder.Entity("Domain.Models.AssessmentDimension", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("LearningOutcomeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinimumScore")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NameCriterium")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RubricId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Wage")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LearningOutcomeId");
-
-                    b.HasIndex("RubricId");
-
-                    b.ToTable("AssessmentDimension");
-                });
-
-            modelBuilder.Entity("Domain.Models.AssessmentDimensionScore", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AssessmentDimensionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssessmentDimensionId");
-
-                    b.ToTable("AssessmentDimensionScore");
                 });
 
             modelBuilder.Entity("Domain.Models.Class", b =>
@@ -327,28 +268,6 @@ namespace Data.Migrations
                     b.ToTable("Plannings");
                 });
 
-            modelBuilder.Entity("Domain.Models.Rubric", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("LearningOutcomeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LearningOutcomeId");
-
-                    b.ToTable("Rubric");
-                });
-
             modelBuilder.Entity("Domain.Models.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -447,32 +366,6 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Models.AssessmentDimension", b =>
-                {
-                    b.HasOne("Domain.Models.LearningOutcome", null)
-                        .WithMany("AssessmentDimensions")
-                        .HasForeignKey("LearningOutcomeId");
-
-                    b.HasOne("Domain.Models.Rubric", "Rubric")
-                        .WithMany("AssessmentDimensions")
-                        .HasForeignKey("RubricId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Rubric");
-                });
-
-            modelBuilder.Entity("Domain.Models.AssessmentDimensionScore", b =>
-                {
-                    b.HasOne("Domain.Models.AssessmentDimension", "AssessmentDimension")
-                        .WithMany("AssessmentDimensionScores")
-                        .HasForeignKey("AssessmentDimensionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AssessmentDimension");
-                });
-
             modelBuilder.Entity("Domain.Models.Class", b =>
                 {
                     b.HasOne("Domain.Models.CourseExecution", null)
@@ -556,17 +449,6 @@ namespace Data.Migrations
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("Domain.Models.Rubric", b =>
-                {
-                    b.HasOne("Domain.Models.LearningOutcome", "LearningOutcome")
-                        .WithMany()
-                        .HasForeignKey("LearningOutcomeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LearningOutcome");
-                });
-
             modelBuilder.Entity("Domain.Models.Student", b =>
                 {
                     b.HasOne("Domain.Models.Class", "Class")
@@ -591,11 +473,6 @@ namespace Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Models.AssessmentDimension", b =>
-                {
-                    b.Navigation("AssessmentDimensionScores");
-                });
-
             modelBuilder.Entity("Domain.Models.Class", b =>
                 {
                     b.Navigation("Students");
@@ -613,11 +490,6 @@ namespace Data.Migrations
                     b.Navigation("Classes");
                 });
 
-            modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
-                {
-                    b.Navigation("AssessmentDimensions");
-                });
-
             modelBuilder.Entity("Domain.Models.Lesson", b =>
                 {
                     b.Navigation("Grades");
@@ -628,11 +500,6 @@ namespace Data.Migrations
             modelBuilder.Entity("Domain.Models.Planning", b =>
                 {
                     b.Navigation("Lessons");
-                });
-
-            modelBuilder.Entity("Domain.Models.Rubric", b =>
-                {
-                    b.Navigation("AssessmentDimensions");
                 });
 
             modelBuilder.Entity("Domain.Models.Student", b =>

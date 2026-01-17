@@ -1,18 +1,19 @@
 ---
 config:
   look: neo
-  theme: redux
+  theme: default
   layout: dagre
 ---
 classDiagram
 direction LR    
     namespace Data.Repositories {
         class Repository~TEntity~ {
-            #DbSet~TEntity~ DbSet
-            -DataContext _context
             +Repository(DataContext context)
-            +GetAll() Task~List~TEntity~~
             +CreateAndCommit(TEntity) Task~TEntity~
+            +UpdateAndCommit(TEntity) Task~TEntity~
+            +DeleteAndCommit(int id) Task~TEntity~
+            +Get(int id) Task~TEntity?~
+            +GetAll() Task~List~TEntity~~
         }
     }
 
@@ -29,21 +30,58 @@ direction LR
     namespace Data.Interfaces.Repositories {
         class IRepository~TEntity~{
             <<external>>
+            +DbSet~Material~ Materials
+            +DbSet~CourseExecution~ CourseExecutions
+            +DbSet~Teacher~ Teachers
+            +DbSet~Student~ Students
+            +DbSet~Class~ Classes
+            +DbSet~Grade~ Grades
+            +DbSet~Rubric~ Rubrics
+            +DbSet~AssessmentDimension~ AssessmentDimensions
+            +DbSet~AssessmentDimensionScore~ AssessmentDimensionScores
+            +DbSet~Person~ Persons
         }
     }
 
-    namespace Domain.Models{
-        class Course{
-            <<external>>
+    namespace Data.Extensions {
+        class DataExtensions {
+            +AddDataStartUp(IServiceCollection services) void
         }
 
-        class LearningOutcome{
-            <<external>>
+        class ApplicationOptions {
+            +ConnectionString: string
         }
     }
 
-%% Relations
+    %% Domain models referenced by Data project
+    class Course
+    class Planning
+    class Lesson
+    class LearningOutcome
+    class Material
+    class CourseExecution
+    class Teacher
+    class Student
+    class Class
+    class Grade
+    class Rubric
+    class AssessmentDimension
+    class AssessmentDimensionScore
+    class Person
+
     Repository~TEntity~ --> DataContext : uses
     Repository~TEntity~ ..|> IRepository : implements
-    DataContext --> Course : stores (EF Core context)
-    DataContext --> LearningOutcome : stores (EF Core context)
+    DataContext --> Course
+    DataContext --> LearningOutcome
+    DataContext --> Material
+    DataContext --> Planning
+    DataContext --> Lesson
+    DataContext --> CourseExecution
+    DataContext --> Teacher
+    DataContext --> Student
+    DataContext --> Class
+    DataContext --> Grade
+    DataContext --> Rubric
+    DataContext --> AssessmentDimension
+    DataContext --> AssessmentDimensionScore
+    DataContext --> Person

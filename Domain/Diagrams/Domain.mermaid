@@ -1,41 +1,81 @@
 ---
 config:
   look: neo
-  theme: redux
-  layout: dagre
+  theme: default
+  layout: elk
 ---
+%%{init: {'theme': 'redux', 'flowchart': {'nodeSpacing': 150, 'rankSpacing': 100}}}%%
 classDiagram
-direction LR  
-   namespace Domain.Models {
-        class Course {
-            +Id: int
-            +Name: string
-            +Description: string
-            +Status: CourseStatus
-            +LearningOutcomes: List<LearningOutcome>
-       }
-
-       class LearningOutcome {
-            +Id: int
-            +CourseId: string
-            +Name: string
-            +Description: string
-            +EndQualification: string
-            +Course: Course
-            +Lessons: List<Lessons>?
-       }
-    }
-
-    namespace Domain.Enums {
-        class CourseStatus{
-            <<enumeration>>
-            Concept
-            Validated
+direction BT   
+    namespace Data.Repositories {
+        class Repository~TEntity~ {
+            +Repository(DataContext context)
+            +CreateAndCommit(TEntity) Task~TEntity~
+            +UpdateAndCommit(TEntity) Task~TEntity~
+            +DeleteAndCommit(int id) Task~TEntity~
+            +Get(int id) Task~TEntity?~
+            +GetAll() Task~List~TEntity~~
         }
     }
 
-%% Relations
-    Course --> CourseStatus : has status
-    Course --> LearningOutcome
-    LearningOutcome --> Course
-    LearningOutcome --> Lesson
+    namespace Data.Context {
+        class DataContext {
+            +DbSet~Course~ Courses
+            +DbSet~Planning~ Plannings
+            +DbSet~Lesson~ Lessons
+            +DbSet~LearningOutcome~ LearningOutcomes
+            +DbSet~Material~ Materials
+            +DbSet~CourseExecution~ CourseExecutions
+            +DbSet~Teacher~ Teachers
+            +DbSet~Student~ Students
+            +DbSet~Class~ Classes
+            +DbSet~Grade~ Grades
+            +DbSet~Rubric~ Rubrics
+            +DbSet~AssessmentDimension~ AssessmentDimensions
+            +DbSet~AssessmentDimensionScore~ AssessmentDimensionScores
+            +DbSet~Person~ Persons
+        }
+    }
+
+    namespace Data.Extensions {
+        class DataExtensions {
+            +AddDataStartUp(IServiceCollection services) void
+        }
+
+        class ApplicationOptions {
+            +ConnectionString: string
+        }
+    }
+
+    %% Domain models referenced by Data project
+    class Course
+    class Planning
+    class Lesson
+    class LearningOutcome
+    class Material
+    class CourseExecution
+    class Teacher
+    class Student
+    class Class
+    class Grade
+    class Rubric
+    class AssessmentDimension
+    class AssessmentDimensionScore
+    class Person
+
+    Repository~TEntity~ --> DataContext : uses
+    Repository~TEntity~ ..|> IRepository : implements
+    DataContext --> Course
+    DataContext --> LearningOutcome
+    DataContext --> Material
+    DataContext --> Planning
+    DataContext --> Lesson
+    DataContext --> CourseExecution
+    DataContext --> Teacher
+    DataContext --> Student
+    DataContext --> Class
+    DataContext --> Grade
+    DataContext --> Rubric
+    DataContext --> AssessmentDimension
+    DataContext --> AssessmentDimensionScore
+    DataContext --> Person

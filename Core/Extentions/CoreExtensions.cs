@@ -31,6 +31,7 @@ public static class CoreExtensions
         services.AddTransient<IStudentService, StudentService>();
         services.AddScoped<IImportAdapter<NijmegenImportDataDto>, NijmegenImport>();
         services.AddScoped<IImportService<NijmegenImportDataDto>, ImportService<NijmegenImportDataDto>>();
+        services.AddTransient<IGradeService, GradeService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }
