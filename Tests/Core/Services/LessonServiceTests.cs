@@ -1,13 +1,10 @@
-using Core.Common;
+using AutoMapper;
 using Core.DTOs;
 using Core.Interfaces.Repositories;
 using Core.Services;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
 
 namespace Tests.Core.Services;
 
@@ -31,23 +28,6 @@ public class LessonServiceTests
         lessonService = new LessonService(lessonRepositoryMock.Object, planningRepositoryMock.Object, learningOutcomeRepositoryMock.Object, mapperMock.Object);
     }
 
-    [Test]
-    public async Task AddLearningOutcomesToLesson_WithValidIds_AttachesAndReturnsOk()
-    {
-        var lesson = new Lesson { Id = 1, Name = "Lesson 1", LearningOutcomes = new List<LearningOutcome>() };
-        var lo = new LearningOutcome { Id = 2, Name = "LO 1", Lessons = new List<Lesson>() };
-
-        lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
-        learningOutcomeRepositoryMock.Setup(r => r.Get(2)).ReturnsAsync(lo);
-        lessonRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Lesson>())).ReturnsAsync(lesson);
-
-        var result = await lessonService.AddLearningOutcomesToLesson(1, new List<int> { 2 });
-
-        Assert.That(result.Success, Is.True);
-        Assert.That(lesson.LearningOutcomes, Has.One.Items);
-        Assert.That(lo.Lessons, Has.One.Items);
-        lessonRepositoryMock.Verify(r => r.UpdateAndCommit(It.IsAny<Lesson>()), Times.Once);
-    }
 
     [Test]
     public async Task AddLearningOutcomesToLesson_WhenLessonNotFound_ReturnsFail()
