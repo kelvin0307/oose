@@ -1,9 +1,12 @@
 ﻿using Core.DocumentGenerator.Factories;
 using Core.DocumentGenerator.Factories.Abstraction;
+using Core.Import.Nijmegen;
 using Core.Interfaces;
+using Core.Interfaces.Adapters;
 using Core.Interfaces.Services;
 using Core.Mappers;
 using Core.Services;
+using Core.DTOs.Imports.Nijmegen;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
 
@@ -26,6 +29,8 @@ public static class CoreExtensions
         services.AddTransient<IAuthService, AuthService>();
         services.AddTransient<IClassService, ClassService>();
         services.AddTransient<IStudentService, StudentService>();
+        services.AddScoped<IImportAdapter<NijmegenImportDataDto>, NijmegenImport>();
+        services.AddScoped<IImportService<NijmegenImportDataDto>, ImportService<NijmegenImportDataDto>>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }
