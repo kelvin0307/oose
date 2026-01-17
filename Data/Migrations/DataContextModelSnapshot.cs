@@ -30,9 +30,12 @@ namespace Data.Migrations
                     b.Property<int>("MaterialsId")
                         .HasColumnType("int");
 
-                    b.HasKey("CourseExecutionsId", "MaterialsId");
+                    b.Property<int>("MaterialsVersion")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MaterialsId");
+                    b.HasKey("CourseExecutionsId", "MaterialsId", "MaterialsVersion");
+
+                    b.HasIndex("MaterialsId", "MaterialsVersion");
 
                     b.ToTable("CourseExecutionMaterial");
                 });
@@ -60,7 +63,7 @@ namespace Data.Migrations
 
                     b.HasIndex("CourseExecutionId");
 
-                    b.ToTable("Class");
+                    b.ToTable("Classes");
                 });
 
             modelBuilder.Entity("Domain.Models.Course", b =>
@@ -78,9 +81,6 @@ namespace Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PlanningId")
-                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -112,6 +112,37 @@ namespace Data.Migrations
                     b.HasIndex("CourseId");
 
                     b.ToTable("CourseExecution");
+                });
+
+            modelBuilder.Entity("Domain.Models.Grade", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseExcecutionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CourseExecutionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseExecutionId");
+
+                    b.HasIndex("LessonId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Grades");
                 });
 
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
@@ -156,7 +187,7 @@ namespace Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PlanningId")
+                    b.Property<int>("PlanningId")
                         .HasColumnType("int");
 
                     b.Property<int>("SequenceNumber")
@@ -178,26 +209,26 @@ namespace Data.Migrations
             modelBuilder.Entity("Domain.Models.Material", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("LessonId")
+                    b.Property<int>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset?>("SysDeleted")
+                        .HasColumnType("datetimeoffset");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Version");
 
                     b.HasIndex("LessonId");
 
@@ -232,6 +263,9 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ClassId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -245,13 +279,14 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MiddleName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("StudentNumber")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
 
                     b.ToTable("Students");
                 });
@@ -277,7 +312,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MiddleName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TeacherCode")
@@ -314,7 +348,7 @@ namespace Data.Migrations
 
                     b.HasOne("Domain.Models.Material", null)
                         .WithMany()
-                        .HasForeignKey("MaterialsId")
+                        .HasForeignKey("MaterialsId", "MaterialsVersion")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -335,11 +369,38 @@ namespace Data.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("Domain.Models.Grade", b =>
+                {
+                    b.HasOne("Domain.Models.CourseExecution", "CourseExecution")
+                        .WithMany()
+                        .HasForeignKey("CourseExecutionId");
+
+                    b.HasOne("Domain.Models.Lesson", "Lesson")
+                        .WithMany("Grades")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Student", "Student")
+                        .WithMany("Grades")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseExecution");
+
+                    b.Navigation("Lesson");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Domain.Models.LearningOutcome", b =>
                 {
                     b.HasOne("Domain.Models.Course", "Course")
                         .WithMany("LearningOutcomes")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
                 });
@@ -348,16 +409,22 @@ namespace Data.Migrations
                 {
                     b.HasOne("Domain.Models.Planning", "Planning")
                         .WithMany("Lessons")
-                        .HasForeignKey("PlanningId");
+                        .HasForeignKey("PlanningId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Planning");
                 });
 
             modelBuilder.Entity("Domain.Models.Material", b =>
                 {
-                    b.HasOne("Domain.Models.Lesson", null)
+                    b.HasOne("Domain.Models.Lesson", "Lesson")
                         .WithMany("Materials")
-                        .HasForeignKey("LessonId");
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("Domain.Models.Planning", b =>
@@ -367,6 +434,15 @@ namespace Data.Migrations
                         .HasForeignKey("Domain.Models.Planning", "CourseId");
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Domain.Models.Student", b =>
+                {
+                    b.HasOne("Domain.Models.Class", "Class")
+                        .WithMany("Students")
+                        .HasForeignKey("ClassId");
+
+                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("LessonLearningOutcome", b =>
@@ -380,8 +456,13 @@ namespace Data.Migrations
                     b.HasOne("Domain.Models.LearningOutcome", null)
                         .WithMany()
                         .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Models.Class", b =>
+                {
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("Domain.Models.Course", b =>
@@ -398,12 +479,19 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Domain.Models.Lesson", b =>
                 {
+                    b.Navigation("Grades");
+
                     b.Navigation("Materials");
                 });
 
             modelBuilder.Entity("Domain.Models.Planning", b =>
                 {
                     b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("Domain.Models.Student", b =>
+                {
+                    b.Navigation("Grades");
                 });
 #pragma warning restore 612, 618
         }

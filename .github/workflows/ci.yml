@@ -1,3 +1,6 @@
+permissions:
+  contents: write
+  
 name: .NET Core Desktop
 on:
   push:
@@ -43,10 +46,20 @@ jobs:
       run: |
         dotnet publish Server/Server.csproj \
         --configuration Release \
-        --output ./publish
+        --output BuildOutput/MyApi
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v4
       with:
         name: MyApi-DLL
-        path: ./publish  
+        path: BuildOutput/MyApi  
+        
+    - name: Commit build output
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+    
+        git status
+        git add BuildOutput/MyApi
+        git commit -m "Publish API (CI)" || echo "Nothing to commit"
+        git push
