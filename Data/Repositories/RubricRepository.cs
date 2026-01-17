@@ -1,5 +1,6 @@
-using Core.Interfaces.Repositories;
+using Data.Interfaces.Repositories;
 using Data.Context;
+using Data.Interfaces;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,8 +10,7 @@ namespace Data.Repositories
     {
         private readonly DataContext _context;
 
-        public RubricRepository(DataContext context)
-            : base(context)
+        public RubricRepository(DataContext context) : base(context)
         {
             _context = context;
         }

@@ -3,7 +3,7 @@ using Core.Services;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
-using Core.Interfaces.Repositories;
+using Data.Interfaces.Repositories;
 
 namespace Tests.Core.Services;
 
