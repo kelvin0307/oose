@@ -16,7 +16,6 @@ public static class NijmegenImportMapper
         {
             Name = importData.Course.Naam ?? string.Empty,
             Description = importData.Course.Beschrijving ?? string.Empty,
-            Status = (CourseStatus)importData.Course.Status,
             LearningOutcomes = new List<LearningOutcome>(),
             Planning = null
         };

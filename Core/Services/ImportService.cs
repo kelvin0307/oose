@@ -6,6 +6,7 @@ using Core.Interfaces.Adapters;
 using Data.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.DTOs.Imports.Nijmegen;
+using Domain.Enums;
 using Domain.Models;
 
 namespace Core.Services;
@@ -21,6 +22,10 @@ public class ImportService<TImportDto>(IImportAdapter<TImportDto> adapter, IRepo
             {
                 return Response<CourseDTO>.Fail("Could not create course, Invalid data");
             }
+            
+            //force course status to be concept. because we a different systems truth. is not our truth
+            course.Status = CourseStatus.Concept,
+
             var createdCourse = await courseRepository.CreateAndCommit(course);
             if (createdCourse == null)
             {
