@@ -2,8 +2,8 @@
 using Core.Common;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
-using Core.Interfaces;
 using Core.Interfaces.Repositories;
+using Core.Interfaces.Services;
 using Core.Services.Abstractions;
 using Domain.Enums;
 using Domain.Models;

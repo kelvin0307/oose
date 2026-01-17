@@ -1,6 +1,5 @@
 ﻿using Core.DocumentGenerator.Factories;
 using Core.DocumentGenerator.Factories.Abstraction;
-using Core.Interfaces;
 using Core.Interfaces.Services;
 using Core.Mappers;
 using Core.Services;
@@ -27,6 +26,7 @@ public static class CoreExtensions
         services.AddTransient<IClassService, ClassService>();
         services.AddTransient<IStudentService, StudentService>();
         services.AddTransient<IGradeService, GradeService>();
+        services.AddTransient<ILessonService, LessonService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }
