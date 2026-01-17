@@ -11,8 +11,7 @@ public interface ILessonService
     Task<Response<IList<LessonDTO>>> GetAllLessonsByPlanningId(int planningId);
     Task<Response<LessonDTO>> UpdateLesson(UpdateLessonDTO updateLessonDTO);
     Task<Response<bool>> DeleteLesson(int lessonId);
-
-    // New methods to couple/decouple learning outcomes from lessons
-    Task<Response<bool>> AddLearningOutcomeToLesson(int lessonId, int learningOutcomeId);
-    Task<Response<bool>> RemoveLearningOutcomeFromLesson(int lessonId, int learningOutcomeId);
+    // Bulk actions for learning outcomes
+    Task<Response<bool>> AddLearningOutcomesToLesson(int lessonId, IList<int> learningOutcomeIds);
+    Task<Response<bool>> RemoveLearningOutcomesFromLesson(int lessonId, IList<int> learningOutcomeIds);
 }

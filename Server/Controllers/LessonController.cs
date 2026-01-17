@@ -48,17 +48,17 @@ public class LessonController(ILessonService lessonService) : BaseApiController
         return HandleResponse(result, noContentOnSuccess: true);
     }
 
-    [HttpPost("{lessonId}/learning-outcomes/{learningOutcomeId}")]
-    public async Task<IActionResult> AddLearningOutcomeToLesson(int lessonId, int learningOutcomeId)
+    [HttpPost("{lessonId}/learning-outcomes")]
+    public async Task<IActionResult> AddLearningOutcomesToLesson(int lessonId, [FromBody] IList<int> learningOutcomeIds)
     {
-        var result = await lessonService.AddLearningOutcomeToLesson(lessonId, learningOutcomeId);
+        var result = await lessonService.AddLearningOutcomesToLesson(lessonId, learningOutcomeIds);
         return HandleResponse(result, noContentOnSuccess: true);
     }
 
-    [HttpDelete("{lessonId}/learning-outcomes/{learningOutcomeId}")]
-    public async Task<IActionResult> RemoveLearningOutcomeFromLesson(int lessonId, int learningOutcomeId)
+    [HttpDelete("{lessonId}/learning-outcomes")]
+    public async Task<IActionResult> RemoveLearningOutcomesFromLesson(int lessonId, [FromBody] IList<int> learningOutcomeIds)
     {
-        var result = await lessonService.RemoveLearningOutcomeFromLesson(lessonId, learningOutcomeId);
+        var result = await lessonService.RemoveLearningOutcomesFromLesson(lessonId, learningOutcomeIds);
         return HandleResponse(result, noContentOnSuccess: true);
     }
 }

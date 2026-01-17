@@ -1,9 +1,9 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Models;
-using Core.Interfaces.Repositories;
 
 namespace Core.Services;
 
@@ -201,6 +201,77 @@ public class LessonService : ILessonService
         catch (Exception ex)
         {
             return Response<bool>.Fail("Error detaching learning outcome from lesson: " + ex.Message);
+        }
+    }
+
+    public async Task<Response<bool>> AddLearningOutcomesToLesson(int lessonId, IList<int> learningOutcomeIds)
+    {
+        try
+        {
+            var lesson = await lessonRepository.Get(lessonId);
+            if (lesson == null)
+                return Response<bool>.Fail("Lesson not found");
+
+            lesson.LearningOutcomes ??= new List<LearningOutcome>();
+
+            foreach (var loId in learningOutcomeIds)
+            {
+                var learningOutcome = await learningOutcomeRepository.Get(loId);
+                if (learningOutcome == null)
+                    return Response<bool>.Fail($"Learning outcome not found: {loId}");
+
+                learningOutcome.Lessons ??= new List<Lesson>();
+
+                if (!lesson.LearningOutcomes.Any(lo => lo.Id == loId))
+                {
+                    lesson.LearningOutcomes.Add(learningOutcome);
+                }
+            }
+
+            await lessonRepository.UpdateAndCommit(lesson);
+
+            return Response<bool>.Ok(true);
+        }
+        catch (Exception ex)
+        {
+            return Response<bool>.Fail("Error attaching learning outcomes to lesson: " + ex.Message);
+        }
+    }
+
+    public async Task<Response<bool>> RemoveLearningOutcomesFromLesson(int lessonId, IList<int> learningOutcomeIds)
+    {
+        try
+        {
+            var lesson = await lessonRepository.Get(lessonId);
+            if (lesson == null)
+                return Response<bool>.Fail("Lesson not found");
+
+            lesson.LearningOutcomes ??= new List<LearningOutcome>();
+
+            foreach (var loId in learningOutcomeIds)
+            {
+                var learningOutcome = await learningOutcomeRepository.Get(loId);
+                if (learningOutcome == null)
+                    return Response<bool>.Fail($"Learning outcome not found: {loId}");
+
+                learningOutcome.Lessons ??= new List<Lesson>();
+
+                var toRemoveFromLesson = lesson.LearningOutcomes.FirstOrDefault(lo => lo.Id == loId);
+                if (toRemoveFromLesson != null)
+                    lesson.LearningOutcomes.Remove(toRemoveFromLesson);
+
+                var toRemoveFromLO = learningOutcome.Lessons.FirstOrDefault(l => l.Id == lessonId);
+                if (toRemoveFromLO != null)
+                    learningOutcome.Lessons.Remove(toRemoveFromLO);
+            }
+
+            await lessonRepository.UpdateAndCommit(lesson);
+
+            return Response<bool>.Ok(true);
+        }
+        catch (Exception ex)
+        {
+            return Response<bool>.Fail("Error detaching learning outcomes from lesson: " + ex.Message);
         }
     }
 }
