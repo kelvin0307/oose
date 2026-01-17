@@ -1,183 +1,273 @@
 ---
 config:
   look: neo
-  theme: redux
-  layout: dagre
+  theme: default
+  layout: elk
 ---
+%%{init: {'theme': 'redux', 'flowchart': {'nodeSpacing': 300, 'rankSpacing': 150}}}%%
+
 classDiagram
-direction TD
-      
-    namespace Core.Dto {
-        class CourseDto {
-            Id: int
-            Name: string
-            Descripton: String
-            Status: CourseStatus
-        }
-        class CreateCourseDto {
-            Name: string
-            Descripton: String
-        }
-        class UpdateCourseDto {
-            Name: string
-            Descripton: String
-        }
+direction BT
 
-        class LearningOutcomeDto {
-            Id: int
-            CourseId: int
-            Name: string
-            Description: string
-            EndQualification: string
-        }
-
-        class UpdateLearningOutcomeDto {
-            Id: int
-            Name: string
-            Description: string
-            EndQualification: string
-        }
-
-        class CreateLearningOutcomeDto {
-            CourseId: int
-            Name: string
-            Description: string
-            EndQualification: string
-        }
+    %% Core project - grouped by namespaces (reflects folder structure and actual files)
+    namespace Core.DTOs {
+        class CourseDTO
+        class CreateCourseDto
+        class UpdateCourseDto
+        class LearningOutcomeDto
+        class CreateLearningOutcomeDto
+        class UpdateLearningOutcomeDto
+        class LessonDTO
+        class PlanningDTO
+        class MaterialDTO
+        class CreateMaterialDTO
+        class UpdateMaterialDTO
+        class DocumentDataDTO
+        class DocumentDTO
+        class CourseExecutionDTO
+        class ClassDTO
+        class StudentDTO
+        class GradeDTO
+        class CreateGradeDTO
+        class UpdateGradeDTO
+        class LoginDTO
+        class TeacherLoginDTO
     }
 
     namespace Core.Interfaces.Repositories {
-        class IRepository~Course~ {
-            <<interface>>
-            +GetAll() Task~List~Course~~
-            +Get(int id) Task~Course?~
-            +CreateAndCommit(Course entity) Task~Course~
-            +UpdateAndCommit(Course entity) Task~Course~
-            +DeleteAndCommit(int id) Task~bool~
+        class IRepository~TEntity~
+        class IRepository~TEntity~ {
+            +GetAll() Task~List~TEntity~~
+            +Get(int id) Task~TEntity?~
+            +CreateAndCommit(TEntity entity) Task~TEntity~
+            +UpdateAndCommit(TEntity entity) Task~TEntity~
+            +DeleteAndCommit(int id) Task~TEntity~
+            +Include<TProperty>(Expression<Func~TEntity, TProperty~>) IQueryable~TEntity~
+        }
+    }
+
+    namespace Core.Interfaces {
+        class IPlanningService {
+            +GetPlanningByCourseId(int courseId) Response~PlanningDTO~
+            +GenerateDocument(int courseId, DocumentTypes documentType) Task~Response~DocumentDTO~~
+        }
+
+        class IMaterialService {
+            +GenerateDocument(int materialId, DocumentTypes documentType) Task~Response~DocumentDTO~~
+            +CreateMaterial(CreateMaterialDTO createMaterialDTO) Task~Response~MaterialDTO~~
+            +UpdateMaterial(UpdateMaterialDTO updatedMaterial) Task~Response~MaterialDTO~~
+            +GetMaterialByLessonId(int lessonId) Task~Response~IList~MaterialDTO~~~
+            +DeleteMaterial(int materialId) Task~Response~bool~~
         }
     }
 
     namespace Core.Interfaces.Services {
+        class ICourseService
+        class ILearningOutcomeService
+        class IValidatorService
+        class IPlanningService
+        class IMaterialService
+        class IAuthService
+        class IClassService
+        class IStudentService
+        class IGradeService
         class ICourseService {
-            <<interface>>
-            +GetAllCourses() Task~Response~List~CourseDto~~~
-            +GetCourseById(int id) Task~Response~CourseDto~~
-            +CreateCourse(CreateCourseDto dto) Task~Response~CourseDto~~
-            +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
+            +GetAllCourses() Task~Response~List~CourseDTO~~~
+            +GetCourseById(int id) Task~Response~CourseDTO~~
+            +CreateCourse(CreateCourseDto createCourseDto) Task~Response~CourseDTO~~
+            +UpdateCourse(int id, UpdateCourseDto updateCourseDto) Task~Response~CourseDTO~~
             +DeleteCourse(int id) Task~Response~bool~~
         }
 
         class ILearningOutcomeService {
-            <<interface>>
-            +GetAllLearningOutcomes() Task~Response~List~LearningOutcomeDto~~~
-            +GetAllLearningOutcomesByCourseId(int courseId) Task~Response~LearningOutcomeDto~~
-            +GetLearningOutcomeById(int id) Task~Response~LearningOutcomeDto~~
-            +CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto) Task~Response~LearningOutocomeDto~~
-            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
-            +DeleteLearningOutcome(int id) Task~Response~bool~~
-        }
-    }
-
-    namespace Core.Services {
-        class CourseService {
-            -IRepository~Course~ courseRepository
-            +CourseService(IRepository~Course~ repository)
-            +GetAllCourses() Task~Response~List~CourseDto~~~
-            +GetCourseById(int id) Task~Response~CourseDto~~
-            +CreateCourse(CreateCourseDto dto) Task~Response~CourseDto~~
-            +UpdateCourse(int id, UpdateCourseDto dto) Task~Response~CourseDto~~
-            +DeleteCourse(int id) Task~Response~bool~~
-        }
-
-        class LearningOutcomeService {
-            -IRepository~LearningOutcome~ learningOutcomeRepository
-            +LearningOutcomeService(IRepository~LearningOutcome~ repository)
             +GetAllLearningOutcomes() Task~Response~List~LearningOutcomeDto~~~
             +GetAllLearningOutcomesByCourseId(int courseId) Task~Response~List~LearningOutcomeDto~~~
             +GetLearningOutcomeById(int id) Task~Response~LearningOutcomeDto~~
             +CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
-            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
+            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcome) Task~Response~LearningOutcomeDto~~
             +DeleteLearningOutcome(int id) Task~Response~bool~~
+        }
+
+        class IValidatorService {
+            +ValidateCoursePlanning(int Courseid) Response~string~
+        }
+
+        class IAuthService {
+            +LoginTeacherByEmail(string email) Task~Response~TeacherLoginDTO~~
+        }
+
+        class IClassService {
+            +GetClassById(int classId) Task~Response~ClassDTO~~
+            +GetAllClasses() Task~Response~List~ClassDTO~~~
+            +GetStudentsByClassId(int classId) Task~Response~List~StudentDTO~~~
+        }
+
+        class IStudentService {
+            +GetStudentById(int studentId) Task~Response~StudentDTO~~
+        }
+
+        class IGradeService {
+            +CreateGrade(CreateGradeDTO createGradeDTO) Task~Response~GradeDTO~~
+            +UpdateGrade(UpdateGradeDTO updateGradeDTO) Task~Response~GradeDTO~~
+            +GetLatestGradesByClassAndExecution(int classId, int courseExecutionId) Task~Response~List~GradeDTO~~~
+        }
+    }
+
+    namespace Core.Services {
+        class CourseService
+        class LearningOutcomeService
+        class ValidatorService
+        class PlanningService
+        class MaterialService
+        class AuthService
+        class ClassService
+        class StudentService
+        class GradeService
+        class CourseService {
+            +GetAllCourses() Task~Response~List~CourseDTO~~~
+            +GetCourseById(int id) Task~Response~CourseDTO~~
+            +CreateCourse(CreateCourseDto createCourseDto) Task~Response~CourseDTO~~
+            +UpdateCourse(int id, UpdateCourseDto updateCourseDto) Task~Response~CourseDTO~~
+            +DeleteCourse(int id) Task~Response~bool~~
+        }
+
+        class LearningOutcomeService {
+            +GetAllLearningOutcomes() Task~Response~List~LearningOutcomeDto~~~
+            +GetAllLearningOutcomesByCourseId(int courseId) Task~Response~List~LearningOutcomeDto~~~
+            +GetLearningOutcomeById(int id) Task~Response~LearningOutcomeDto~~
+            +CreateLearningOutcome(CreateLearningOutcomeDto createLearningOutcomeDto) Task~Response~LearningOutcomeDto~~
+            +UpdateLearningOutcome(int id, UpdateLearningOutcomeDto updateLearningOutcome) Task~Response~LearningOutcomeDto~~
+            +DeleteLearningOutcome(int id) Task~Response~bool~~
+        }
+
+        class ValidatorService {
+            +ValidateCoursePlanning(int courseId) Response~string~
+        }
+
+        class PlanningService {
+            +GetPlanningByCourseId(int courseId) Response~PlanningDTO~
+            +GenerateDocument(int courseId, DocumentTypes documentType) Task~Response~DocumentDTO~~
+        }
+
+        class MaterialService {
+            +GenerateDocument(int materialId, DocumentTypes documentType) Task~Response~DocumentDTO~~
+            +CreateMaterial(CreateMaterialDTO createMaterialDTO) Task~Response~MaterialDTO~~
+            +UpdateMaterial(UpdateMaterialDTO updatedMaterial) Task~Response~MaterialDTO~~
+            +GetMaterialByLessonId(int lessonId) Task~Response~IList~MaterialDTO~~~
+            +DeleteMaterial(int materialId) Task~Response~bool~~
+        }
+
+        class AuthService {
+            +LoginTeacherByEmail(string email) Task~Response~TeacherLoginDTO~~
+        }
+
+        class ClassService {
+            +GetClassById(int classId) Task~Response~ClassDTO~~
+            +GetAllClasses() Task~Response~List~ClassDTO~~~
+            +GetStudentsByClassId(int classId) Task~Response~List~StudentDTO~~~
+        }
+
+        class StudentService {
+            +GetStudentById(int studentId) Task~Response~StudentDTO~~
+        }
+
+        class GradeService {
+            +CreateGrade(CreateGradeDTO createGradeDTO) Task~Response~GradeDTO~~
+            +UpdateGrade(UpdateGradeDTO updateGradeDTO) Task~Response~GradeDTO~~
+            +GetLatestGradesByClassAndExecution(int classId, int courseExecutionId) Task~Response~List~GradeDTO~~~
         }
     }
 
     namespace Core.Common {
-        class Response~T~ {
-            +bool Success
-            +T Result
-            +string Message
-            +Dictionary~string, string[]~ ValidationErrors
-            +ResponseStatus Status
-            +Ok(T result)$ Response~T~
-            +NotFound(string message)$ Response~T~
-            +Fail(string message, ResponseStatus status)$ Response~T~
-            +ValidationFail(Dictionary errors)$ Response~T~
-        }
-
-        class ResponseStatus {
-            <<enumeration>>
-            Success
-            NotFound
-            ValidationError
-            InvalidOperation
-            UnexpectedError
-            Unauthorized
-            Forbidden
-        }
+        class Response~T~
+        class ResponseStatus
     }
 
-    namespace Core.Mappers{
-        class CourseMapper{
-             <<static>>
-            +$ToDto(course: Course) CourseDto
-        }
-
-        class LearningOutcomeMapper{
-             <<static>>
-            +$ToDto(learningOutcome: LearningOutcome) LearningOutcomeDto
-        }
-    }
-
-    namespace Domain.Models {
-        class Course {
-            <<external>>
-        }
-
-        class LearningOutcome {
-            <<external>>
-        }
+    namespace Core.Mappers {
+        class MappingProfile
+        class LearningOutcomeMapper
+        class MapperExtensions
+        class DTOMappers
     }
 
     namespace Core.Extensions {
-        class LearningOutcomeExtensions {
-            <<static>>
-            +getLearningOutcomesByCourseId(IQueryable~LearningOutcome~ learningOutcomes, int courseId): IQueryable~LearningOutcome~
-        }
+        class LearningOutcomeExtensions
+        class CoreExtensions
     }
 
-%% --------------------- Course Relations ---------------------
-    %% Common
-        Response --> ResponseStatus : has status
+    namespace Core.DocumentGenerator.Generators {
+        class IGenerator
+        class DocxGenerator
+        class PdfGenerator
+        class CsvGenerator
+    }
 
+    namespace Core.DocumentGenerator.Factories {
+        class IDocumentFactory
+        class DocumentFactory
+    }
 
-    %% COURSE
-        CourseService ..|> ICourseService : implements
-        CourseService --> IRepository~Course~ : uses
-        CourseService ..> CourseDto : returns
-        CourseService ..> CreateCourseDto : uses
-        CourseService ..> UpdateCourseDto : uses
-        CourseService ..> Response : returns
-        CourseService ..> Course : uses
-        CourseService ..> CourseMapper: uses
+    namespace Core.Services.Abstractions {
+        class Generatable
+    }
 
-    %% LEARNINGOUTCOMES
-        LearningOutcomeService ..|> ILearningOutcomeService : implements
-        LearningOutcomeService --> IRepository~LearningOutcome~ : uses
-        LearningOutcomeService ..> LearningOutcomeDto : returns
-        LearningOutcomeService ..> CreateLearningOutcomeDto : uses
-        LearningOutcomeService ..> UpdateLearningOutcomeDto : uses
-        LearningOutcomeService ..> Response : returns
-        LearningOutcomeService ..> LearningOutcome : uses
-        LearningOutcomeService ..> LearningOutcomeMapper: uses
-        LearningOutcomeExtensions ..> LearningOutcome : uses
-        LearningOutcomeService ..> LearningOutcomeExtensions : uses
+    %% simple relationships (implementations/uses)
+    %% implementations and uses (accurate to code)
+    CourseService ..|> ICourseService
+    CourseService --> IRepository~Course~ : uses
+    CourseService --> Core.Mappers.MapperExtensions : uses
+    CourseService ..> CourseDTO : returns
+    CourseService ..> MapperExtensions : uses
+
+    LearningOutcomeService ..|> ILearningOutcomeService
+    LearningOutcomeService --> IRepository~LearningOutcome~ : uses
+    LearningOutcomeService --> IRepository~Course~ : uses
+    LearningOutcomeService ..> LearningOutcomeDto : returns
+    LearningOutcomeService ..> LearningOutcomeMapper : uses
+    LearningOutcomeService ..> MapperExtensions : uses
+
+    MaterialService ..|> IMaterialService
+    MaterialService --> IRepository~Material~ : uses
+    MaterialService --> IRepository~Lesson~ : uses
+    MaterialService --> Core.DocumentGenerator.Factories.IDocumentFactory : uses
+    MaterialService ..> MaterialDTO : returns
+    MaterialService --> IDocumentFactory : uses
+
+    ValidatorService ..|> IValidatorService
+    PlanningService ..|> IPlanningService
+    MaterialService ..|> IMaterialService
+    ValidatorService --> IRepository~LearningOutcome~ : uses
+
+    PlanningService ..|> Core.Interfaces.IPlanningService
+    PlanningService --> IRepository~Planning~ : uses
+    PlanningService --> Core.DocumentGenerator.Factories.IDocumentFactory : uses
+
+    AuthService ..|> IAuthService
+    AuthService --> IRepository~Teacher~ : uses
+
+    ClassService ..|> IClassService
+    ClassService --> IRepository~Class~ : uses
+    ClassService --> IRepository~Student~ : uses
+
+    StudentService ..|> IStudentService
+    StudentService --> IRepository~Student~ : uses
+
+    GradeService ..|> IGradeService
+    GradeService --> IRepository~Grade~ : uses
+    GradeService --> IRepository~Student~ : uses
+    GradeService --> IRepository~Lesson~ : uses
+    GradeService --> IRepository~CourseExecution~ : uses
+
+    MappingProfile ..> CourseDTO : maps
+    LearningOutcomeMapper ..> LearningOutcomeDto : maps
+    MapperExtensions ..> CourseDTO : helper
+
+    DocumentFactory ..|> IDocumentFactory
+    DocumentFactory --> DocxGenerator : creates
+    DocumentFactory --> PdfGenerator : creates
+    DocumentFactory --> CsvGenerator : creates
+    DocxGenerator ..|> IGenerator
+    PdfGenerator ..|> IGenerator
+    CsvGenerator ..|> IGenerator
+
+    Response~T~ --> ResponseStatus : has status
