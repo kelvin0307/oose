@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Services;
+﻿using Core.Enums;
+using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ public class PlanningController(IPlanningService planningService) : BaseApiContr
     }
 
     [HttpGet("{courseId}/document/{documentType}")]
-    public async Task<IActionResult> GenerateDocument(int courseId, DocumentTypes documentType)
+    public async Task<IActionResult> GenerateDocument(int courseId, DocumentType documentType)
     {
         var doc = await planningService.GenerateDocument(courseId, documentType);
 

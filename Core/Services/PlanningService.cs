@@ -2,12 +2,13 @@
 using Core.Common;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
-using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Services;
 using Core.Services.Abstractions;
 using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
+using Core.Extensions.Mapper;
+using Core.Enums;
 
 namespace Core.Services;
 public class PlanningService : Generatable<Planning, int>, IPlanningService
@@ -73,7 +74,7 @@ public class PlanningService : Generatable<Planning, int>, IPlanningService
 
     #region Generatable Members
 
-    public override Task<Response<DocumentDto>> GenerateDocument(int courseId, DocumentTypes documentType)
+    public override Task<Response<DocumentDto>> GenerateDocument(int courseId, DocumentType documentType)
     {
         try
         {

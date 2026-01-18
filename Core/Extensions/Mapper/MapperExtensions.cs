@@ -2,7 +2,7 @@
 using Core.DTOs;
 using Domain.Models;
 
-namespace Core.Extensions.ModelExtensions;
+namespace Core.Extensions.Mapper;
 
 public static class MapperExtensions
 {
@@ -22,7 +22,7 @@ public static class MapperExtensions
     {
         return mapper.Map<CourseDto>(course);
     }
-    
+
     public static RubricDto ToDto(this Rubric rubric, IMapper mapper)
     {
         return mapper.Map<RubricDto>(rubric);

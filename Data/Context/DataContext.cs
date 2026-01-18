@@ -14,6 +14,11 @@ namespace Data.Context
         public virtual DbSet<Lesson> Lessons { get; set; }
         public virtual DbSet<Material> Materials { get; set; }
         public virtual DbSet<LearningOutcome> LearningOutcomes { get; set; }
+        public virtual DbSet<CourseExecution> CourseExecutions { get; set; }
+        public virtual DbSet<AssessmentDimension> AssessmentDimensions { get; set; }
+        public virtual DbSet<AssessmentDimensionScore> AssessmentDimensionScores { get; set; }
+        public virtual DbSet<Rubric> Rubrics { get; set; }
+
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
@@ -61,7 +66,19 @@ namespace Data.Context
                 .WithOne(ads => ads.AssessmentDimension)
                 .HasForeignKey(ads => ads.AssessmentDimensionId);
             modelBuilder.Entity<Material>()
-                .HasKey(x => new { x.Id, x.Version });
+                .HasKey(m => new { m.Id, m.Version });
+            modelBuilder.Entity<CourseExecution>()
+                .HasMany(ce => ce.Classes)
+                .WithOne(c => c.CourseExecution)
+                .HasForeignKey(c => c.CourseExecutionId);
+            modelBuilder.Entity<Class>()
+                .HasMany(c => c.Students)
+                .WithOne(s => s.Class)
+                .HasForeignKey(s => s.ClassId);
+            modelBuilder.Entity<CourseExecution>()
+                .HasMany(ce => ce.Grades)
+                .WithOne(g => g.CourseExecution)
+                .HasForeignKey(x => x.CourseExcecutionId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

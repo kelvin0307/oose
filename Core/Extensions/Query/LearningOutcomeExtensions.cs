@@ -1,7 +1,7 @@
 using Domain.Models;
 using System.Linq;
 
-namespace Core.Extensions;
+namespace Core.Extensions.Query;
 
 public static class LearningOutcomeExtensions
 {

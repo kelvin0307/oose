@@ -1,4 +1,5 @@
-﻿using Core.Interfaces.Services;
+﻿using Core.Enums;
+using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace Server.Controllers
     public class AssessmentDocumentController(IAssessmentDocumentService assessmentDocumentService) : BaseApiController
     {
         [HttpGet("{testId}/document/{documentType}")]
-        public async Task<IActionResult> GenerateDocument(int testId, DocumentTypes documentType)
+        public async Task<IActionResult> GenerateDocument(int testId, DocumentType documentType)
         {
             var doc = await assessmentDocumentService.GenerateDocument(testId, documentType);
 

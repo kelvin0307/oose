@@ -1,4 +1,4 @@
-namespace Domain.Enums;
+namespace Core.Enums;
 
 public enum LetterGrade
 {

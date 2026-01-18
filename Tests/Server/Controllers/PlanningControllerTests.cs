@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Server.Controllers;
 using Core.Interfaces.Services;
+using Core.Enums;
 
 namespace Tests.Server.Controllers;
 
@@ -95,7 +96,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
         var documentDto = new DocumentDto
@@ -128,7 +129,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Csv;
+        var documentType = DocumentType.Csv;
         var documentBytes = new byte[] { 1, 2, 3 };
 
         var documentDto = new DocumentDto
@@ -159,7 +160,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Docx;
+        var documentType = DocumentType.Docx;
         var documentBytes = new byte[] { 1, 2, 3 };
 
         var documentDto = new DocumentDto
@@ -189,7 +190,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 999;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var response = Response<DocumentDto>.Fail("Error generating planning document");
 
         planningServiceMock
@@ -206,7 +207,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var documentBytes1 = new byte[] { 1, 2, 3 };
         var documentBytes2 = new byte[] { 4, 5, 6 };
 

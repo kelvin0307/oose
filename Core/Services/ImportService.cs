@@ -1,12 +1,12 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
-using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Adapters;
 using Core.Interfaces.Services;
 using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
+using Core.Extensions.Mapper;
 
 namespace Core.Services;
 

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
-using Core.Extensions.ModelExtensions;
+using Core.Extensions.Mapper;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Enums;
