@@ -36,5 +36,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.Student != null ? src.Student.FirstName : string.Empty))
             .ForMember(dest => dest.StudentLastName,
                 opt => opt.MapFrom(src => src.Student != null ? src.Student.LastName : string.Empty));
+        
+        CreateMap<CourseExecution,CourseExecutionDTO>().ReverseMap();
     }
 }

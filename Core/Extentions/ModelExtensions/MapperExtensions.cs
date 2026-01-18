@@ -50,5 +50,10 @@ public static class MapperExtensions
     {
         return mapper.Map<Rubric>(dto);
     }
+
+    public static CourseExecutionDTO ToDto(this CourseExecution courseExecution, IMapper mapper)
+    {
+        return mapper.Map<CourseExecutionDTO>(courseExecution);
+    }
     #endregion
 }
