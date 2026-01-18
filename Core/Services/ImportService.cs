@@ -21,8 +21,8 @@ public class ImportService<TImportDto>(IImportAdapter<TImportDto> adapter, IRepo
             {
                 return Response<CourseDTO>.Fail("Could not create course, Invalid data");
             }
-
-            //force course status to be concept. because we a different systems truth. is not our truth
+            
+            //force course status to be concept. because a different systems truth. is not our truth
             course.Status = CourseStatus.Concept;
 
             var createdCourse = await courseRepository.CreateAndCommit(course);

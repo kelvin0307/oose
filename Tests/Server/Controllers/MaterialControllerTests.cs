@@ -452,7 +452,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -482,7 +482,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -509,7 +509,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -543,7 +543,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -580,7 +580,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -616,7 +616,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(materialId, updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -806,7 +806,6 @@ public class MaterialControllerTests
 
         // Assert
         Assert.That(result, Is.TypeOf<NoContentResult>());
-
     }
 
     [Test]

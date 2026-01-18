@@ -1,6 +1,5 @@
-using Data.Interfaces.Repositories;
 using Data.Context;
-using Data.Interfaces;
+using Data.Interfaces.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +25,7 @@ namespace Data.Repositories
                 .ThenInclude(d => d.AssessmentDimensionScores)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
-        
+
         public async Task<List<Rubric>> GetAggregatesByLearningOutcomeId(int learningOutcomeId)
         {
             return await _context.Set<Rubric>()
@@ -35,7 +34,16 @@ namespace Data.Repositories
                 .Where(r => r.LearningOutcomeId == learningOutcomeId)
                 .ToListAsync();
         }
-        
+
+        public async Task<List<Rubric>> GetAggregatesByLearningOutcomeIds(IList<int> learningOutcomeIds)
+        {
+            return await _context.Set<Rubric>()
+                .Include(r => r.AssessmentDimensions)
+                .ThenInclude(d => d.AssessmentDimensionScores)
+                .Where(r => learningOutcomeIds.Contains(r.LearningOutcomeId))
+                .ToListAsync();
+        }
+
         public async Task SaveAggregate()
         {
             await _context.SaveChangesAsync();

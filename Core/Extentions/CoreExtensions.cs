@@ -33,6 +33,7 @@ public static class CoreExtensions
         services.AddTransient<IGradeService, GradeService>();
         services.AddTransient<ILessonService, LessonService>();
         services.AddTransient<ICourseExecutionService, CourseExecutionService>();
+        services.AddTransient<IAssessmentDocumentService, AssessmentDocumentService>();
         services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
     }
 }

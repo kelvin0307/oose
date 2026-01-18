@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
 using AutoMapper;
 using Core.DTOs;
-using Data.Interfaces.Repositories;
 using Core.Services;
+using Data.Interfaces.Repositories;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
