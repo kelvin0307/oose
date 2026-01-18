@@ -9,6 +9,7 @@
       "Server/1.0.0": {
         "dependencies": {
           "Core": "1.0.0",
+          "Data": "1.0.0",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.22",
           "Swashbuckle.AspNetCore": "6.4.0"
         },
@@ -1038,8 +1039,8 @@
         "dependencies": {
           "AutoMapper": "16.0.0",
           "CsvHelper": "33.1.0",
-          "Data": "1.0.0",
           "DocumentFormat.OpenXml": "3.3.0",
+          "Domain": "1.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.2",
           "QuestPDF": "2025.12.1",
           "System.IdentityModel.Tokens.Jwt": "7.1.2"
@@ -1053,6 +1054,7 @@
       },
       "Data/1.0.0": {
         "dependencies": {
+          "Core": "1.0.0",
           "Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore": "8.0.22",
           "Microsoft.EntityFrameworkCore.Design": "8.0.22",
