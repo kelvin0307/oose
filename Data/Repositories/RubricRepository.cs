@@ -1,5 +1,5 @@
 using Data.Context;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 

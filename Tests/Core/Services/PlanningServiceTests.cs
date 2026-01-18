@@ -1,7 +1,7 @@
 using AutoMapper;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Core.Services;
 using Domain.Enums;
 using Domain.Models;

@@ -1,4 +1,4 @@
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Data.Context;
 using Data.Extensions.ExtensionModels;
 using Data.Repositories;

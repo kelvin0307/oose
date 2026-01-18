@@ -1,6 +1,6 @@
 using Domain.Models;
 
-namespace Data.Interfaces.Repositories
+namespace Core.Interfaces.Repositories
 {
     public interface IRubricRepository : IRepository<Rubric>
     {

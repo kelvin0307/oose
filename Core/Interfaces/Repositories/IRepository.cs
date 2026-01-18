@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Data.Interfaces.Repositories
+namespace Core.Interfaces.Repositories
 {
     public interface IRepository<TEntity> : IQueryable<TEntity> where
         TEntity : class

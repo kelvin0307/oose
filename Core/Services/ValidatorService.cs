@@ -1,5 +1,5 @@
 ﻿using Core.Common;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Domain.Models;
 

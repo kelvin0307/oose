@@ -4,7 +4,7 @@ using Core.DTOs;
 using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Adapters;
 using Core.Interfaces.Services;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
 

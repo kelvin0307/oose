@@ -1,7 +1,7 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Services;
 using Domain.Models;

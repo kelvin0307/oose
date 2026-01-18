@@ -3,7 +3,7 @@ using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
 using Core.Interfaces.Services;
 using Core.Services.Abstractions;
-using Data.Interfaces.Repositories;
+using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
 
