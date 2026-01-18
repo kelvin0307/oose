@@ -1,5 +1,6 @@
 using Core.Common;
 using Core.DTOs;
+using Core.Enums;
 using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
         var documentDto = new DocumentDto
@@ -62,7 +63,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Csv;
+        var documentType = DocumentType.Csv;
         var documentBytes = new byte[] { 1, 2, 3 };
 
         var documentDto = new DocumentDto
@@ -94,7 +95,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Docx;
+        var documentType = DocumentType.Docx;
         var documentBytes = new byte[] { 1, 2, 3 };
 
         var documentDto = new DocumentDto
@@ -125,7 +126,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 999, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var response = Response<DocumentDto>.Fail("Error generating material document");
 
         materialServiceMock
@@ -144,7 +145,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithDifferentMaterialIds_ReturnsCorrectDocuments()
     {
         // Arrange
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         var materialId1 = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var materialId2 = new MaterialIdDto() { MaterialId = 2, Version = 1 };
@@ -206,7 +207,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var documentBytes = new byte[10000]; // 10KB document
         for (int i = 0; i < documentBytes.Length; i++)
         {
@@ -240,7 +241,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var documentBytes1 = new byte[] { 1, 2, 3 };
         var documentBytes2 = new byte[] { 4, 5, 6 };
 

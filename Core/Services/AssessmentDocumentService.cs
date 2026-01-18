@@ -6,6 +6,7 @@ using Core.Services.Abstractions;
 using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
+using Core.Enums;
 
 namespace Core.Services;
 
@@ -24,7 +25,7 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
         this.rubricRepository = rubricRepository;
     }
 
-    public override async Task<Response<DocumentDto>> GenerateDocument(int testId, DocumentTypes documentType)
+    public override async Task<Response<DocumentDto>> GenerateDocument(int testId, DocumentType documentType)
     {
         try
         {

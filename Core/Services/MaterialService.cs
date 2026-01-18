@@ -7,6 +7,7 @@ using Core.Services.Abstractions;
 using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
+using Core.Enums;
 
 namespace Core.Services;
 
@@ -23,7 +24,7 @@ public class MaterialService : Generatable<Material, MaterialIdDto>, IMaterialSe
         this.mapper = mapper;
     }
 
-    public override Task<Response<DocumentDto>> GenerateDocument(MaterialIdDto materialId, DocumentTypes documentType)
+    public override Task<Response<DocumentDto>> GenerateDocument(MaterialIdDto materialId, DocumentType documentType)
     {
         try
         {

@@ -1,4 +1,5 @@
 ﻿using Core.DTOs;
+using Core.Enums;
 using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
     }
 
     [HttpPost("document/{documentType}")]
-    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDto materialId, DocumentTypes documentType) { 
+    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDto materialId, DocumentType documentType) { 
         var doc = await materialService.GenerateDocument(materialId, documentType);
 
         if (!doc.Success)

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
+using Core.Enums;
 using Core.Interfaces.Repositories;
 using Core.Services;
 using Domain.Enums;
@@ -37,7 +38,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         var material = new Material
         {
@@ -78,7 +79,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 999, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         materialRepositoryMock
             .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
@@ -98,7 +99,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         materialRepositoryMock
             .Setup(r => r.Find(It.IsAny<Expression<Func<Material, bool>>>()))
@@ -118,7 +119,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentTypes = new[] { DocumentTypes.Pdf, DocumentTypes.Csv, DocumentTypes.Docx };
+        var documentTypes = new[] { DocumentType.Pdf, DocumentType.Csv, DocumentType.Docx };
 
         var material = new Material
         {
@@ -133,8 +134,8 @@ public class MaterialServiceTests
             .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()))
-            .Returns((DocumentDataDto data, DocumentTypes type) => new DocumentDto
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentType>()))
+            .Returns((DocumentDataDto data, DocumentType type) => new DocumentDto
             {
                 Document = new byte[] { 1, 2, 3 },
                 ContentType = "application/octet-stream",
@@ -149,7 +150,7 @@ public class MaterialServiceTests
             Assert.That(result.Result.DocumentName, Does.Contain(docType.ToString().ToLower()));
         }
 
-        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
+        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentType>()), Times.AtLeastOnce);
     }
 
     [Test]
@@ -157,7 +158,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var largeContent = string.Concat(Enumerable.Repeat("This is large content. ", 1000));
 
         var material = new Material
@@ -196,7 +197,7 @@ public class MaterialServiceTests
     {
         // Arrange
         var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         var material = new Material
         {

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
+using Core.Enums;
 using Core.Interfaces.Repositories;
 using Core.Services;
 using Domain.Enums;
@@ -160,7 +161,7 @@ public class PlanningServiceTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         var lessons = new List<Lesson>
         {
@@ -205,7 +206,7 @@ public class PlanningServiceTests
     {
         // Arrange
         var courseId = 999;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
         var emptyPlanning = new List<Planning>().AsQueryable();
 
         planningRepositoryMock
@@ -225,7 +226,7 @@ public class PlanningServiceTests
     {
         // Arrange
         var courseId = 1;
-        var documentType = DocumentTypes.Pdf;
+        var documentType = DocumentType.Pdf;
 
         planningRepositoryMock
             .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, List<Lesson>>>>()))
@@ -244,7 +245,7 @@ public class PlanningServiceTests
     {
         // Arrange
         var courseId = 1;
-        var documentTypes = new[] { DocumentTypes.Pdf, DocumentTypes.Csv, DocumentTypes.Docx };
+        var documentTypes = new[] { DocumentType.Pdf, DocumentType.Csv, DocumentType.Docx };
 
         var lessons = new List<Lesson>
         {
@@ -265,8 +266,8 @@ public class PlanningServiceTests
             .Returns(queryablePlanning);
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()))
-            .Returns((DocumentDataDto data, DocumentTypes type) => new DocumentDto
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentType>()))
+            .Returns((DocumentDataDto data, DocumentType type) => new DocumentDto
             {
                 Document = new byte[] { 1, 2, 3 },
                 ContentType = "application/octet-stream",
@@ -280,7 +281,7 @@ public class PlanningServiceTests
             Assert.That(result.Success, Is.True);
         }
 
-        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
+        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentType>()), Times.AtLeastOnce);
     }
 
     #endregion
