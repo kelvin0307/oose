@@ -9,7 +9,7 @@ namespace Core.Services;
 
 public class ClassService(IRepository<Class> classRepository, IRepository<Student> studentRepository, IMapper mapper) : IClassService
 {
-    public async Task<Response<ClassDTO>> GetClassById(int classId)
+    public async Task<Response<ClassDto>> GetClassById(int classId)
     {
         try
         {
@@ -17,58 +17,58 @@ public class ClassService(IRepository<Class> classRepository, IRepository<Studen
             var classEntity = await classRepository.FirstOrDefaultAsync(query);
 
             if (classEntity == null)
-                return Response<ClassDTO>.NotFound("Class not found");
+                return Response<ClassDto>.NotFound("Class not found");
 
-            var classDto = mapper.Map<ClassDTO>(classEntity);
-            return Response<ClassDTO>.Ok(classDto);
+            var classDto = mapper.Map<ClassDto>(classEntity);
+            return Response<ClassDto>.Ok(classDto);
         }
         catch (InvalidOperationException)
         {
-            return Response<ClassDTO>.Fail("Invalid operation while fetching class", ResponseStatus.InvalidOperation);
+            return Response<ClassDto>.Fail("Invalid operation while fetching class", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
-            return Response<ClassDTO>.Fail("An unexpected error occurred while fetching the class");
+            return Response<ClassDto>.Fail("An unexpected error occurred while fetching the class");
         }
     }
 
-    public async Task<Response<List<ClassDTO>>> GetAllClasses()
+    public async Task<Response<List<ClassDto>>> GetAllClasses()
     {
         try
         {
             var classes = await classRepository.GetAll();
-            var classDtos = classes.Select(c => mapper.Map<ClassDTO>(c)).ToList();
-            return Response<List<ClassDTO>>.Ok(classDtos);
+            var classDtos = classes.Select(c => mapper.Map<ClassDto>(c)).ToList();
+            return Response<List<ClassDto>>.Ok(classDtos);
         }
         catch (InvalidOperationException)
         {
-            return Response<List<ClassDTO>>.Fail("Invalid operation while fetching classes", ResponseStatus.InvalidOperation);
+            return Response<List<ClassDto>>.Fail("Invalid operation while fetching classes", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
-            return Response<List<ClassDTO>>.Fail("An unexpected error occurred while fetching classes");
+            return Response<List<ClassDto>>.Fail("An unexpected error occurred while fetching classes");
         }
     }
 
-    public async Task<Response<List<StudentDTO>>> GetStudentsByClassId(int classId)
+    public async Task<Response<List<StudentDto>>> GetStudentsByClassId(int classId)
     {
         try
         {
             var classEntity = await classRepository.Get(classId);
             if (classEntity == null)
-                return Response<List<StudentDTO>>.NotFound("Class not found");
+                return Response<List<StudentDto>>.NotFound("Class not found");
 
             var students = await studentRepository.GetAll(s => s.ClassId == classId);
-            var studentDtos = students.Select(s => mapper.Map<StudentDTO>(s)).ToList();
-            return Response<List<StudentDTO>>.Ok(studentDtos);
+            var studentDtos = students.Select(s => mapper.Map<StudentDto>(s)).ToList();
+            return Response<List<StudentDto>>.Ok(studentDtos);
         }
         catch (InvalidOperationException)
         {
-            return Response<List<StudentDTO>>.Fail("Invalid operation while fetching students", ResponseStatus.InvalidOperation);
+            return Response<List<StudentDto>>.Fail("Invalid operation while fetching students", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
-            return Response<List<StudentDTO>>.Fail("An unexpected error occurred while fetching students");
+            return Response<List<StudentDto>>.Fail("An unexpected error occurred while fetching students");
         }
     }
 

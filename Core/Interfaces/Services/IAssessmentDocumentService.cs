@@ -6,5 +6,5 @@ namespace Core.Interfaces.Services;
 
 public interface IAssessmentDocumentService
 {
-    Task<Response<DocumentDTO>> GenerateDocument(int testId, DocumentTypes documentType);
+    Task<Response<DocumentDto>> GenerateDocument(int testId, DocumentTypes documentType);
 }

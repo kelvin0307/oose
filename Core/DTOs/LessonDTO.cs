@@ -2,7 +2,7 @@
 
 namespace Core.DTOs;
 
-public class LessonDTO
+public class LessonDto
 {
     public int Id { get; set; }
     public int WeekNumber { get; set; }

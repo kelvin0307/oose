@@ -22,7 +22,7 @@ public class LessonService : ILessonService
         this.mapper = mapper;
     }
 
-    public async Task<Response<LessonDTO>> CreateLesson(CreateLessonDTO createLessonDTO)
+    public async Task<Response<LessonDto>> CreateLesson(CreateLessonDto createLessonDTO)
     {
         try
         {
@@ -30,7 +30,7 @@ public class LessonService : ILessonService
 
             if (planning == null)
             {
-                return Response<LessonDTO>.Fail("Planning not found");
+                return Response<LessonDto>.Fail("Planning not found");
             }
 
             var newLesson = new Lesson
@@ -46,15 +46,15 @@ public class LessonService : ILessonService
 
             await lessonRepository.CreateAndCommit(newLesson);
 
-            return Response<LessonDTO>.Ok(mapper.Map<LessonDTO>(newLesson));
+            return Response<LessonDto>.Ok(mapper.Map<LessonDto>(newLesson));
         }
         catch (Exception ex)
         {
-            return Response<LessonDTO>.Fail("Error creating lesson: " + ex.Message);
+            return Response<LessonDto>.Fail("Error creating lesson: " + ex.Message);
         }
     }
 
-    public async Task<Response<LessonDTO>> GetLessonById(int lessonId)
+    public async Task<Response<LessonDto>> GetLessonById(int lessonId)
     {
         try
         {
@@ -62,32 +62,32 @@ public class LessonService : ILessonService
 
             if (lesson == null)
             {
-                return Response<LessonDTO>.Fail("Lesson not found");
+                return Response<LessonDto>.Fail("Lesson not found");
             }
 
-            return Response<LessonDTO>.Ok(mapper.Map<LessonDTO>(lesson));
+            return Response<LessonDto>.Ok(mapper.Map<LessonDto>(lesson));
         }
         catch (Exception ex)
         {
-            return Response<LessonDTO>.Fail("Error retrieving lesson: " + ex.Message);
+            return Response<LessonDto>.Fail("Error retrieving lesson: " + ex.Message);
         }
     }
 
-    public async Task<Response<IList<LessonDTO>>> GetAllLessonsByPlanningId(int planningId)
+    public async Task<Response<IList<LessonDto>>> GetAllLessonsByPlanningId(int planningId)
     {
         try
         {
             var lessons = await lessonRepository.GetAll(x => x.PlanningId == planningId);
 
-            return Response<IList<LessonDTO>>.Ok(mapper.Map<IList<LessonDTO>>(lessons));
+            return Response<IList<LessonDto>>.Ok(mapper.Map<IList<LessonDto>>(lessons));
         }
         catch (Exception ex)
         {
-            return Response<IList<LessonDTO>>.Fail("Error retrieving lessons: " + ex.Message);
+            return Response<IList<LessonDto>>.Fail("Error retrieving lessons: " + ex.Message);
         }
     }
 
-    public async Task<Response<LessonDTO>> UpdateLesson(UpdateLessonDTO updateLessonDTO)
+    public async Task<Response<LessonDto>> UpdateLesson(UpdateLessonDto updateLessonDTO)
     {
         try
         {
@@ -95,7 +95,7 @@ public class LessonService : ILessonService
 
             if (lesson == null)
             {
-                return Response<LessonDTO>.Fail("Lesson not found");
+                return Response<LessonDto>.Fail("Lesson not found");
             }
 
             lesson.WeekNumber = updateLessonDTO.WeekNumber;
@@ -107,11 +107,11 @@ public class LessonService : ILessonService
 
             await lessonRepository.UpdateAndCommit(lesson);
 
-            return Response<LessonDTO>.Ok(mapper.Map<LessonDTO>(lesson));
+            return Response<LessonDto>.Ok(mapper.Map<LessonDto>(lesson));
         }
         catch (Exception ex)
         {
-            return Response<LessonDTO>.Fail("Error updating lesson: " + ex.Message);
+            return Response<LessonDto>.Fail("Error updating lesson: " + ex.Message);
         }
     }
 

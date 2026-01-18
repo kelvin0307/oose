@@ -33,10 +33,10 @@ public class StudentServiceTests
     public async Task GetStudentById_ReturnsOk_WhenStudentExists()
     {
         var student = new Student { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 };
-        var studentDto = new StudentDTO { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 };
+        var studentDto = new StudentDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 };
 
         studentRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(student);
-        mapperMock.Setup(m => m.Map<StudentDTO>(student)).Returns(studentDto);
+        mapperMock.Setup(m => m.Map<StudentDto>(student)).Returns(studentDto);
 
         var result = await studentService.GetStudentById(1);
 

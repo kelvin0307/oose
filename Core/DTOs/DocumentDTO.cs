@@ -1,6 +1,6 @@
 ﻿namespace Core.DTOs;
 
-public class DocumentDTO
+public class DocumentDto
 {
     public byte[] Document { get; set; } = [];
     public string ContentType { get; set; } = string.Empty;

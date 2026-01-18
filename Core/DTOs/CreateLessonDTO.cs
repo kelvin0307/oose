@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class CreateLessonDTO
+public class CreateLessonDto
 {
     public int WeekNumber { get; set; }
     public string Name { get; set; } = string.Empty;

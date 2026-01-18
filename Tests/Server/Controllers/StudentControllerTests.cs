@@ -25,8 +25,8 @@ public class StudentControllerTests
     [Test]
     public async Task GetStudent_ReturnsOk_WhenStudentExists()
     {
-        var studentDto = new StudentDTO { Id = 1, FirstName = "Jane", LastName = "Doe", Email = "jane@example.com", StudentNumber = 456 };
-        studentServiceMock.Setup(s => s.GetStudentById(1)).ReturnsAsync(Response<StudentDTO>.Ok(studentDto));
+        var studentDto = new StudentDto { Id = 1, FirstName = "Jane", LastName = "Doe", Email = "jane@example.com", StudentNumber = 456 };
+        studentServiceMock.Setup(s => s.GetStudentById(1)).ReturnsAsync(Response<StudentDto>.Ok(studentDto));
 
         var result = await controller.GetStudent(1) as OkObjectResult;
 
@@ -38,7 +38,7 @@ public class StudentControllerTests
     [Test]
     public async Task GetStudent_ReturnsNotFound_WhenStudentDoesNotExist()
     {
-        studentServiceMock.Setup(s => s.GetStudentById(2)).ReturnsAsync(Response<StudentDTO>.NotFound("Student not found"));
+        studentServiceMock.Setup(s => s.GetStudentById(2)).ReturnsAsync(Response<StudentDto>.NotFound("Student not found"));
 
         var actionResult = await controller.GetStudent(2);
 

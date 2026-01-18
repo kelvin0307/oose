@@ -9,7 +9,7 @@ namespace Server.Controllers;
 public class MaterialController(IMaterialService materialService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> CreateMaterial([FromBody] CreateMaterialDTO createMaterialdto)
+    public async Task<IActionResult> CreateMaterial([FromBody] CreateMaterialDto createMaterialdto)
     {
         var result = await materialService.CreateMaterial(createMaterialdto);
 
@@ -27,7 +27,7 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
     }
 
     [HttpPut("{materialId}")]
-    public async Task<IActionResult> UpdateMaterial(int materialId, [FromBody] UpdateMaterialDTO updatedMaterial)
+    public async Task<IActionResult> UpdateMaterial(int materialId, [FromBody] UpdateMaterialDto updatedMaterial)
     {
         updatedMaterial.Id = materialId;
         var result = await materialService.UpdateMaterial(updatedMaterial);
@@ -42,7 +42,7 @@ public class MaterialController(IMaterialService materialService) : BaseApiContr
     }
 
     [HttpPost("document/{documentType}")]
-    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDTO materialId, DocumentTypes documentType) { 
+    public async Task<IActionResult> GenerateDocument([FromBody] MaterialIdDto materialId, DocumentTypes documentType) { 
         var doc = await materialService.GenerateDocument(materialId, documentType);
 
         if (!doc.Success)

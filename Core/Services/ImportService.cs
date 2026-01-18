@@ -12,14 +12,14 @@ namespace Core.Services;
 
 public class ImportService<TImportDto>(IImportAdapter<TImportDto> adapter, IRepository<Course> courseRepository, IMapper mapper) : IImportService<TImportDto>
 {
-    public async Task<Response<CourseDTO>> Import(TImportDto data)
+    public async Task<Response<CourseDto>> Import(TImportDto data)
     {
         try
         {
             var course = adapter.GetMappedCourseData(data);
             if (course == null)
             {
-                return Response<CourseDTO>.Fail("Could not create course, Invalid data");
+                return Response<CourseDto>.Fail("Could not create course, Invalid data");
             }
             
             //force course status to be concept. because a different systems truth. is not our truth
@@ -28,19 +28,19 @@ public class ImportService<TImportDto>(IImportAdapter<TImportDto> adapter, IRepo
             var createdCourse = await courseRepository.CreateAndCommit(course);
             if (createdCourse == null)
             {
-                return Response<CourseDTO>.Fail("Course could not be created");
+                return Response<CourseDto>.Fail("Course could not be created");
             }
-            return Response<CourseDTO>.Ok(createdCourse.ToDto(mapper));
+            return Response<CourseDto>.Ok(createdCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("Invalid operation while deleting rubric", ResponseStatus.InvalidOperation);
+            return Response<CourseDto>.Fail("Invalid operation while deleting rubric", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("An unexpected error occurred while deleting the rubric");
+            return Response<CourseDto>.Fail("An unexpected error occurred while deleting the rubric");
         }
     }
 }

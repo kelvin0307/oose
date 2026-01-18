@@ -42,10 +42,10 @@ public class PlanningServiceTests
         };
 
 
-        var lessonsDTOs = new List<LessonDTO>
+        var lessonsDTOs = new List<LessonDto>
         {
-            new LessonDTO { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
-            new LessonDTO { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
+            new LessonDto { Id = 1, SequenceNumber = 1, WeekNumber = 1, Name = "Lesson 1" },
+            new LessonDto { Id = 2, SequenceNumber = 2, WeekNumber = 1, Name = "Lesson 2" }
         };
 
         var planning = new Planning
@@ -55,7 +55,7 @@ public class PlanningServiceTests
             Lessons = lessons
         };
 
-        var planningDto = new PlanningDTO
+        var planningDto = new PlanningDto
         {
             Id = 1,
             Lessons = lessonsDTOs
@@ -67,7 +67,7 @@ public class PlanningServiceTests
             .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, List<Lesson>>>>()))
             .Returns(queryablePlanning);
 
-        mapperMock.Setup(x => x.Map<PlanningDTO>(planning)).Returns(planningDto);
+        mapperMock.Setup(x => x.Map<PlanningDto>(planning)).Returns(planningDto);
 
         // Act
         var result = planningService.GetPlanningByCourseId(courseId);
@@ -139,7 +139,7 @@ public class PlanningServiceTests
             .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<Planning, List<Lesson>>>>()))
             .Returns(queryablePlanning);
 
-        mapperMock.Setup(m => m.Map<PlanningDTO>(It.IsAny<Planning>()))
+        mapperMock.Setup(m => m.Map<PlanningDto>(It.IsAny<Planning>()))
             .Throws(new Exception("Mock Error was thrown"));
 
         // Act
@@ -182,8 +182,8 @@ public class PlanningServiceTests
             .Returns(queryablePlanning.Where(x => x.CourseId == courseId));
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
-            .Returns(new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), documentType))
+            .Returns(new DocumentDto
             {
                 Document = documentBytes,
                 ContentType = "application/pdf",
@@ -265,8 +265,8 @@ public class PlanningServiceTests
             .Returns(queryablePlanning);
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), It.IsAny<DocumentTypes>()))
-            .Returns((DocumentDataDTO data, DocumentTypes type) => new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()))
+            .Returns((DocumentDataDto data, DocumentTypes type) => new DocumentDto
             {
                 Document = new byte[] { 1, 2, 3 },
                 ContentType = "application/octet-stream",
@@ -280,7 +280,7 @@ public class PlanningServiceTests
             Assert.That(result.Success, Is.True);
         }
 
-        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
+        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
     }
 
     #endregion

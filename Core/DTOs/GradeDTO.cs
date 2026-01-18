@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class GradeDTO
+public class GradeDto
 {
     public int Id { get; set; }
     public int GradeValue { get; set; }

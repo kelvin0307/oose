@@ -24,8 +24,8 @@ public class ClassControllerTests
     [Test]
     public async Task GetClass_ReturnsOk_WhenClassExists()
     {
-        var classDto = new ClassDTO { Id = 1, Name = "Class A", ClassCode = "A1" };
-        classServiceMock.Setup(s => s.GetClassById(1)).ReturnsAsync(Response<ClassDTO>.Ok(classDto));
+        var classDto = new ClassDto { Id = 1, Name = "Class A", ClassCode = "A1" };
+        classServiceMock.Setup(s => s.GetClassById(1)).ReturnsAsync(Response<ClassDto>.Ok(classDto));
 
         var result = await controller.GetClass(1) as OkObjectResult;
 
@@ -37,11 +37,11 @@ public class ClassControllerTests
     [Test]
     public async Task GetStudentsByClass_ReturnsOk_WhenStudentsExist()
     {
-        var students = new List<StudentDTO>
+        var students = new List<StudentDto>
         {
-            new StudentDTO { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 }
+            new StudentDto { Id = 1, FirstName = "John", LastName = "Doe", Email = "john@example.com", StudentNumber = 123 }
         };
-        classServiceMock.Setup(s => s.GetStudentsByClassId(1)).ReturnsAsync(Response<List<StudentDTO>>.Ok(students));
+        classServiceMock.Setup(s => s.GetStudentsByClassId(1)).ReturnsAsync(Response<List<StudentDto>>.Ok(students));
 
         var result = await controller.GetStudentsByClass(1) as OkObjectResult;
 

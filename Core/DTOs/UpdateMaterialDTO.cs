@@ -1,6 +1,6 @@
 ﻿namespace Core.DTOs;
 
-public class UpdateMaterialDTO
+public class UpdateMaterialDto
 {
     public int Id { get; set; }
     public int Version { get; set; }

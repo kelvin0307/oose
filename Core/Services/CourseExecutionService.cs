@@ -10,49 +10,49 @@ namespace Core.Services;
 
 public class CourseExecutionService(IRepository<CourseExecution> courseExecutionRepository, IRepository<Course> courseRepository, IMapper mapper): ICourseExecutionService
 {
-    public async Task<Response<List<CourseExecutionDTO>>> GetAllCourseExecutions()
+    public async Task<Response<List<CourseExecutionDto>>> GetAllCourseExecutions()
     {
         var response = await courseExecutionRepository.GetAll();
-        return Response<List<CourseExecutionDTO>>.Ok(response.Select(execution => execution.ToDto(mapper)).ToList());
+        return Response<List<CourseExecutionDto>>.Ok(response.Select(execution => execution.ToDto(mapper)).ToList());
     }
     
-    public async Task<Response<CourseExecutionDTO>> GetCourseExecutionById(int id)
+    public async Task<Response<CourseExecutionDto>> GetCourseExecutionById(int id)
     {
         try
         {
             var courseExecution = courseExecutionRepository.Include(course => course.Course).FirstOrDefault(execution => execution.Id == id);
             if (courseExecution == null)
             {
-                return Response<CourseExecutionDTO>.NotFound("Course execution not found");
+                return Response<CourseExecutionDto>.NotFound("Course execution not found");
             }
             
-            return Response<CourseExecutionDTO>.Ok(courseExecution.ToDto(mapper));
+            return Response<CourseExecutionDto>.Ok(courseExecution.ToDto(mapper));
         }
         catch (InvalidOperationException ex)
         {
             //TODO: Log exception
-            return Response<CourseExecutionDTO>.Fail("Invalid operation while creating the course execution", ResponseStatus.InvalidOperation);
+            return Response<CourseExecutionDto>.Fail("Invalid operation while creating the course execution", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
             //TODO: Log exception
-            return Response<CourseExecutionDTO>.Fail("An unexpected error occurred while creating a course execution");
+            return Response<CourseExecutionDto>.Fail("An unexpected error occurred while creating a course execution");
         }    }
 
-    public async Task<Response<CourseExecutionDTO>> CreateCourseExecution(CreateCourseExecutionDto createCourseExecutionDto)
+    public async Task<Response<CourseExecutionDto>> CreateCourseExecution(CreateCourseExecutionDto createCourseExecutionDto)
     {
         try
         {
             if (createCourseExecutionDto.StartDate >= createCourseExecutionDto.EndDate)
             {
-                return Response<CourseExecutionDTO>.Fail(
+                return Response<CourseExecutionDto>.Fail(
                     "StartDate must be before EndDate",
                     ResponseStatus.ValidationError);
             }
             var course = await courseRepository.Get(createCourseExecutionDto.CourseId);
             if (course == null)
             {
-                return Response<CourseExecutionDTO>.NotFound("Course not found");
+                return Response<CourseExecutionDto>.NotFound("Course not found");
             }
             
             var execution = new CourseExecution
@@ -65,33 +65,33 @@ public class CourseExecutionService(IRepository<CourseExecution> courseExecution
 
             var savedExecution = await courseExecutionRepository.CreateAndCommit(execution);
             
-            return Response<CourseExecutionDTO>.Ok(savedExecution.ToDto(mapper));
+            return Response<CourseExecutionDto>.Ok(savedExecution.ToDto(mapper));
         }
         catch (InvalidOperationException ex)
         {
             //TODO: Log exception
-            return Response<CourseExecutionDTO>.Fail("Invalid operation while creating the course execution", ResponseStatus.InvalidOperation);
+            return Response<CourseExecutionDto>.Fail("Invalid operation while creating the course execution", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
             //TODO: Log exception
-            return Response<CourseExecutionDTO>.Fail("An unexpected error occurred while creating a course execution");
+            return Response<CourseExecutionDto>.Fail("An unexpected error occurred while creating a course execution");
         }
     }
     
-    public async Task<Response<CourseExecutionDTO>> EndCourseExecution(int id)
+    public async Task<Response<CourseExecutionDto>> EndCourseExecution(int id)
     {
         try
         {
             var execution = await courseExecutionRepository.Get(id);
             if (execution == null)
             {
-                return Response<CourseExecutionDTO>.NotFound("Course execution not found");
+                return Response<CourseExecutionDto>.NotFound("Course execution not found");
             }
 
             if (execution.EndDate <= DateTime.UtcNow)
             {
-                return Response<CourseExecutionDTO>.Fail(
+                return Response<CourseExecutionDto>.Fail(
                     "Course execution has already ended");
             }
 
@@ -100,17 +100,17 @@ public class CourseExecutionService(IRepository<CourseExecution> courseExecution
             var updatedExecution =
                 await courseExecutionRepository.UpdateAndCommit(execution);
 
-            return Response<CourseExecutionDTO>.Ok(updatedExecution.ToDto(mapper));
+            return Response<CourseExecutionDto>.Ok(updatedExecution.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
-            return Response<CourseExecutionDTO>.Fail(
+            return Response<CourseExecutionDto>.Fail(
                 "Invalid operation while ending the course execution",
                 ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
-            return Response<CourseExecutionDTO>.Fail(
+            return Response<CourseExecutionDto>.Fail(
                 "An unexpected error occurred while ending the course execution");
         }
     }

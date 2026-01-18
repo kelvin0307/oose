@@ -8,19 +8,19 @@ public static class MapperExtensions
 {
     #region DTO Mappers
 
-    public static PlanningDTO ToDto(this Planning model, IMapper mapper)
+    public static PlanningDto ToDto(this Planning model, IMapper mapper)
     {
-        return mapper.Map<PlanningDTO>(model);
+        return mapper.Map<PlanningDto>(model);
     }
 
-    public static LessonDTO ToDto(this Lesson lesson, IMapper mapper)
+    public static LessonDto ToDto(this Lesson lesson, IMapper mapper)
     {
-        return mapper.Map<LessonDTO>(lesson);
+        return mapper.Map<LessonDto>(lesson);
     }
 
-    public static CourseDTO ToDto(this Course course, IMapper mapper)
+    public static CourseDto ToDto(this Course course, IMapper mapper)
     {
-        return mapper.Map<CourseDTO>(course);
+        return mapper.Map<CourseDto>(course);
     }
     
     public static RubricDto ToDto(this Rubric rubric, IMapper mapper)
@@ -28,7 +28,7 @@ public static class MapperExtensions
         return mapper.Map<RubricDto>(rubric);
     }
 
-    public static Planning ToModel(this PlanningDTO dto, IMapper mapper)
+    public static Planning ToModel(this PlanningDto dto, IMapper mapper)
     {
         return mapper.Map<Planning>(dto);
     }
@@ -51,9 +51,9 @@ public static class MapperExtensions
         return mapper.Map<Rubric>(dto);
     }
 
-    public static CourseExecutionDTO ToDto(this CourseExecution courseExecution, IMapper mapper)
+    public static CourseExecutionDto ToDto(this CourseExecution courseExecution, IMapper mapper)
     {
-        return mapper.Map<CourseExecutionDTO>(courseExecution);
+        return mapper.Map<CourseExecutionDto>(courseExecution);
     }
     #endregion
 }

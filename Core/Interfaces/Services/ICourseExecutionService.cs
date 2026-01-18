@@ -5,8 +5,8 @@ namespace Core.Interfaces.Services;
 
 public interface ICourseExecutionService
 {
-    Task<Response<List<CourseExecutionDTO>>> GetAllCourseExecutions();
-    Task<Response<CourseExecutionDTO>> GetCourseExecutionById(int id);
-    Task<Response<CourseExecutionDTO>> CreateCourseExecution(CreateCourseExecutionDto createCourseExectionDto);
-    Task<Response<CourseExecutionDTO>> EndCourseExecution(int id);
+    Task<Response<List<CourseExecutionDto>>> GetAllCourseExecutions();
+    Task<Response<CourseExecutionDto>> GetCourseExecutionById(int id);
+    Task<Response<CourseExecutionDto>> CreateCourseExecution(CreateCourseExecutionDto createCourseExectionDto);
+    Task<Response<CourseExecutionDto>> EndCourseExecution(int id);
 }

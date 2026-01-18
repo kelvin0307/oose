@@ -9,7 +9,7 @@ namespace Server.Controllers;
 public class LessonController(ILessonService lessonService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> CreateLesson([FromBody] CreateLessonDTO createLessonDTO)
+    public async Task<IActionResult> CreateLesson([FromBody] CreateLessonDto createLessonDTO)
     {
         var result = await lessonService.CreateLesson(createLessonDTO);
         
@@ -34,7 +34,7 @@ public class LessonController(ILessonService lessonService) : BaseApiController
     }
 
     [HttpPut("{lessonId}")]
-    public async Task<IActionResult> UpdateLesson(int lessonId, [FromBody] UpdateLessonDTO updateLessonDTO)
+    public async Task<IActionResult> UpdateLesson(int lessonId, [FromBody] UpdateLessonDto updateLessonDTO)
     {
         updateLessonDTO.Id = lessonId;
         var result = await lessonService.UpdateLesson(updateLessonDTO);

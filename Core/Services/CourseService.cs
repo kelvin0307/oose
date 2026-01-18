@@ -11,51 +11,51 @@ namespace Core.Services;
 
 public class CourseService(IRepository<Course> courseRepository, IMapper mapper) : ICourseService
 {
-    public async Task<Response<List<CourseDTO>>> GetAllCourses()
+    public async Task<Response<List<CourseDto>>> GetAllCourses()
     {
         try
         {
             var courses = await courseRepository.GetAll();
-            return Response<List<CourseDTO>>.Ok(courses.Select(x => x.ToDto(mapper)).ToList());
+            return Response<List<CourseDto>>.Ok(courses.Select(x => x.ToDto(mapper)).ToList());
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<List<CourseDTO>>.Fail("Invalid operation while fetching course", ResponseStatus.InvalidOperation);
+            return Response<List<CourseDto>>.Fail("Invalid operation while fetching course", ResponseStatus.InvalidOperation);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
             //TODO: Log exception
-            return Response<List<CourseDTO>>.Fail("An unexpected error occurred while fetching courses");
+            return Response<List<CourseDto>>.Fail("An unexpected error occurred while fetching courses");
         }
 
     }
 
-    public async Task<Response<CourseDTO>> GetCourseById(int id)
+    public async Task<Response<CourseDto>> GetCourseById(int id)
     {
         try
         {
             var course = await courseRepository.Get(id);
 
             return course != null
-                ? Response<CourseDTO>.Ok(course.ToDto(mapper))
-                : Response<CourseDTO>.NotFound("Course not found");
+                ? Response<CourseDto>.Ok(course.ToDto(mapper))
+                : Response<CourseDto>.NotFound("Course not found");
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
+            return Response<CourseDto>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("An unexpected error occurred while fetching the course");
+            return Response<CourseDto>.Fail("An unexpected error occurred while fetching the course");
         }
 
     }
 
-    public async Task<Response<CourseDTO>> CreateCourse(CreateCourseDto createCourseDto)
+    public async Task<Response<CourseDto>> CreateCourse(CreateCourseDto createCourseDto)
     {
         try
         {
@@ -63,44 +63,44 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
             course.Status = CourseStatus.Concept;
 
             var createdCourse = await courseRepository.CreateAndCommit(course);
-            return Response<CourseDTO>.Ok(createdCourse.ToDto(mapper));
+            return Response<CourseDto>.Ok(createdCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
+            return Response<CourseDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("An unexpected error occurred while updating the course");
+            return Response<CourseDto>.Fail("An unexpected error occurred while updating the course");
         }
 
     }
 
-    public async Task<Response<CourseDTO>> UpdateCourse(int id, UpdateCourseDto updateCourseDto)
+    public async Task<Response<CourseDto>> UpdateCourse(int id, UpdateCourseDto updateCourseDto)
     {
         try
         {
             var course = await courseRepository.Get(id);
             if (course == null)
-                return Response<CourseDTO>.NotFound("Course not found");
+                return Response<CourseDto>.NotFound("Course not found");
 
             course.Name = updateCourseDto.Name;
             course.Description = updateCourseDto.Description;
 
             var updatedCourse = await courseRepository.UpdateAndCommit(course);
-            return Response<CourseDTO>.Ok(updatedCourse.ToDto(mapper));
+            return Response<CourseDto>.Ok(updatedCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
+            return Response<CourseDto>.Fail("Invalid operation while updating course", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
             //TODO: Log exception
-            return Response<CourseDTO>.Fail("An unexpected error occurred while updating the course");
+            return Response<CourseDto>.Fail("An unexpected error occurred while updating the course");
         }
 
     }

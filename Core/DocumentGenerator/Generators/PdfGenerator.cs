@@ -9,7 +9,7 @@ public class PdfGenerator : IGenerator
 {
     public string ContentType => "application/pdf";
 
-    public DocumentDTO GenerateDocument(DocumentDataDTO documentData)
+    public DocumentDto GenerateDocument(DocumentDataDto documentData)
     {
         var document = Document.Create(container =>
         {
@@ -46,7 +46,7 @@ public class PdfGenerator : IGenerator
         // saving to the server
         //File.WriteAllBytes("output.pdf", pdfBytes);
 
-        return new DocumentDTO
+        return new DocumentDto
         {
             Document = document.GeneratePdf(),
             ContentType = ContentType,

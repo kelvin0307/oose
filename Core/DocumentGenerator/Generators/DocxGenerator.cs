@@ -9,7 +9,7 @@ public class DocXGenerator : IGenerator
 {
     public string ContentType => "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-    public DocumentDTO GenerateDocument(DocumentDataDTO documentData)
+    public DocumentDto GenerateDocument(DocumentDataDto documentData)
     {
         using var stream = new MemoryStream();
 
@@ -35,7 +35,7 @@ public class DocXGenerator : IGenerator
         // saving to the server
         //File.WriteAllBytes(documentData.Title, stream.ToArray());
 
-        return new DocumentDTO
+        return new DocumentDto
         {
             Document = stream.ToArray(),
             ContentType = ContentType,

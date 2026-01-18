@@ -9,24 +9,24 @@ namespace Core.Services;
 
 public class StudentService(IRepository<Class> classRepository, IRepository<Student> studentRepository, IMapper mapper) : IStudentService
 {
-    public async Task<Response<StudentDTO>> GetStudentById(int studentId)
+    public async Task<Response<StudentDto>> GetStudentById(int studentId)
     {
         try
         {
             var student = await studentRepository.Get(studentId);
             if (student == null)
-                return Response<StudentDTO>.NotFound("Student not found in this class");
+                return Response<StudentDto>.NotFound("Student not found in this class");
 
-            var studentDto = mapper.Map<StudentDTO>(student);
-            return Response<StudentDTO>.Ok(studentDto);
+            var studentDto = mapper.Map<StudentDto>(student);
+            return Response<StudentDto>.Ok(studentDto);
         }
         catch (InvalidOperationException)
         {
-            return Response<StudentDTO>.Fail("Invalid operation while fetching student", ResponseStatus.InvalidOperation);
+            return Response<StudentDto>.Fail("Invalid operation while fetching student", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
-            return Response<StudentDTO>.Fail("An unexpected error occurred while fetching the student");
+            return Response<StudentDto>.Fail("An unexpected error occurred while fetching the student");
         }
     }
 }

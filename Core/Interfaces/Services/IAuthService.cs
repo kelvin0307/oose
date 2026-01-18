@@ -5,5 +5,5 @@ namespace Core.Interfaces.Services;
 
 public interface IAuthService
 {
-    Task<Response<TeacherLoginDTO>> LoginTeacherByEmail(string email);
+    Task<Response<TeacherLoginDto>> LoginTeacherByEmail(string email);
 }

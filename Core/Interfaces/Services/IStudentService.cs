@@ -5,5 +5,5 @@ namespace Core.Interfaces.Services;
 
 public interface IStudentService
 {
-    Task<Response<StudentDTO>> GetStudentById(int studentId);
+    Task<Response<StudentDto>> GetStudentById(int studentId);
 }

@@ -5,7 +5,7 @@ namespace Core.Interfaces.Services;
 
 public interface IGradeService
 {
-    Task<Response<GradeDTO>> CreateGrade(CreateGradeDTO createGradeDTO);
-    Task<Response<GradeDTO>> UpdateGrade(UpdateGradeDTO updateGradeDTO);
-    Task<Response<List<GradeDTO>>> GetLatestGradesByClassAndExecution(int classId, int courseExecutionId);
+    Task<Response<GradeDto>> CreateGrade(CreateGradeDto createGradeDTO);
+    Task<Response<GradeDto>> UpdateGrade(UpdateGradeDto updateGradeDTO);
+    Task<Response<List<GradeDto>>> GetLatestGradesByClassAndExecution(int classId, int courseExecutionId);
 }

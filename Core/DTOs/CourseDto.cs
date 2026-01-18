@@ -2,7 +2,7 @@ using Domain.Enums;
 
 namespace Core.DTOs;
 
-public class CourseDTO
+public class CourseDto
 {
     public int Id { get; set; }
     public double EuropeanCredits { get; set; }

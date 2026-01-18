@@ -30,13 +30,13 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 1;
-        var planningDto = new PlanningDTO
+        var planningDto = new PlanningDto
         {
             Id = 1,
             Lessons = null
         };
 
-        var response = Response<PlanningDTO>.Ok(planningDto);
+        var response = Response<PlanningDto>.Ok(planningDto);
 
         planningServiceMock
             .Setup(s => s.GetPlanningByCourseId(courseId))
@@ -57,7 +57,7 @@ public class PlanningControllerTests
     {
         // Arrange
         var courseId = 999;
-        var response = Response<PlanningDTO>.NotFound("planning not found");
+        var response = Response<PlanningDto>.NotFound("planning not found");
 
         planningServiceMock
             .Setup(s => s.GetPlanningByCourseId(courseId))
@@ -98,14 +98,14 @@ public class PlanningControllerTests
         var documentType = DocumentTypes.Pdf;
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "application/pdf",
             DocumentName = "planning.pdf"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         planningServiceMock
             .Setup(s => s.GenerateDocument(courseId, documentType))
@@ -131,14 +131,14 @@ public class PlanningControllerTests
         var documentType = DocumentTypes.Csv;
         var documentBytes = new byte[] { 1, 2, 3 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "text/csv",
             DocumentName = "planning.csv"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         planningServiceMock
             .Setup(s => s.GenerateDocument(courseId, documentType))
@@ -162,14 +162,14 @@ public class PlanningControllerTests
         var documentType = DocumentTypes.Docx;
         var documentBytes = new byte[] { 1, 2, 3 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             DocumentName = "planning.docx"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         planningServiceMock
             .Setup(s => s.GenerateDocument(courseId, documentType))
@@ -190,7 +190,7 @@ public class PlanningControllerTests
         // Arrange
         var courseId = 999;
         var documentType = DocumentTypes.Pdf;
-        var response = Response<DocumentDTO>.Fail("Error generating planning document");
+        var response = Response<DocumentDto>.Fail("Error generating planning document");
 
         planningServiceMock
             .Setup(s => s.GenerateDocument(courseId, documentType))
@@ -210,24 +210,24 @@ public class PlanningControllerTests
         var documentBytes1 = new byte[] { 1, 2, 3 };
         var documentBytes2 = new byte[] { 4, 5, 6 };
 
-        var documentDto1 = new DocumentDTO
+        var documentDto1 = new DocumentDto
         {
             Document = documentBytes1,
             ContentType = "application/pdf",
             DocumentName = "planning1.pdf"
         };
 
-        var documentDto2 = new DocumentDTO
+        var documentDto2 = new DocumentDto
         {
             Document = documentBytes2,
             ContentType = "application/pdf",
             DocumentName = "planning2.pdf"
         };
 
-        var responses = new Queue<Response<DocumentDTO>>(new[]
+        var responses = new Queue<Response<DocumentDto>>(new[]
         {
-            Response<DocumentDTO>.Ok(documentDto1),
-            Response<DocumentDTO>.Ok(documentDto2)
+            Response<DocumentDto>.Ok(documentDto1),
+            Response<DocumentDto>.Ok(documentDto2)
         });
 
         planningServiceMock

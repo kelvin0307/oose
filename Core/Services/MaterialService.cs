@@ -10,7 +10,7 @@ using Domain.Models;
 
 namespace Core.Services;
 
-public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialService
+public class MaterialService : Generatable<Material, MaterialIdDto>, IMaterialService
 {
     private readonly IRepository<Material> materialRepository;
     private readonly IRepository<Lesson> lessonRepository;
@@ -23,7 +23,7 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
         this.mapper = mapper;
     }
 
-    public override Task<Response<DocumentDTO>> GenerateDocument(MaterialIdDTO materialId, DocumentTypes documentType)
+    public override Task<Response<DocumentDto>> GenerateDocument(MaterialIdDto materialId, DocumentTypes documentType)
     {
         try
         {
@@ -31,34 +31,34 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
 
             if (material == null)
             {
-                return Task.FromResult(Response<DocumentDTO>.Fail("Error generating material document"));
+                return Task.FromResult(Response<DocumentDto>.Fail("Error generating material document"));
             }
 
             var documentData = MapToDocumentDataDTO(material);
 
-            return Task.FromResult(Response<DocumentDTO>.Ok(CreateDocument(documentData, documentType)));
+            return Task.FromResult(Response<DocumentDto>.Ok(CreateDocument(documentData, documentType)));
         }
         catch (Exception ex)
         {
-            return Task.FromResult(Response<DocumentDTO>.Fail("Error generating material document" + ex.Message));
+            return Task.FromResult(Response<DocumentDto>.Fail("Error generating material document" + ex.Message));
         }
     }
 
-    protected override DocumentDataDTO MapToDocumentDataDTO(Material material)
+    protected override DocumentDataDto MapToDocumentDataDTO(Material material)
     {
         var dict = new Dictionary<string, string>
         {
             { "", material.Content }
         };
 
-        return new DocumentDataDTO()
+        return new DocumentDataDto()
         {
             Title = material.Name,
             Paragraphs = dict
         };
     }
 
-    public async Task<Response<MaterialDTO>> UpdateMaterial(UpdateMaterialDTO updatedMaterial)
+    public async Task<Response<MaterialDto>> UpdateMaterial(UpdateMaterialDto updatedMaterial)
     {
         try
         {
@@ -66,7 +66,7 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
 
             if (currentMaterial == null)
             {
-                return Response<MaterialDTO>.Fail("Material not found");
+                return Response<MaterialDto>.Fail("Material not found");
             }
 
             var newMaterial = new Material
@@ -81,15 +81,15 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
 
             await materialRepository.CreateAndCommit(newMaterial);
 
-            return Response<MaterialDTO>.Ok(mapper.Map<MaterialDTO>(newMaterial));
+            return Response<MaterialDto>.Ok(mapper.Map<MaterialDto>(newMaterial));
 
         }
         catch (Exception ex)
         {
-            return Response<MaterialDTO>.Fail("Error updating material: " + ex.Message);
+            return Response<MaterialDto>.Fail("Error updating material: " + ex.Message);
         }
     }
-    public async Task<Response<MaterialDTO>> CreateMaterial(CreateMaterialDTO createMaterialDTO)
+    public async Task<Response<MaterialDto>> CreateMaterial(CreateMaterialDto createMaterialDTO)
     {
         try
         {
@@ -97,7 +97,7 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
 
             if (lesson == null)
             {
-                return Response<MaterialDTO>.Fail("Lesson not found");
+                return Response<MaterialDto>.Fail("Lesson not found");
             }
             var allMaterials = await materialRepository.GetAll();
             var newId = allMaterials.OrderByDescending(x => x.Id).Select(x => x.Id).FirstOrDefault();
@@ -113,15 +113,15 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
 
             await materialRepository.CreateAndCommit(newMaterial);
 
-            return Response<MaterialDTO>.Ok(mapper.Map<MaterialDTO>(newMaterial));
+            return Response<MaterialDto>.Ok(mapper.Map<MaterialDto>(newMaterial));
 
         }
         catch (Exception ex)
         {
-            return Response<MaterialDTO>.Fail("Error creating material: " + ex.Message);
+            return Response<MaterialDto>.Fail("Error creating material: " + ex.Message);
         }
     }
-    public async Task<Response<IList<MaterialDTO>>> GetMaterialByLessonId(int lessonId)
+    public async Task<Response<IList<MaterialDto>>> GetMaterialByLessonId(int lessonId)
     {
         try
         {
@@ -132,11 +132,11 @@ public class MaterialService : Generatable<Material, MaterialIdDTO>, IMaterialSe
             .Select(g => g.OrderByDescending(m => m.Version).First())
             .ToList();
 
-            return Response<IList<MaterialDTO>>.Ok(mapper.Map<IList<MaterialDTO>>(latestMaterials));
+            return Response<IList<MaterialDto>>.Ok(mapper.Map<IList<MaterialDto>>(latestMaterials));
         }
         catch (Exception ex)
         {
-            return Response<IList<MaterialDTO>>.Fail("Error retrieving material: " + ex.Message);
+            return Response<IList<MaterialDto>>.Fail("Error retrieving material: " + ex.Message);
         }
     }
 

@@ -7,7 +7,7 @@ namespace Core.Services.Abstractions;
 public abstract class Generatable<Domain, Id>(IDocumentFactory documentFactory)
 {
     // should contain the full flow for generating a document
-    public abstract Task<Response<DocumentDTO>> GenerateDocument(Id id, DocumentTypes documentType);
+    public abstract Task<Response<DocumentDto>> GenerateDocument(Id id, DocumentTypes documentType);
 
     /// <summary>
     /// Implement this method to map your domain model to DocumentDataDTO, 
@@ -15,9 +15,9 @@ public abstract class Generatable<Domain, Id>(IDocumentFactory documentFactory)
     /// </summary>
     /// <param name="document"></param>
     /// <returns></returns>
-    protected abstract DocumentDataDTO MapToDocumentDataDTO(Domain document);
+    protected abstract DocumentDataDto MapToDocumentDataDTO(Domain document);
 
-    protected DocumentDTO CreateDocument(DocumentDataDTO documentData, DocumentTypes documentType)
+    protected DocumentDto CreateDocument(DocumentDataDto documentData, DocumentTypes documentType)
     {
         return documentFactory.GenerateDocument(documentData, documentType);
     }
