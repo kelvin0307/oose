@@ -17,4 +17,5 @@ public class NijmegenLessonDto
     public int SequenceNumber { get; set; }
     public TestType? TestVariant { get; set; }
     public int? PlanningId { get; set; }
+    public ICollection<int> LearningOutcomeIds { get; set; } = new List<int>();
 }
