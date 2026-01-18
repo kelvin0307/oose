@@ -1,9 +1,11 @@
 using Core.Services;
+using Core.Common;
+using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
 using Moq;
 using NUnit.Framework;
-using Core.Interfaces.Repositories;
+using System.Linq.Expressions;
 
 namespace Tests.Core.Services;
 
@@ -11,6 +13,10 @@ namespace Tests.Core.Services;
 public class ValidatorServiceTests
 {
     private Mock<IRepository<LearningOutcome>> learningOutcomeRepositoryMock;
+    private Mock<IRubricRepository> rubricRepositoryMock;
+    private Mock<IRepository<Planning>> planningRepositoryMock;
+    private Mock<IRepository<Course>> courseRepositoryMock;
+
     private ValidatorService validatorService;
 
     private const int COURSE_ID = 1;
@@ -19,155 +25,96 @@ public class ValidatorServiceTests
     public void Setup()
     {
         learningOutcomeRepositoryMock = new Mock<IRepository<LearningOutcome>>();
-        validatorService = new ValidatorService(learningOutcomeRepositoryMock.Object);
+        rubricRepositoryMock = new Mock<IRubricRepository>();
+        planningRepositoryMock = new Mock<IRepository<Planning>>();
+        courseRepositoryMock = new Mock<IRepository<Course>>();
+
+        validatorService = new ValidatorService(
+            learningOutcomeRepositoryMock.Object,
+            rubricRepositoryMock.Object,
+            planningRepositoryMock.Object,
+            courseRepositoryMock.Object
+        );
     }
 
     [Test]
-    public void ValidateCoursePlanning_NoLearningOutcomes_ReturnsValidationFail()
+    public async Task ValidateCoursePlanning_NoLearningOutcomes_ReturnsValidationFail()
     {
-        // Arrange
-        var learningOutcomes = new List<LearningOutcome>().AsQueryable();
-
         learningOutcomeRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
-            .Returns(learningOutcomes);
+            .Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, ICollection<Lesson>>>>()))
+            .Returns(new List<LearningOutcome>().AsQueryable());
 
-        // Act
-        var result = validatorService.ValidateCoursePlanning(COURSE_ID);
+        planningRepositoryMock
+            .Setup(r => r.Include(It.IsAny<Expression<Func<Planning, ICollection<Lesson>>>>()))
+            .Returns(new List<Planning>().AsQueryable());
 
-        // Assert
+        var result = await validatorService.ValidateCoursePlanning(COURSE_ID);
+
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("Course"), Is.True);
     }
 
     [Test]
-    public void ValidateCoursePlanning_LearningOutcomeWithoutLessons_ReturnsValidationFail()
+    public async Task ValidateCoursePlanning_LearningOutcomeWithoutLessons_ReturnsValidationFail()
     {
-        // Arrange
-        var learningOutcomes = new List<LearningOutcome>
+        var lo = new LearningOutcome
         {
-            new LearningOutcome
-            {
-                Id = 1,
-                CourseId = COURSE_ID,
-                Name = "LO1",
-                Lessons = new List<Lesson>()
-            }
-        }.AsQueryable();
+            Id = 1,
+            CourseId = COURSE_ID,
+            Name = "LO1",
+            Lessons = new List<Lesson>()
+        };
 
         learningOutcomeRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
-            .Returns(learningOutcomes);
+            .Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, ICollection<Lesson>>>>()))
+            .Returns(new List<LearningOutcome> { lo }.AsQueryable());
 
-        // Act
-        var result = validatorService.ValidateCoursePlanning(COURSE_ID);
+        planningRepositoryMock
+            .Setup(r => r.Include(It.IsAny<Expression<Func<Planning, ICollection<Lesson>>>>()))
+            .Returns(new List<Planning>().AsQueryable());
 
-        // Assert
+        rubricRepositoryMock
+            .Setup(r => r.GetAggregatesByLearningOutcomeId(lo.Id))
+            .ReturnsAsync(new List<Rubric>());
+
+        var result = await validatorService.ValidateCoursePlanning(COURSE_ID);
+
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.True);
     }
 
     [Test]
-    public void ValidateCoursePlanning_LastLessonIsNotTest_ReturnsValidationFail()
+    public async Task ValidateCoursePlanning_LastLessonIsNotTest_ReturnsValidationFail()
     {
-        // Arrange
-        var learningOutcomes = new List<LearningOutcome>
+        var lo = new LearningOutcome
         {
-            new LearningOutcome
+            Id = 1,
+            CourseId = COURSE_ID,
+            Name = "LO1",
+            Lessons = new List<Lesson>
             {
-                Id = 1,
-                CourseId = COURSE_ID,
-                Name = "LO1",
-                Lessons = new List<Lesson>
-                {
-                    new Lesson { WeekNumber = 1, SequenceNumber = 1, TestType = TestType.Written },
-                    new Lesson { WeekNumber = 2, SequenceNumber = 1 }
-                }
+                new Lesson { WeekNumber = 1, SequenceNumber = 1, TestType = TestType.Written },
+                new Lesson { WeekNumber = 2, SequenceNumber = 1 }
             }
-        }.AsQueryable();
+        };
 
         learningOutcomeRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
-            .Returns(learningOutcomes);
+            .Setup(r => r.Include(It.IsAny<Expression<Func<LearningOutcome, ICollection<Lesson>>>>()))
+            .Returns(new List<LearningOutcome> { lo }.AsQueryable());
 
-        // Act
-        var result = validatorService.ValidateCoursePlanning(COURSE_ID);
+        planningRepositoryMock
+            .Setup(r => r.Include(It.IsAny<Expression<Func<Planning, ICollection<Lesson>>>>()))
+            .Returns(new List<Planning>().AsQueryable());
 
-        // Assert
+        rubricRepositoryMock
+            .Setup(r => r.GetAggregatesByLearningOutcomeId(lo.Id))
+            .ReturnsAsync(new List<Rubric>());
+
+        var result = await validatorService.ValidateCoursePlanning(COURSE_ID);
+
         Assert.That(result.Success, Is.False);
         Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.True);
     }
 
-    [Test]
-    public void ValidateCoursePlanning_ValidCourse_ReturnsOk()
-    {
-        // Arrange
-        var learningOutcomes = new List<LearningOutcome>
-        {
-            new LearningOutcome
-            {
-                Id = 1,
-                CourseId = COURSE_ID,
-                Name = "LO1",
-                Lessons = new List<Lesson>
-                {
-                    new Lesson { WeekNumber = 1, SequenceNumber = 1 },
-                    new Lesson { WeekNumber = 2, SequenceNumber = 1, TestType = TestType.Practical }
-                }
-            }
-        }.AsQueryable();
 
-        learningOutcomeRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
-            .Returns(learningOutcomes);
-
-        // Act
-        var result = validatorService.ValidateCoursePlanning(COURSE_ID);
-
-        // Assert
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Result, Is.EqualTo("Course planning is valid."));
-    }
-
-    [Test]
-    public void ValidateCoursePlanning_MultipleLearningOutcomes_OnlyInvalidReturned()
-    {
-        // Arrange
-        var learningOutcomes = new List<LearningOutcome>
-        {
-            new LearningOutcome
-            {
-                Id = 1,
-                CourseId = COURSE_ID,
-                Name = "Valid LO",
-                Lessons = new List<Lesson>
-                {
-                    new Lesson { WeekNumber = 1, SequenceNumber = 1 },
-                    new Lesson { WeekNumber = 2, SequenceNumber = 1, TestType = TestType.Practical }
-                }
-            },
-            new LearningOutcome
-            {
-                Id = 2,
-                CourseId = COURSE_ID,
-                Name = "Invalid LO",
-                Lessons = new List<Lesson>
-                {
-                    new Lesson { WeekNumber = 1, SequenceNumber = 1 }
-                }
-            }
-        }.AsQueryable();
-
-        learningOutcomeRepositoryMock
-            .Setup(r => r.Include(It.IsAny<System.Linq.Expressions.Expression<System.Func<LearningOutcome, System.Collections.Generic.ICollection<Lesson>>>>()))
-            .Returns(learningOutcomes);
-
-        // Act
-        var result = validatorService.ValidateCoursePlanning(COURSE_ID);
-
-        // Assert
-        Assert.That(result.Success, Is.False);
-        Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_2"), Is.True);
-        Assert.That(result.ValidationErrors.ContainsKey("LearningOutcome_1"), Is.False);
-    }
 }

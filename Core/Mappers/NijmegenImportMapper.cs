@@ -31,7 +31,7 @@ public class NijmegenImportMapper
                 EndQualification = nijmegenLo.Eindkwalificatie,
                 Course = course,
                 Lessons = new List<Lesson>(),
-                AssessmentDimensions = new List<AssessmentDimension>()
+                Rubrics = new List<Rubric>()
             };
 
             course.LearningOutcomes.Add(learningOutcome);
@@ -77,8 +77,9 @@ public class NijmegenImportMapper
                     }
 
                     rubric.AssessmentDimensions.Add(assessmentDimension);
-                    learningOutcome.AssessmentDimensions.Add(assessmentDimension);
                 }
+                learningOutcome.Rubrics.Add(rubric);
+
             }
         }
 

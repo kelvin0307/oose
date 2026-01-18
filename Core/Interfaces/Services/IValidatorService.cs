@@ -10,7 +10,7 @@ namespace Core.Interfaces.Services
 {
     public interface IValidatorService
     {
-        Response<string> ValidateCoursePlanning(int Courseid);
+        Task<Response<string>> ValidateCoursePlanning(int Courseid);
 
     }
 }
