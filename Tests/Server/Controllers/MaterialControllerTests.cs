@@ -313,9 +313,9 @@ public class MaterialControllerTests
         var result = await materialController.CreateMaterial(createMaterialDTO);
 
         // Assert
-        Assert.That(result, Is.TypeOf<OkObjectResult>());
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
+        Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
+        var okResult = result as CreatedAtActionResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(201));
         Assert.That(okResult.Value, Is.EqualTo(createdMaterialDTO));
         materialServiceMock.Verify(s => s.CreateMaterial(createMaterialDTO), Times.Once);
     }
@@ -374,8 +374,8 @@ public class MaterialControllerTests
         var result = await materialController.CreateMaterial(createMaterialDTO);
 
         // Assert
-        Assert.That(result, Is.TypeOf<OkObjectResult>());
-        var okResult = result as OkObjectResult;
+        Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
+        var okResult = result as CreatedAtActionResult;
         Assert.That(okResult!.Value, Is.EqualTo(createdMaterialDTO));
     }
 
@@ -413,8 +413,8 @@ public class MaterialControllerTests
         var result2 = await materialController.CreateMaterial(createMaterialDTO2);
 
         // Assert
-        Assert.That(result1, Is.TypeOf<OkObjectResult>());
-        Assert.That(result2, Is.TypeOf<OkObjectResult>());
+        Assert.That(result1, Is.TypeOf<CreatedAtActionResult>());
+        Assert.That(result2, Is.TypeOf<CreatedAtActionResult>());
         materialServiceMock.Verify(s => s.CreateMaterial(It.IsAny<CreateMaterialDTO>()), Times.Exactly(2));
     }
 
@@ -449,7 +449,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -478,7 +478,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -504,7 +504,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -537,7 +537,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -573,7 +573,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -608,7 +608,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.UpdateMaterial(updateMaterialDTO);
+        var result = await materialController.UpdateMaterial(1, updateMaterialDTO);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -638,7 +638,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.GetAllByLessonId(lessonId);
+        var result = await materialController.GetMaterialByLessonId(lessonId);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -663,7 +663,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.GetAllByLessonId(lessonId);
+        var result = await materialController.GetMaterialByLessonId(lessonId);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -691,7 +691,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.GetAllByLessonId(lessonId);
+        var result = await materialController.GetMaterialByLessonId(lessonId);
 
         // Assert
         var okResult = result as OkObjectResult;
@@ -711,7 +711,7 @@ public class MaterialControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await materialController.GetAllByLessonId(lessonId);
+        var result = await materialController.GetMaterialByLessonId(lessonId);
 
         // Assert
         Assert.That(result, Is.TypeOf<ObjectResult>());
@@ -745,8 +745,8 @@ public class MaterialControllerTests
             .ReturnsAsync(Response<IList<MaterialDTO>>.Ok(materials2));
 
         // Act
-        var result1 = await materialController.GetAllByLessonId(lessonId1);
-        var result2 = await materialController.GetAllByLessonId(lessonId2);
+        var result1 = await materialController.GetMaterialByLessonId(lessonId1);
+        var result2 = await materialController.GetMaterialByLessonId(lessonId2);
 
         // Assert
         var okResult1 = result1 as OkObjectResult;
@@ -776,10 +776,9 @@ public class MaterialControllerTests
         var result = await materialController.DeleteMaterial(materialId);
 
         // Assert
-        Assert.That(result, Is.TypeOf<OkObjectResult>());
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        Assert.That(okResult.Value, Is.True);
+        Assert.That(result, Is.TypeOf<NoContentResult>());
+        var okResult = result as NoContentResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(204));
         materialServiceMock.Verify(s => s.DeleteMaterial(materialId), Times.Once);
     }
 
@@ -798,9 +797,7 @@ public class MaterialControllerTests
         var result = await materialController.DeleteMaterial(materialId);
 
         // Assert
-        Assert.That(result, Is.TypeOf<OkObjectResult>());
-        var okResult = result as OkObjectResult;
-        Assert.That(okResult!.Value, Is.True);
+        Assert.That(result, Is.TypeOf<NoContentResult>());
     }
 
     [Test]
@@ -839,7 +836,7 @@ public class MaterialControllerTests
         foreach (var id in materialIds)
         {
             var result = await materialController.DeleteMaterial(id);
-            Assert.That(result, Is.TypeOf<OkObjectResult>());
+            Assert.That(result, Is.TypeOf<NoContentResult>());
         }
 
         materialServiceMock.Verify(s => s.DeleteMaterial(It.IsAny<int>()), Times.Exactly(3));
