@@ -1,14 +1,13 @@
 using Core.DTOs.Imports.Nijmegen;
-using Domain.Enums;
 using Domain.Models;
+using Domain.Enums;
 
-namespace Core.Import.Nijmegen;
+namespace Core.Mappers;
 
-public static class NijmegenImportMapper
+public class NijmegenImportMapper
 {
-    
     public static Course Map(NijmegenImportDataDto importData)
-         {
+    {
         if (importData?.Course == null)
             throw new ArgumentNullException(nameof(importData), "Import data or course cannot be null");
 
@@ -16,6 +15,7 @@ public static class NijmegenImportMapper
         {
             Name = importData.Course.Naam ?? string.Empty,
             Description = importData.Course.Beschrijving ?? string.Empty,
+            Status = (CourseStatus)importData.Course.Status,
             LearningOutcomes = new List<LearningOutcome>(),
             Planning = null
         };
@@ -102,6 +102,7 @@ public static class NijmegenImportMapper
                     {
                         WeekNumber = nijmegenLesson.Weeknummer,
                         Name = nijmegenLesson.Naam,
+                        Description = string.Empty,
                         SequenceNumber = nijmegenLesson.SequenceNumber,
                         TestType = nijmegenLesson.TestVariant,
                         Planning = planning,
@@ -109,6 +110,19 @@ public static class NijmegenImportMapper
                         LearningOutcomes = new List<LearningOutcome>(),
                         Grades = new List<Grade>()
                     };
+
+                    // Link lesson to learning outcomes
+                    if (nijmegenLesson.LearningOutcomeIds != null)
+                    {
+                        foreach (var learningOutcomeId in nijmegenLesson.LearningOutcomeIds)
+                        {
+                            if (learningOutcomesMap.TryGetValue(learningOutcomeId, out var linkedLearningOutcome))
+                            {
+                                lesson.LearningOutcomes.Add(linkedLearningOutcome);
+                                linkedLearningOutcome.Lessons.Add(lesson);
+                            }
+                        }
+                    }
 
                     planning.Lessons.Add(lesson);
                 }

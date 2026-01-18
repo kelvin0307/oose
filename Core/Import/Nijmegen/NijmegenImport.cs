@@ -1,5 +1,6 @@
 using Core.Interfaces.Adapters;
 using Core.DTOs.Imports.Nijmegen;
+using Core.Mappers;
 using Domain.Models;
 
 namespace Core.Import.Nijmegen;

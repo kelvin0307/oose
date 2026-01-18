@@ -4,6 +4,7 @@
     <Compile Remove="Configurations\**" />
     <EmbeddedResource Remove="Configurations\**" />
     <None Remove="Configurations\**" />
+    <Compile Remove="Migrations\DataContextModelSnapshot.cs" />
   </ItemGroup>
 
   <ItemGroup>
