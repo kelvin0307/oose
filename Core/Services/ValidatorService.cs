@@ -19,7 +19,6 @@ public class ValidatorService(
     {
         var validationErrors = new Dictionary<string, string[]>();
 
-        // 1️⃣ Haal planning met lessons op
         var planningWithLessons = planningRepository
             .Include(x => x.Lessons)
             .Where(x => x.CourseId == courseId)
@@ -33,7 +32,6 @@ public class ValidatorService(
             );
         }
 
-        // 2️⃣ Haal learning outcomes met lessons op
         var learningOutcomesWithLessons = learningOutcomeRepository
             .Include(x => x.Lessons)
             .Where(x => x.CourseId == courseId)
@@ -49,12 +47,10 @@ public class ValidatorService(
             return Response<string>.ValidationFail(validationErrors);
         }
 
-        // 3️⃣ Check per LearningOutcome
         foreach (var learningOutcome in learningOutcomesWithLessons)
         {
             var learningOutcomeErrors = new List<string>();
 
-            // Minimum lessons check
             if (learningOutcome.Lessons.Count < MINIMUM_LESSONS)
             {
                 learningOutcomeErrors.Add(
@@ -62,7 +58,6 @@ public class ValidatorService(
                 );
             }
 
-            // Laatste les moet een toets zijn
             var lastLesson = learningOutcome.Lessons
                 .OrderByDescending(l => l.WeekNumber)
                 .ThenByDescending(l => l.SequenceNumber)
@@ -83,7 +78,6 @@ public class ValidatorService(
                 );
             }
 
-            // 4️⃣ Rubrics & assessment dimensions
             var rubrics = await rubricRepository
                 .GetAggregatesByLearningOutcomeId(learningOutcome.Id);
 
@@ -129,7 +123,6 @@ public class ValidatorService(
             }
         }
 
-        // 5️⃣ Lessons mogen alleen LearningOutcomes van dezelfde course bevatten
         if (planningWithLessons?.Lessons != null)
         {
             foreach (var lesson in planningWithLessons.Lessons)
@@ -152,7 +145,6 @@ public class ValidatorService(
             }
         }
 
-        // 6️⃣ Zet course status op Validated als alles klopt
         if (!validationErrors.Any())
         {
             var course = courseRepository
@@ -166,7 +158,6 @@ public class ValidatorService(
             }
         }
 
-        // 7️⃣ Resultaat
         return validationErrors.Any()
             ? Response<string>.ValidationFail(validationErrors)
             : Response<string>.Ok("Course planning is valid.");
