@@ -3,9 +3,8 @@ using Core.Common;
 using Core.DTOs;
 using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Adapters;
-using Data.Interfaces.Repositories;
 using Core.Interfaces.Services;
-using Core.DTOs.Imports.Nijmegen;
+using Data.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
 
@@ -32,13 +31,13 @@ public class ImportService<TImportDto>(IImportAdapter<TImportDto> adapter, IRepo
                 return Response<CourseDTO>.Fail("Course could not be created");
             }
             return Response<CourseDTO>.Ok(createdCourse.ToDto(mapper));
-        } 
+        }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
             return Response<CourseDTO>.Fail("Invalid operation while deleting rubric", ResponseStatus.InvalidOperation);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //TODO: Log exception
             return Response<CourseDTO>.Fail("An unexpected error occurred while deleting the rubric");

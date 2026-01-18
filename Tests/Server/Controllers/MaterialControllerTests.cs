@@ -1,6 +1,6 @@
 using Core.Common;
 using Core.DTOs;
-using Core.Interfaces;
+using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -376,7 +376,9 @@ public class MaterialControllerTests
         // Assert
         Assert.That(result, Is.TypeOf<CreatedAtActionResult>());
         var okResult = result as CreatedAtActionResult;
+        Assert.That(okResult!.StatusCode, Is.EqualTo(201));
         Assert.That(okResult!.Value, Is.EqualTo(createdMaterialDTO));
+
     }
 
     [Test]
@@ -426,9 +428,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithValidData_ReturnsOkResponse()
     {
         // Arrange
+        var materialId = 1;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Version = 1,
             Name = "Updated Material",
             Content = "Updated content"
@@ -436,7 +439,7 @@ public class MaterialControllerTests
 
         var updatedMaterialDTO = new MaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Name = "Updated Material",
             Content = "Updated content",
             Version = 2
@@ -463,9 +466,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithNonExistentMaterial_ReturnsBadRequest()
     {
         // Arrange
+        var materialId = 999;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 999,
+            Id = materialId,
             Version = 1,
             Name = "Updated Material",
             Content = "Updated content"
@@ -489,9 +493,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithIncorrectVersion_ReturnsBadRequest()
     {
         // Arrange
+        var materialId = 1;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Version = 1,
             Name = "Updated Material",
             Content = "Updated content"
@@ -514,9 +519,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithValidVersionIncrement_ReturnsUpdatedVersion()
     {
         // Arrange
+        var materialId = 1;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Version = 5,
             Name = "Updated Material",
             Content = "Updated content"
@@ -524,7 +530,7 @@ public class MaterialControllerTests
 
         var updatedMaterialDTO = new MaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Name = "Updated Material",
             Content = "Updated content",
             Version = 6
@@ -550,9 +556,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithNameChange_ReturnsUpdatedName()
     {
         // Arrange
+        var materialId = 1;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Version = 1,
             Name = "New Name",
             Content = "Same content"
@@ -560,7 +567,7 @@ public class MaterialControllerTests
 
         var updatedMaterialDTO = new MaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Name = "New Name",
             Content = "Same content",
             Version = 2
@@ -585,9 +592,10 @@ public class MaterialControllerTests
     public async Task UpdateMaterial_WithContentChange_ReturnsUpdatedContent()
     {
         // Arrange
+        var materialId = 1;
         var updateMaterialDTO = new UpdateMaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Version = 1,
             Name = "Same name",
             Content = "New content"
@@ -595,7 +603,7 @@ public class MaterialControllerTests
 
         var updatedMaterialDTO = new MaterialDTO
         {
-            Id = 1,
+            Id = materialId,
             Name = "Same name",
             Content = "New content",
             Version = 2
@@ -621,7 +629,7 @@ public class MaterialControllerTests
     #region GetMaterialByLessonId Tests
 
     [Test]
-    public async Task GetAllByLessonId_WithValidLessonId_ReturnsOkResponse()
+    public async Task GetMaterialByLessonId_WithValidLessonId_ReturnsOkResponse()
     {
         // Arrange
         var lessonId = 1;
@@ -650,7 +658,7 @@ public class MaterialControllerTests
     }
 
     [Test]
-    public async Task GetAllByLessonId_WithNoMaterials_ReturnsEmptyList()
+    public async Task GetMaterialByLessonId_WithNoMaterials_ReturnsEmptyList()
     {
         // Arrange
         var lessonId = 999;
@@ -673,7 +681,7 @@ public class MaterialControllerTests
     }
 
     [Test]
-    public async Task GetAllByLessonId_WithMultipleMaterials_ReturnsAllMaterials()
+    public async Task GetMaterialByLessonId_WithMultipleMaterials_ReturnsAllMaterials()
     {
         // Arrange
         var lessonId = 1;
@@ -700,7 +708,7 @@ public class MaterialControllerTests
     }
 
     [Test]
-    public async Task GetAllByLessonId_WithFailedResponse_ReturnsErrorStatus()
+    public async Task GetMaterialByLessonId_WithFailedResponse_ReturnsErrorStatus()
     {
         // Arrange
         var lessonId = 1;
@@ -719,7 +727,7 @@ public class MaterialControllerTests
     }
 
     [Test]
-    public async Task GetAllByLessonId_WithDifferentLessonIds_ReturnsCorrectMaterials()
+    public async Task GetMaterialByLessonId_WithDifferentLessonIds_ReturnsCorrectMaterials()
     {
         // Arrange
         var lessonId1 = 1;

@@ -1,5 +1,5 @@
 ﻿using Core.DTOs;
-using Core.Interfaces;
+using Core.Interfaces.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 namespace Server.Controllers;
