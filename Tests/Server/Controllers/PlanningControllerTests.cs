@@ -1,4 +1,3 @@
-using Core.Interfaces;
 using Core.Common;
 using Core.DTOs;
 using Domain.Enums;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using Server.Controllers;
+using Core.Interfaces.Services;
 
 namespace Tests.Server.Controllers;
 
@@ -26,7 +26,7 @@ public class PlanningControllerTests
     #region Get Tests
 
     [Test]
-    public void Get_WithValidCourseId_ReturnsOkResponse()
+    public void GetPlanningByCourseId_WithValidCourseId_ReturnsOkResponse()
     {
         // Arrange
         var courseId = 1;
@@ -43,7 +43,7 @@ public class PlanningControllerTests
             .Returns(response);
 
         // Act
-        var result = planningController.Get(courseId);
+        var result = planningController.GetPlanningByCourseId(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -53,7 +53,7 @@ public class PlanningControllerTests
     }
 
     [Test]
-    public void Get_WithNonExistentCourseId_ReturnsNotFound()
+    public void GetPlanningByCourseId_WithNonExistentCourseId_ReturnsNotFound()
     {
         // Arrange
         var courseId = 999;
@@ -64,7 +64,7 @@ public class PlanningControllerTests
             .Returns(response);
 
         // Act
-        var result = planningController.Get(courseId);
+        var result = planningController.GetPlanningByCourseId(courseId);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -72,7 +72,7 @@ public class PlanningControllerTests
     }
 
     [Test]
-    public void Get_WhenServiceThrowsException_ThrowsException()
+    public void GetPlanningByCourseId_WhenServiceThrowsException_ThrowsException()
     {
         // Arrange
         var courseId = 1;
@@ -82,7 +82,7 @@ public class PlanningControllerTests
             .Throws(new Exception("Service error"));
 
         // Act & Assert
-        Assert.Throws<Exception>(() => planningController.Get(courseId));
+        Assert.Throws<Exception>(() => planningController.GetPlanningByCourseId(courseId));
         planningServiceMock.Verify(s => s.GetPlanningByCourseId(courseId), Times.Once);
     }
 

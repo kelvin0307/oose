@@ -11,7 +11,9 @@ public class MappingProfile : Profile
         CreateMap<Material, MaterialDTO>().ReverseMap();
         CreateMap<Course, CourseDTO>().ReverseMap();
         CreateMap<CreateCourseDto, Course>();
-        CreateMap<Lesson, LessonDTO>();
+        CreateMap<Lesson, LessonDTO>().ReverseMap();
+        CreateMap<CreateLessonDTO, Lesson>();
+        CreateMap<UpdateLessonDTO, Lesson>();
         
         CreateMap<Rubric, RubricDto>().ReverseMap();
         CreateMap<AssessmentDimension, AssessmentDimensionDto>().ReverseMap();

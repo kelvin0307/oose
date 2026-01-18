@@ -2,7 +2,7 @@
 using Core.DTOs;
 using Domain.Enums;
 
-namespace Core.Interfaces;
+namespace Core.Interfaces.Services;
 public interface IPlanningService
 {
     Response<PlanningDTO> GetPlanningByCourseId(int courseId);
