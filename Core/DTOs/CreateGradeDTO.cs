@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class CreateGradeDTO
+public class CreateGradeDto
 {
     public string Grade { get; set; } = string.Empty; // numeric string or letter
     public string? Feedback { get; set; }

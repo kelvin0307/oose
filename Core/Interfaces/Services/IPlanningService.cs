@@ -5,7 +5,7 @@ using Domain.Enums;
 namespace Core.Interfaces.Services;
 public interface IPlanningService
 {
-    Response<PlanningDTO> GetPlanningByCourseId(int courseId);
-    Task<Response<DocumentDTO>> GenerateDocument(int courseId, DocumentTypes documentType);
+    Response<PlanningDto> GetPlanningByCourseId(int courseId);
+    Task<Response<DocumentDto>> GenerateDocument(int courseId, DocumentTypes documentType);
 
 }

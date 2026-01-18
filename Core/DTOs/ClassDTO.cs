@@ -1,9 +1,9 @@
 ﻿namespace Core.DTOs;
 
-public class ClassDTO
+public class ClassDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string ClassCode { get; set; } = string.Empty;
-    public List<StudentDTO>? Students { get; set; }
+    public List<StudentDto>? Students { get; set; }
 }

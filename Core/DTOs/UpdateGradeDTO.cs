@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class UpdateGradeDTO
+public class UpdateGradeDto
 {
     public int Id { get; set; }
     public string? Grade { get; set; } = string.Empty;

@@ -10,7 +10,7 @@ public class CsvGenerator : IGenerator
 {
     public string ContentType => "text/csv";
 
-    public DocumentDTO GenerateDocument(DocumentDataDTO documentData)
+    public DocumentDto GenerateDocument(DocumentDataDto documentData)
     {
 
 
@@ -23,7 +23,7 @@ public class CsvGenerator : IGenerator
             writer.Flush();
         }
 
-        return new DocumentDTO()
+        return new DocumentDto()
         {
             ContentType = ContentType,
             Document = ms.ToArray(),

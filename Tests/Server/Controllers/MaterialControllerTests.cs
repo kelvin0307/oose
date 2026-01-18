@@ -28,18 +28,18 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndPdfType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes = new byte[] { 1, 2, 3, 4, 5 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "application/pdf",
             DocumentName = "material.pdf"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId, documentType))
@@ -61,18 +61,18 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndCsvType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Csv;
         var documentBytes = new byte[] { 1, 2, 3 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "text/csv",
             DocumentName = "material.csv"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId, documentType))
@@ -93,18 +93,18 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithValidMaterialIdAndDocxType_ReturnsFileResult()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Docx;
         var documentBytes = new byte[] { 1, 2, 3 };
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             DocumentName = "material.docx"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId, documentType))
@@ -124,9 +124,9 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithNonExistentMaterialId_ThrowsExceptionOrReturnsError()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 999, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 999, Version = 1 };
         var documentType = DocumentTypes.Pdf;
-        var response = Response<DocumentDTO>.Fail("Error generating material document");
+        var response = Response<DocumentDto>.Fail("Error generating material document");
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId, documentType))
@@ -146,25 +146,25 @@ public class MaterialControllerTests
         // Arrange
         var documentType = DocumentTypes.Pdf;
 
-        var materialId1 = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
-        var materialId2 = new MaterialIdDTO() { MaterialId = 2, Version = 1 };
-        var materialId3 = new MaterialIdDTO() { MaterialId = 3, Version = 1 };
+        var materialId1 = new MaterialIdDto() { MaterialId = 1, Version = 1 };
+        var materialId2 = new MaterialIdDto() { MaterialId = 2, Version = 1 };
+        var materialId3 = new MaterialIdDto() { MaterialId = 3, Version = 1 };
 
-        var documentDto1 = new DocumentDTO
+        var documentDto1 = new DocumentDto
         {
             Document = new byte[] { 1, 2, 3 },
             ContentType = "application/pdf",
             DocumentName = "material1.pdf"
         };
 
-        var documentDto2 = new DocumentDTO
+        var documentDto2 = new DocumentDto
         {
             Document = new byte[] { 2, 2, 3 },
             ContentType = "application/pdf",
             DocumentName = "material2.pdf"
         };
 
-        var documentDto3 = new DocumentDTO
+        var documentDto3 = new DocumentDto
         {
             Document = new byte[] { 3, 2, 3 },
             ContentType = "application/pdf",
@@ -173,15 +173,15 @@ public class MaterialControllerTests
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId1, documentType))
-            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto1));
+            .ReturnsAsync(Response<DocumentDto>.Ok(documentDto1));
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId2, documentType))
-            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto2));
+            .ReturnsAsync(Response<DocumentDto>.Ok(documentDto2));
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId3, documentType))
-            .ReturnsAsync(Response<DocumentDTO>.Ok(documentDto3));
+            .ReturnsAsync(Response<DocumentDto>.Ok(documentDto3));
 
         // Act & Assert
         var result1 = await materialController.GenerateDocument(materialId1, documentType);
@@ -205,7 +205,7 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithLargeDocument_ReturnsFileWithCorrectSize()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes = new byte[10000]; // 10KB document
         for (int i = 0; i < documentBytes.Length; i++)
@@ -213,14 +213,14 @@ public class MaterialControllerTests
             documentBytes[i] = (byte)(i % 256);
         }
 
-        var documentDto = new DocumentDTO
+        var documentDto = new DocumentDto
         {
             Document = documentBytes,
             ContentType = "application/pdf",
             DocumentName = "large_material.pdf"
         };
 
-        var response = Response<DocumentDTO>.Ok(documentDto);
+        var response = Response<DocumentDto>.Ok(documentDto);
 
         materialServiceMock
             .Setup(s => s.GenerateDocument(materialId, documentType))
@@ -239,29 +239,29 @@ public class MaterialControllerTests
     public async Task GenerateDocument_WithMultipleCalls_EachReturnsSeparateFile()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var documentBytes1 = new byte[] { 1, 2, 3 };
         var documentBytes2 = new byte[] { 4, 5, 6 };
 
-        var documentDto1 = new DocumentDTO
+        var documentDto1 = new DocumentDto
         {
             Document = documentBytes1,
             ContentType = "application/pdf",
             DocumentName = "material1.pdf"
         };
 
-        var documentDto2 = new DocumentDTO
+        var documentDto2 = new DocumentDto
         {
             Document = documentBytes2,
             ContentType = "application/pdf",
             DocumentName = "material2.pdf"
         };
 
-        var responses = new Queue<Response<DocumentDTO>>(new[]
+        var responses = new Queue<Response<DocumentDto>>(new[]
         {
-            Response<DocumentDTO>.Ok(documentDto1),
-            Response<DocumentDTO>.Ok(documentDto2)
+            Response<DocumentDto>.Ok(documentDto1),
+            Response<DocumentDto>.Ok(documentDto2)
         });
 
         materialServiceMock
@@ -288,14 +288,14 @@ public class MaterialControllerTests
     public async Task CreateMaterial_WithValidData_ReturnsOkResponse()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "New Material",
             Content = "Material content",
             LessonId = 1
         };
 
-        var createdMaterialDTO = new MaterialDTO
+        var createdMaterialDTO = new MaterialDto
         {
             Id = 1,
             Name = "New Material",
@@ -303,7 +303,7 @@ public class MaterialControllerTests
             Version = 1
         };
 
-        var response = Response<MaterialDTO>.Ok(createdMaterialDTO);
+        var response = Response<MaterialDto>.Ok(createdMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.CreateMaterial(createMaterialDTO))
@@ -324,14 +324,14 @@ public class MaterialControllerTests
     public async Task CreateMaterial_WithInvalidLesson_ReturnsBadRequest()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "New Material",
             Content = "Material content",
             LessonId = 999
         };
 
-        var response = Response<MaterialDTO>.Fail("Lesson not found");
+        var response = Response<MaterialDto>.Fail("Lesson not found");
 
         materialServiceMock
             .Setup(s => s.CreateMaterial(createMaterialDTO))
@@ -349,14 +349,14 @@ public class MaterialControllerTests
     public async Task CreateMaterial_WithEmptyName_StillCreates()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "",
             Content = "Material content",
             LessonId = 1
         };
 
-        var createdMaterialDTO = new MaterialDTO
+        var createdMaterialDTO = new MaterialDto
         {
             Id = 1,
             Name = "",
@@ -364,7 +364,7 @@ public class MaterialControllerTests
             Version = 1
         };
 
-        var response = Response<MaterialDTO>.Ok(createdMaterialDTO);
+        var response = Response<MaterialDto>.Ok(createdMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.CreateMaterial(createMaterialDTO))
@@ -385,30 +385,30 @@ public class MaterialControllerTests
     public async Task CreateMaterial_WithMultipleMaterialsInLesson_CreatesCorrectly()
     {
         // Arrange
-        var createMaterialDTO1 = new CreateMaterialDTO
+        var createMaterialDTO1 = new CreateMaterialDto
         {
             Name = "Material 1",
             Content = "Content 1",
             LessonId = 1
         };
 
-        var createMaterialDTO2 = new CreateMaterialDTO
+        var createMaterialDTO2 = new CreateMaterialDto
         {
             Name = "Material 2",
             Content = "Content 2",
             LessonId = 1
         };
 
-        var createdMaterialDTO1 = new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 };
-        var createdMaterialDTO2 = new MaterialDTO { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 };
+        var createdMaterialDTO1 = new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 };
+        var createdMaterialDTO2 = new MaterialDto { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 };
 
         materialServiceMock
             .Setup(s => s.CreateMaterial(createMaterialDTO1))
-            .ReturnsAsync(Response<MaterialDTO>.Ok(createdMaterialDTO1));
+            .ReturnsAsync(Response<MaterialDto>.Ok(createdMaterialDTO1));
 
         materialServiceMock
             .Setup(s => s.CreateMaterial(createMaterialDTO2))
-            .ReturnsAsync(Response<MaterialDTO>.Ok(createdMaterialDTO2));
+            .ReturnsAsync(Response<MaterialDto>.Ok(createdMaterialDTO2));
 
         // Act
         var result1 = await materialController.CreateMaterial(createMaterialDTO1);
@@ -417,7 +417,7 @@ public class MaterialControllerTests
         // Assert
         Assert.That(result1, Is.TypeOf<CreatedAtActionResult>());
         Assert.That(result2, Is.TypeOf<CreatedAtActionResult>());
-        materialServiceMock.Verify(s => s.CreateMaterial(It.IsAny<CreateMaterialDTO>()), Times.Exactly(2));
+        materialServiceMock.Verify(s => s.CreateMaterial(It.IsAny<CreateMaterialDto>()), Times.Exactly(2));
     }
 
     #endregion
@@ -429,7 +429,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 1;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 1,
@@ -437,7 +437,7 @@ public class MaterialControllerTests
             Content = "Updated content"
         };
 
-        var updatedMaterialDTO = new MaterialDTO
+        var updatedMaterialDTO = new MaterialDto
         {
             Id = materialId,
             Name = "Updated Material",
@@ -445,7 +445,7 @@ public class MaterialControllerTests
             Version = 2
         };
 
-        var response = Response<MaterialDTO>.Ok(updatedMaterialDTO);
+        var response = Response<MaterialDto>.Ok(updatedMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -467,7 +467,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 999;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 1,
@@ -475,7 +475,7 @@ public class MaterialControllerTests
             Content = "Updated content"
         };
 
-        var response = Response<MaterialDTO>.Fail("Material not found");
+        var response = Response<MaterialDto>.Fail("Material not found");
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -494,7 +494,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 1;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 1,
@@ -502,7 +502,7 @@ public class MaterialControllerTests
             Content = "Updated content"
         };
 
-        var response = Response<MaterialDTO>.Fail("Material not found");
+        var response = Response<MaterialDto>.Fail("Material not found");
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -520,7 +520,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 1;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 5,
@@ -528,7 +528,7 @@ public class MaterialControllerTests
             Content = "Updated content"
         };
 
-        var updatedMaterialDTO = new MaterialDTO
+        var updatedMaterialDTO = new MaterialDto
         {
             Id = materialId,
             Name = "Updated Material",
@@ -536,7 +536,7 @@ public class MaterialControllerTests
             Version = 6
         };
 
-        var response = Response<MaterialDTO>.Ok(updatedMaterialDTO);
+        var response = Response<MaterialDto>.Ok(updatedMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -548,7 +548,7 @@ public class MaterialControllerTests
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
-        var materialDTO = okResult!.Value as MaterialDTO;
+        var materialDTO = okResult!.Value as MaterialDto;
         Assert.That(materialDTO!.Version, Is.EqualTo(6));
     }
 
@@ -557,7 +557,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 1;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 1,
@@ -565,7 +565,7 @@ public class MaterialControllerTests
             Content = "Same content"
         };
 
-        var updatedMaterialDTO = new MaterialDTO
+        var updatedMaterialDTO = new MaterialDto
         {
             Id = materialId,
             Name = "New Name",
@@ -573,7 +573,7 @@ public class MaterialControllerTests
             Version = 2
         };
 
-        var response = Response<MaterialDTO>.Ok(updatedMaterialDTO);
+        var response = Response<MaterialDto>.Ok(updatedMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -584,7 +584,7 @@ public class MaterialControllerTests
 
         // Assert
         var okResult = result as OkObjectResult;
-        var materialDTO = okResult!.Value as MaterialDTO;
+        var materialDTO = okResult!.Value as MaterialDto;
         Assert.That(materialDTO!.Name, Is.EqualTo("New Name"));
     }
 
@@ -593,7 +593,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var materialId = 1;
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = materialId,
             Version = 1,
@@ -601,7 +601,7 @@ public class MaterialControllerTests
             Content = "New content"
         };
 
-        var updatedMaterialDTO = new MaterialDTO
+        var updatedMaterialDTO = new MaterialDto
         {
             Id = materialId,
             Name = "Same name",
@@ -609,7 +609,7 @@ public class MaterialControllerTests
             Version = 2
         };
 
-        var response = Response<MaterialDTO>.Ok(updatedMaterialDTO);
+        var response = Response<MaterialDto>.Ok(updatedMaterialDTO);
 
         materialServiceMock
             .Setup(s => s.UpdateMaterial(updateMaterialDTO))
@@ -620,7 +620,7 @@ public class MaterialControllerTests
 
         // Assert
         var okResult = result as OkObjectResult;
-        var materialDTO = okResult!.Value as MaterialDTO;
+        var materialDTO = okResult!.Value as MaterialDto;
         Assert.That(materialDTO!.Content, Is.EqualTo("New content"));
     }
 
@@ -633,13 +633,13 @@ public class MaterialControllerTests
     {
         // Arrange
         var lessonId = 1;
-        var materialsDTO = new List<MaterialDTO>
+        var materialsDTO = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
-            new MaterialDTO { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
+            new MaterialDto { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 }
         };
 
-        var response = Response<IList<MaterialDTO>>.Ok(materialsDTO);
+        var response = Response<IList<MaterialDto>>.Ok(materialsDTO);
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId))
@@ -652,7 +652,7 @@ public class MaterialControllerTests
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
         Assert.That(okResult!.StatusCode, Is.EqualTo(200));
-        var returnedMaterials = okResult.Value as IList<MaterialDTO>;
+        var returnedMaterials = okResult.Value as IList<MaterialDto>;
         Assert.That(returnedMaterials!.Count, Is.EqualTo(2));
         materialServiceMock.Verify(s => s.GetMaterialByLessonId(lessonId), Times.Once);
     }
@@ -662,9 +662,9 @@ public class MaterialControllerTests
     {
         // Arrange
         var lessonId = 999;
-        var materialsDTO = new List<MaterialDTO>();
+        var materialsDTO = new List<MaterialDto>();
 
-        var response = Response<IList<MaterialDTO>>.Ok(materialsDTO);
+        var response = Response<IList<MaterialDto>>.Ok(materialsDTO);
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId))
@@ -676,7 +676,7 @@ public class MaterialControllerTests
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
         var okResult = result as OkObjectResult;
-        var returnedMaterials = okResult!.Value as IList<MaterialDTO>;
+        var returnedMaterials = okResult!.Value as IList<MaterialDto>;
         Assert.That(returnedMaterials!.Count, Is.EqualTo(0));
     }
 
@@ -685,14 +685,14 @@ public class MaterialControllerTests
     {
         // Arrange
         var lessonId = 1;
-        var materialsDTO = new List<MaterialDTO>
+        var materialsDTO = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
-            new MaterialDTO { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 },
-            new MaterialDTO { Id = 3, Name = "Material 3", Content = "Content 3", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
+            new MaterialDto { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 },
+            new MaterialDto { Id = 3, Name = "Material 3", Content = "Content 3", Version = 1 }
         };
 
-        var response = Response<IList<MaterialDTO>>.Ok(materialsDTO);
+        var response = Response<IList<MaterialDto>>.Ok(materialsDTO);
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId))
@@ -703,7 +703,7 @@ public class MaterialControllerTests
 
         // Assert
         var okResult = result as OkObjectResult;
-        var returnedMaterials = okResult!.Value as IList<MaterialDTO>;
+        var returnedMaterials = okResult!.Value as IList<MaterialDto>;
         Assert.That(returnedMaterials!.Count, Is.EqualTo(3));
     }
 
@@ -712,7 +712,7 @@ public class MaterialControllerTests
     {
         // Arrange
         var lessonId = 1;
-        var response = Response<IList<MaterialDTO>>.Fail("Error retrieving materials");
+        var response = Response<IList<MaterialDto>>.Fail("Error retrieving materials");
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId))
@@ -733,24 +733,24 @@ public class MaterialControllerTests
         var lessonId1 = 1;
         var lessonId2 = 2;
 
-        var materials1 = new List<MaterialDTO>
+        var materials1 = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 }
         };
 
-        var materials2 = new List<MaterialDTO>
+        var materials2 = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 },
-            new MaterialDTO { Id = 3, Name = "Material 3", Content = "Content 3", Version = 1 }
+            new MaterialDto { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 },
+            new MaterialDto { Id = 3, Name = "Material 3", Content = "Content 3", Version = 1 }
         };
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId1))
-            .ReturnsAsync(Response<IList<MaterialDTO>>.Ok(materials1));
+            .ReturnsAsync(Response<IList<MaterialDto>>.Ok(materials1));
 
         materialServiceMock
             .Setup(s => s.GetMaterialByLessonId(lessonId2))
-            .ReturnsAsync(Response<IList<MaterialDTO>>.Ok(materials2));
+            .ReturnsAsync(Response<IList<MaterialDto>>.Ok(materials2));
 
         // Act
         var result1 = await materialController.GetMaterialByLessonId(lessonId1);
@@ -759,8 +759,8 @@ public class MaterialControllerTests
         // Assert
         var okResult1 = result1 as OkObjectResult;
         var okResult2 = result2 as OkObjectResult;
-        var returnedMaterials1 = okResult1!.Value as IList<MaterialDTO>;
-        var returnedMaterials2 = okResult2!.Value as IList<MaterialDTO>;
+        var returnedMaterials1 = okResult1!.Value as IList<MaterialDto>;
+        var returnedMaterials2 = okResult2!.Value as IList<MaterialDto>;
         Assert.That(returnedMaterials1!.Count, Is.EqualTo(1));
         Assert.That(returnedMaterials2!.Count, Is.EqualTo(2));
     }

@@ -1,6 +1,6 @@
 ﻿namespace Core.DTOs;
-public class PlanningDTO
+public class PlanningDto
 {
     public int Id { get; set; }
-    public IList<LessonDTO> Lessons { get; set; } = [];
+    public IList<LessonDto> Lessons { get; set; } = [];
 }

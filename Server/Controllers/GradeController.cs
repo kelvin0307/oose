@@ -9,7 +9,7 @@ namespace Server.Controllers;
 public class GradeController(IGradeService gradeService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> CreateGrade([FromBody] CreateGradeDTO createGradeDTO)
+    public async Task<IActionResult> CreateGrade([FromBody] CreateGradeDto createGradeDTO)
     {
         var response = await gradeService.CreateGrade(createGradeDTO);
         if (!response.Success)
@@ -19,7 +19,7 @@ public class GradeController(IGradeService gradeService) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateGrade(int id, [FromBody] UpdateGradeDTO updateGradeDTO)
+    public async Task<IActionResult> UpdateGrade(int id, [FromBody] UpdateGradeDto updateGradeDTO)
     {
         updateGradeDTO.Id = id;
         var response = await gradeService.UpdateGrade(updateGradeDTO);

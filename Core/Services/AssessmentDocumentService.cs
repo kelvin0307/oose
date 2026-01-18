@@ -24,7 +24,7 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
         this.rubricRepository = rubricRepository;
     }
 
-    public override async Task<Response<DocumentDTO>> GenerateDocument(int testId, DocumentTypes documentType)
+    public override async Task<Response<DocumentDto>> GenerateDocument(int testId, DocumentTypes documentType)
     {
         try
         {
@@ -34,11 +34,11 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
 
             if (test == null)
             {
-                return Response<DocumentDTO>.NotFound("Error generating assessment document: Test not found");
+                return Response<DocumentDto>.NotFound("Error generating assessment document: Test not found");
             }
             if (test.TestType == null)
             {
-                return Response<DocumentDTO>.NotFound("Error generating assessment document: Id is not a Test");
+                return Response<DocumentDto>.NotFound("Error generating assessment document: Id is not a Test");
             }
 
             var loIds = test.LearningOutcomes.Select(x => x.Id).ToArray();
@@ -46,16 +46,16 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
 
             var doc = MapToDocumentDataDTO(rubrics);
 
-            return Response<DocumentDTO>.Ok(CreateDocument(doc, documentType));
+            return Response<DocumentDto>.Ok(CreateDocument(doc, documentType));
 
         }
         catch (Exception ex)
         {
-            return Response<DocumentDTO>.Fail("Error generating assessment document" + ex.Message);
+            return Response<DocumentDto>.Fail("Error generating assessment document" + ex.Message);
         }
     }
 
-    protected override DocumentDataDTO MapToDocumentDataDTO(IList<Rubric> rubrics)
+    protected override DocumentDataDto MapToDocumentDataDTO(IList<Rubric> rubrics)
     {
         var paragraphs = new Dictionary<string, string>();
 
@@ -97,7 +97,7 @@ public class AssessmentDocumentService : Generatable<IList<Rubric>, int>, IAsses
             rubricIndex++;
         }
         
-        return new DocumentDataDTO()
+        return new DocumentDataDto()
         {
             Title = "AssessmentDocument",
             Paragraphs = paragraphs ?? [],

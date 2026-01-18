@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class TeacherLoginDTO
+public class TeacherLoginDto
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;

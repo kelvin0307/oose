@@ -5,7 +5,7 @@ using Domain.Enums;
 namespace Core.DocumentGenerator.Factories;
 public class DocumentFactory : IDocumentFactory
 {
-    public DocumentDTO GenerateDocument(DocumentDataDTO documentData, DocumentTypes documentType)
+    public DocumentDto GenerateDocument(DocumentDataDto documentData, DocumentTypes documentType)
     {
         switch (documentType)
         {

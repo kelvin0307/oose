@@ -5,5 +5,5 @@ namespace Core.Interfaces.Services;
 
 public interface IImportService<T>
 {
-    Task<Response<CourseDTO>> Import(T data);
+    Task<Response<CourseDto>> Import(T data);
 }

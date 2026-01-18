@@ -4,5 +4,5 @@ using Domain.Enums;
 namespace Core.DocumentGenerator.Factories.Abstraction;
 public interface IDocumentFactory
 {
-    DocumentDTO GenerateDocument(DocumentDataDTO documentData, DocumentTypes documentType);
+    DocumentDto GenerateDocument(DocumentDataDto documentData, DocumentTypes documentType);
 }

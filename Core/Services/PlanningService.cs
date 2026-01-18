@@ -25,7 +25,7 @@ public class PlanningService : Generatable<Planning, int>, IPlanningService
         this.mapper = mapper;
     }
 
-    public Response<PlanningDTO> GetPlanningByCourseId(int courseId)
+    public Response<PlanningDto> GetPlanningByCourseId(int courseId)
     {
         try
         {
@@ -35,18 +35,18 @@ public class PlanningService : Generatable<Planning, int>, IPlanningService
                 ?.ToDto(mapper);
 
             return planning != null
-            ? Response<PlanningDTO>.Ok(planning)
-            : Response<PlanningDTO>.NotFound("planning not found");
+            ? Response<PlanningDto>.Ok(planning)
+            : Response<PlanningDto>.NotFound("planning not found");
         }
         catch (InvalidOperationException)
         {
             //TODO: Log exception
-            return Response<PlanningDTO>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
+            return Response<PlanningDto>.Fail("Invalid operation while getting course", ResponseStatus.InvalidOperation);
         }
         catch (Exception)
         {
             //TODO: Log exception
-            return Response<PlanningDTO>.Fail("An unexpected error occurred while fetching the course");
+            return Response<PlanningDto>.Fail("An unexpected error occurred while fetching the course");
         }
     }
 
@@ -73,7 +73,7 @@ public class PlanningService : Generatable<Planning, int>, IPlanningService
 
     #region Generatable Members
 
-    public override Task<Response<DocumentDTO>> GenerateDocument(int courseId, DocumentTypes documentType)
+    public override Task<Response<DocumentDto>> GenerateDocument(int courseId, DocumentTypes documentType)
     {
         try
         {
@@ -83,25 +83,25 @@ public class PlanningService : Generatable<Planning, int>, IPlanningService
 
             if (planning == null)
             {
-                return Task.FromResult(Response<DocumentDTO>.Fail("Error generating planning document"));
+                return Task.FromResult(Response<DocumentDto>.Fail("Error generating planning document"));
             }
 
             var documentData = MapToDocumentDataDTO(planning);
 
-            return Task.FromResult(Response<DocumentDTO>.Ok(CreateDocument(documentData, documentType)));
+            return Task.FromResult(Response<DocumentDto>.Ok(CreateDocument(documentData, documentType)));
         }
         catch (Exception ex)
         {
             //TODO: Add logging here.
-            return Task.FromResult(Response<DocumentDTO>.Fail("Error generating planning document" + ex.Message));
+            return Task.FromResult(Response<DocumentDto>.Fail("Error generating planning document" + ex.Message));
         }
     }
 
-    protected override DocumentDataDTO MapToDocumentDataDTO(Planning planning)
+    protected override DocumentDataDto MapToDocumentDataDTO(Planning planning)
     {
         var paragraphs = planning.Lessons?.ToDictionary(x => x.SequenceNumber + ". " + x.Name, x => "Week " + x.WeekNumber.ToString());
 
-        return new DocumentDataDTO()
+        return new DocumentDataDto()
         {
             Title = "Planning",
             Paragraphs = paragraphs ?? [],

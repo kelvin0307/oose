@@ -8,23 +8,23 @@ namespace Core.Services;
 
 public class AuthService(IRepository<Teacher> teacherRepository) : IAuthService
 {
-    public async Task<Response<TeacherLoginDTO>> LoginTeacherByEmail(string email)
+    public async Task<Response<TeacherLoginDto>> LoginTeacherByEmail(string email)
     {
         try
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                return Response<TeacherLoginDTO>.Fail("Email is required", ResponseStatus.ValidationError);
+                return Response<TeacherLoginDto>.Fail("Email is required", ResponseStatus.ValidationError);
             }
 
             var teacher = await teacherRepository.Get(t => t.Email == email.Trim());
 
             if (teacher == null)
             {
-                return Response<TeacherLoginDTO>.NotFound($"No teacher found with email: {email}");
+                return Response<TeacherLoginDto>.NotFound($"No teacher found with email: {email}");
             }
 
-            var teacherLoginDto = new TeacherLoginDTO
+            var teacherLoginDto = new TeacherLoginDto
             {
                 Id = teacher.Id,
                 FirstName = teacher.FirstName,
@@ -34,11 +34,11 @@ public class AuthService(IRepository<Teacher> teacherRepository) : IAuthService
                 TeacherCode = teacher.TeacherCode
             };
 
-            return Response<TeacherLoginDTO>.Ok(teacherLoginDto);
+            return Response<TeacherLoginDto>.Ok(teacherLoginDto);
         }
         catch (Exception ex)
         {
-            return Response<TeacherLoginDTO>.Fail($"An error occurred during login: {ex.Message}");
+            return Response<TeacherLoginDto>.Fail($"An error occurred during login: {ex.Message}");
         }
     }
 }

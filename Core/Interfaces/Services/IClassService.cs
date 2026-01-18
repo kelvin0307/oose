@@ -5,7 +5,7 @@ namespace Core.Interfaces.Services;
 
 public interface IClassService
 {
-    Task<Response<ClassDTO>> GetClassById(int classId);
-    Task<Response<List<ClassDTO>>> GetAllClasses();
-    Task<Response<List<StudentDTO>>> GetStudentsByClassId(int classId);
+    Task<Response<ClassDto>> GetClassById(int classId);
+    Task<Response<List<ClassDto>>> GetAllClasses();
+    Task<Response<List<StudentDto>>> GetStudentsByClassId(int classId);
 }

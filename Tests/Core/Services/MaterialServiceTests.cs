@@ -36,7 +36,7 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithValidMaterialId_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         var material = new Material
@@ -54,8 +54,8 @@ public class MaterialServiceTests
             .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
-            .Returns(new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), documentType))
+            .Returns(new DocumentDto
             {
                 Document = documentBytes,
                 ContentType = "application/pdf",
@@ -77,7 +77,7 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithNonExistentMaterialId_ReturnsFail()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 999, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 999, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         materialRepositoryMock
@@ -97,7 +97,7 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WhenRepositoryThrowsException_ReturnsFail()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         materialRepositoryMock
@@ -117,7 +117,7 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithDifferentDocumentTypes_CreatesCorrectDocument()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentTypes = new[] { DocumentTypes.Pdf, DocumentTypes.Csv, DocumentTypes.Docx };
 
         var material = new Material
@@ -133,8 +133,8 @@ public class MaterialServiceTests
             .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), It.IsAny<DocumentTypes>()))
-            .Returns((DocumentDataDTO data, DocumentTypes type) => new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()))
+            .Returns((DocumentDataDto data, DocumentTypes type) => new DocumentDto
             {
                 Document = new byte[] { 1, 2, 3 },
                 ContentType = "application/octet-stream",
@@ -149,14 +149,14 @@ public class MaterialServiceTests
             Assert.That(result.Result.DocumentName, Does.Contain(docType.ToString().ToLower()));
         }
 
-        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
+        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), It.IsAny<DocumentTypes>()), Times.AtLeastOnce);
     }
 
     [Test]
     public async Task GenerateDocument_WithLargeMaterialContent_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
         var largeContent = string.Concat(Enumerable.Repeat("This is large content. ", 1000));
 
@@ -175,8 +175,8 @@ public class MaterialServiceTests
             .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
-            .Returns(new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), documentType))
+            .Returns(new DocumentDto
             {
                 Document = documentBytes,
                 ContentType = "application/pdf",
@@ -195,7 +195,7 @@ public class MaterialServiceTests
     public async Task GenerateDocument_WithEmptyContent_ReturnsOkResponse()
     {
         // Arrange
-        var materialId = new MaterialIdDTO() { MaterialId = 1, Version = 1 };
+        var materialId = new MaterialIdDto() { MaterialId = 1, Version = 1 };
         var documentType = DocumentTypes.Pdf;
 
         var material = new Material
@@ -213,8 +213,8 @@ public class MaterialServiceTests
             .Returns(new List<Material> { material }.AsQueryable());
 
         documentFactoryMock
-            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType))
-            .Returns(new DocumentDTO
+            .Setup(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), documentType))
+            .Returns(new DocumentDto
             {
                 Document = documentBytes,
                 ContentType = "application/pdf",
@@ -226,7 +226,7 @@ public class MaterialServiceTests
 
         // Assert
         Assert.That(result.Success, Is.True);
-        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDTO>(), documentType), Times.Once);
+        documentFactoryMock.Verify(f => f.GenerateDocument(It.IsAny<DocumentDataDto>(), documentType), Times.Once);
     }
 
     #endregion
@@ -237,7 +237,7 @@ public class MaterialServiceTests
     public async Task CreateMaterial_WithValidData_ReturnsOkResponse()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "New Material",
             Content = "Material content",
@@ -266,7 +266,7 @@ public class MaterialServiceTests
             LessonId = lesson.Id
         };
 
-        var expectedDTO = new MaterialDTO
+        var expectedDTO = new MaterialDto
         {
             Id = 1,
             Name = "New Material",
@@ -287,7 +287,7 @@ public class MaterialServiceTests
             .ReturnsAsync(createdMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
+            .Setup(m => m.Map<MaterialDto>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act
@@ -305,7 +305,7 @@ public class MaterialServiceTests
     public async Task CreateMaterial_WithNonExistentLesson_ReturnsFail()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "New Material",
             Content = "Material content",
@@ -329,7 +329,7 @@ public class MaterialServiceTests
     public async Task CreateMaterial_WhenRepositoryThrowsException_ReturnsFail()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "New Material",
             Content = "Material content",
@@ -364,7 +364,7 @@ public class MaterialServiceTests
     public async Task CreateMaterial_WithEmptyName_StillCreates()
     {
         // Arrange
-        var createMaterialDTO = new CreateMaterialDTO
+        var createMaterialDTO = new CreateMaterialDto
         {
             Name = "",
             Content = "Material content",
@@ -390,7 +390,7 @@ public class MaterialServiceTests
             LessonId = lesson.Id
         };
 
-        var expectedDTO = new MaterialDTO
+        var expectedDTO = new MaterialDto
         {
             Id = 1,
             Name = "",
@@ -411,7 +411,7 @@ public class MaterialServiceTests
             .ReturnsAsync(createdMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(createdMaterial))
+            .Setup(m => m.Map<MaterialDto>(createdMaterial))
             .Returns(expectedDTO);
 
         // Act
@@ -429,7 +429,7 @@ public class MaterialServiceTests
     public async Task UpdateMaterial_WithValidData_ReturnsOkResponse()
     {
         // Arrange
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = 1,
             Version = 1,
@@ -455,7 +455,7 @@ public class MaterialServiceTests
             LessonId = 1
         };
 
-        var expectedDTO = new MaterialDTO
+        var expectedDTO = new MaterialDto
         {
             Id = 1,
             Name = "Updated Material",
@@ -472,7 +472,7 @@ public class MaterialServiceTests
             .ReturnsAsync(updatedMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
+            .Setup(m => m.Map<MaterialDto>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act
@@ -489,7 +489,7 @@ public class MaterialServiceTests
     public async Task UpdateMaterial_WithNonExistentMaterial_ReturnsFail()
     {
         // Arrange
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = 999,
             Version = 1,
@@ -513,7 +513,7 @@ public class MaterialServiceTests
     public async Task UpdateMaterial_WithIncorrectVersion_ReturnsFail()
     {
         // Arrange
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = 1,
             Version = 1,
@@ -547,7 +547,7 @@ public class MaterialServiceTests
     public async Task UpdateMaterial_WhenRepositoryThrowsException_ReturnsFail()
     {
         // Arrange
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = 1,
             Version = 1,
@@ -584,7 +584,7 @@ public class MaterialServiceTests
     public async Task UpdateMaterial_IncrementVersionCorrectly()
     {
         // Arrange
-        var updateMaterialDTO = new UpdateMaterialDTO
+        var updateMaterialDTO = new UpdateMaterialDto
         {
             Id = 1,
             Version = 5,
@@ -610,7 +610,7 @@ public class MaterialServiceTests
             LessonId = 1
         };
 
-        var expectedDTO = new MaterialDTO
+        var expectedDTO = new MaterialDto
         {
             Id = 1,
             Name = "Updated Material",
@@ -627,7 +627,7 @@ public class MaterialServiceTests
             .ReturnsAsync(updatedMaterial);
 
         mapperMock
-            .Setup(m => m.Map<MaterialDTO>(It.IsAny<Material>()))
+            .Setup(m => m.Map<MaterialDto>(It.IsAny<Material>()))
             .Returns(expectedDTO);
 
         // Act
@@ -669,10 +669,10 @@ public class MaterialServiceTests
             }
         };
 
-        var expectedDTOs = new List<MaterialDTO>
+        var expectedDTOs = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
-            new MaterialDTO { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 },
+            new MaterialDto { Id = 2, Name = "Material 2", Content = "Content 2", Version = 1 }
         };
 
         materialRepositoryMock
@@ -680,7 +680,7 @@ public class MaterialServiceTests
             .ReturnsAsync(materials);
 
         mapperMock
-            .Setup(m => m.Map<IList<MaterialDTO>>(It.IsAny<List<Material>>()))
+            .Setup(m => m.Map<IList<MaterialDto>>(It.IsAny<List<Material>>()))
             .Returns(expectedDTOs);
 
         // Act
@@ -700,14 +700,14 @@ public class MaterialServiceTests
         var lessonId = 999;
         var materials = new List<Material>();
 
-        var expectedDTOs = new List<MaterialDTO>();
+        var expectedDTOs = new List<MaterialDto>();
 
         materialRepositoryMock
             .Setup(r => r.GetAll(It.IsAny<Expression<Func<Material, bool>>>()))
             .ReturnsAsync(materials);
 
         mapperMock
-            .Setup(m => m.Map<IList<MaterialDTO>>(It.IsAny<List<Material>>()))
+            .Setup(m => m.Map<IList<MaterialDto>>(It.IsAny<List<Material>>()))
             .Returns(expectedDTOs);
 
         // Act
@@ -736,9 +736,9 @@ public class MaterialServiceTests
             }
         };
 
-        var expectedDTOs = new List<MaterialDTO>
+        var expectedDTOs = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1", Content = "Content 1", Version = 1 }
         };
 
         materialRepositoryMock
@@ -746,7 +746,7 @@ public class MaterialServiceTests
             .ReturnsAsync(materials);
 
         mapperMock
-            .Setup(m => m.Map<IList<MaterialDTO>>(It.IsAny<List<Material>>()))
+            .Setup(m => m.Map<IList<MaterialDto>>(It.IsAny<List<Material>>()))
             .Returns(expectedDTOs);
 
         // Act
@@ -768,10 +768,10 @@ public class MaterialServiceTests
             new Material { Id = 2, Name = "Material 2 V1", Content = "Content 2", Version = 1, LessonId = lessonId, SysDeleted = null }
         };
 
-        var expectedDTOs = new List<MaterialDTO>
+        var expectedDTOs = new List<MaterialDto>
         {
-            new MaterialDTO { Id = 1, Name = "Material 1 V2", Content = "Content 1 Updated", Version = 2 },
-            new MaterialDTO { Id = 2, Name = "Material 2 V1", Content = "Content 2", Version = 1 }
+            new MaterialDto { Id = 1, Name = "Material 1 V2", Content = "Content 1 Updated", Version = 2 },
+            new MaterialDto { Id = 2, Name = "Material 2 V1", Content = "Content 2", Version = 1 }
         };
 
         materialRepositoryMock
@@ -779,7 +779,7 @@ public class MaterialServiceTests
             .ReturnsAsync(materials);
 
         mapperMock
-            .Setup(m => m.Map<IList<MaterialDTO>>(It.IsAny<List<Material>>()))
+            .Setup(m => m.Map<IList<MaterialDto>>(It.IsAny<List<Material>>()))
             .Returns(expectedDTOs);
 
         // Act

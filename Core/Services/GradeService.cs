@@ -42,19 +42,19 @@ public class GradeService(
         return false;
     }
 
-    public async Task<Response<GradeDTO>> CreateGrade(CreateGradeDTO createGradeDTO)
+    public async Task<Response<GradeDto>> CreateGrade(CreateGradeDto createGradeDTO)
     {
         try
         {
             if (!TryParseLetterGrade(createGradeDTO.Grade, out var numericGrade))
-                return Response<GradeDTO>.Fail("Invalid or missing grade");
+                return Response<GradeDto>.Fail("Invalid or missing grade");
 
             var lesson = await lessonRepository.Get(createGradeDTO.LessonId);
             if (lesson == null)
-                return Response<GradeDTO>.NotFound("Lesson not found");
+                return Response<GradeDto>.NotFound("Lesson not found");
 
             if (lesson.TestType == null)
-                return Response<GradeDTO>.Fail("Only exam lessons (lessons with a TestType) can have grades");
+                return Response<GradeDto>.Fail("Only exam lessons (lessons with a TestType) can have grades");
 
             var grade = new Grade
             {
@@ -69,26 +69,26 @@ public class GradeService(
 
             var student = await studentRepository.Get(createGradeDTO.StudentId);
             grade.Student = student;
-            return Response<GradeDTO>.Ok(mapper.Map<GradeDTO>(grade));
+            return Response<GradeDto>.Ok(mapper.Map<GradeDto>(grade));
         }
         catch (Exception ex)
         {
-            return Response<GradeDTO>.Fail($"Error creating grade: {ex.Message}");
+            return Response<GradeDto>.Fail($"Error creating grade: {ex.Message}");
         }
     }
 
-    public async Task<Response<GradeDTO>> UpdateGrade(UpdateGradeDTO updateGradeDTO)
+    public async Task<Response<GradeDto>> UpdateGrade(UpdateGradeDto updateGradeDTO)
     {
         try
         {
             var existing = await gradeRepository.Get(updateGradeDTO.Id);
             if (existing == null)
-                return Response<GradeDTO>.NotFound("Grade not found");
+                return Response<GradeDto>.NotFound("Grade not found");
 
             if (!string.IsNullOrEmpty(updateGradeDTO.Grade))
             {
                 if (!TryParseLetterGrade(updateGradeDTO.Grade, out var numericGrade))
-                    return Response<GradeDTO>.Fail("Invalid or missing grade");
+                    return Response<GradeDto>.Fail("Invalid or missing grade");
 
                 existing.GradeValue = numericGrade;
             }
@@ -99,15 +99,15 @@ public class GradeService(
 
             var gradeWithStudent = gradeRepository.Include(g => g.Student).Where(g => g.Id == updated.Id).FirstOrDefault();
 
-            return Response<GradeDTO>.Ok(mapper.Map<GradeDTO>(gradeWithStudent));
+            return Response<GradeDto>.Ok(mapper.Map<GradeDto>(gradeWithStudent));
         }
         catch (Exception ex)
         {
-            return Response<GradeDTO>.Fail($"Error updating grade: {ex.Message}");
+            return Response<GradeDto>.Fail($"Error updating grade: {ex.Message}");
         }
     }
 
-    public async Task<Response<List<GradeDTO>>> GetLatestGradesByClassAndExecution(int classId, int courseExecutionId)
+    public async Task<Response<List<GradeDto>>> GetLatestGradesByClassAndExecution(int classId, int courseExecutionId)
     {
         try
         {
@@ -123,16 +123,16 @@ public class GradeService(
                 .Select(g => g.OrderByDescending(x => x.Id).First())
                 .ToList();
 
-            var dtos = latest.Select(mapper.Map<GradeDTO>)
+            var dtos = latest.Select(mapper.Map<GradeDto>)
                 .OrderBy(d => d.StudentLastName)
                 .ThenBy(d => d.StudentFirstName)
                 .ToList();
 
-            return Response<List<GradeDTO>>.Ok(dtos);
+            return Response<List<GradeDto>>.Ok(dtos);
         }
         catch (Exception ex)
         {
-            return Response<List<GradeDTO>>.Fail($"Error retrieving grades: {ex.Message}");
+            return Response<List<GradeDto>>.Fail($"Error retrieving grades: {ex.Message}");
         }
     }
 

@@ -42,8 +42,8 @@ public class AuthControllerTests
     public async Task Login_WithValidEmail_ReturnsOkResponse()
     {
         // Arrange
-        var loginRequest = new LoginDTO { Email = "teacher@example.com" };
-        var teacherLoginDto = new TeacherLoginDTO
+        var loginRequest = new LoginDto { Email = "teacher@example.com" };
+        var teacherLoginDto = new TeacherLoginDto
         {
             Id = 1,
             FirstName = "John",
@@ -52,7 +52,7 @@ public class AuthControllerTests
             TeacherCode = "T001"
         };
 
-        var response = Response<TeacherLoginDTO>.Ok(teacherLoginDto);
+        var response = Response<TeacherLoginDto>.Ok(teacherLoginDto);
 
         authServiceMock
             .Setup(s => s.LoginTeacherByEmail(loginRequest.Email))
@@ -86,7 +86,7 @@ public class AuthControllerTests
     public async Task Login_WithEmptyEmail_ReturnsBadRequest()
     {
         // Arrange
-        var loginRequest = new LoginDTO { Email = "" };
+        var loginRequest = new LoginDto { Email = "" };
 
         // Act
         var result = await authController.LoginByEmail(loginRequest.Email);
@@ -102,8 +102,8 @@ public class AuthControllerTests
     public async Task Login_WithNonExistentEmail_ReturnsErrorResponse()
     {
         // Arrange
-        var loginRequest = new LoginDTO { Email = "nonexistent@example.com" };
-        var response = Response<TeacherLoginDTO>.NotFound("No teacher found with email");
+        var loginRequest = new LoginDto { Email = "nonexistent@example.com" };
+        var response = Response<TeacherLoginDto>.NotFound("No teacher found with email");
 
         authServiceMock
             .Setup(s => s.LoginTeacherByEmail(loginRequest.Email))
@@ -121,7 +121,7 @@ public class AuthControllerTests
     public async Task Login_WhenServiceThrowsException_ThrowsException()
     {
         // Arrange
-        var loginRequest = new LoginDTO { Email = "teacher@example.com" };
+        var loginRequest = new LoginDto { Email = "teacher@example.com" };
 
         authServiceMock
             .Setup(s => s.LoginTeacherByEmail(loginRequest.Email))
@@ -141,7 +141,7 @@ public class AuthControllerTests
     {
         // Arrange
         var email = "teacher@example.com";
-        var teacherLoginDto = new TeacherLoginDTO
+        var teacherLoginDto = new TeacherLoginDto
         {
             Id = 1,
             FirstName = "Jane",
@@ -150,7 +150,7 @@ public class AuthControllerTests
             TeacherCode = "T002"
         };
 
-        var response = Response<TeacherLoginDTO>.Ok(teacherLoginDto);
+        var response = Response<TeacherLoginDto>.Ok(teacherLoginDto);
 
         authServiceMock
             .Setup(s => s.LoginTeacherByEmail(email))
@@ -198,7 +198,7 @@ public class AuthControllerTests
     {
         // Arrange
         var email = "nonexistent@example.com";
-        var response = Response<TeacherLoginDTO>.NotFound("No teacher found with email");
+        var response = Response<TeacherLoginDto>.NotFound("No teacher found with email");
 
         authServiceMock
             .Setup(s => s.LoginTeacherByEmail(email))

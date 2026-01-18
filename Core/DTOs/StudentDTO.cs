@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class StudentDTO
+public class StudentDto
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;

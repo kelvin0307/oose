@@ -43,16 +43,16 @@ public class GradeServiceTests
     public async Task CreateGrade_WithLetterGrade_ConvertsToNumeric()
     {
         // Arrange
-        var createDto = new CreateGradeDTO { Grade = "V", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
+        var createDto = new CreateGradeDto { Grade = "V", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
         var student = new Student { Id = 1, FirstName = "A", LastName = "Z" };
         var lesson = new Lesson { Id = 1, TestType = TestType.Practical };
         var grade = new Grade { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExcecutionId = 1, Student = student };
-        var gradeDto = new GradeDTO { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "A", StudentLastName = "Z" };
+        var gradeDto = new GradeDto { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "A", StudentLastName = "Z" };
 
         lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
         studentRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(student);
         gradeRepositoryMock.Setup(r => r.CreateAndCommit(It.IsAny<Grade>())).ReturnsAsync((Grade g) => { g.Id = 1; return g; });
-        mapperMock.Setup(m => m.Map<GradeDTO>(It.IsAny<Grade>())).Returns(gradeDto);
+        mapperMock.Setup(m => m.Map<GradeDto>(It.IsAny<Grade>())).Returns(gradeDto);
 
         // Act
         var result = await gradeService.CreateGrade(createDto);
@@ -63,14 +63,14 @@ public class GradeServiceTests
         lessonRepositoryMock.Verify(r => r.Get(1), Times.Once);
         studentRepositoryMock.Verify(r => r.Get(1), Times.Once);
         gradeRepositoryMock.Verify(r => r.CreateAndCommit(It.IsAny<Grade>()), Times.Once);
-        mapperMock.Verify(m => m.Map<GradeDTO>(It.IsAny<Grade>()), Times.Once);
+        mapperMock.Verify(m => m.Map<GradeDto>(It.IsAny<Grade>()), Times.Once);
     }
 
     [Test]
     public async Task CreateGrade_WithoutGrade_ReturnsFail()
     {
         // Arrange
-        var createDto = new CreateGradeDTO { Grade = "", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
+        var createDto = new CreateGradeDto { Grade = "", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
 
         // Act
         var result = await gradeService.CreateGrade(createDto);
@@ -86,7 +86,7 @@ public class GradeServiceTests
     public async Task CreateGrade_NonExamLesson_ReturnsFail()
     {
         // Arrange
-        var createDto = new CreateGradeDTO { Grade = "8", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
+        var createDto = new CreateGradeDto { Grade = "8", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
         var lesson = new Lesson { Id = 1, TestType = null };
 
         lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
@@ -105,16 +105,16 @@ public class GradeServiceTests
     public async Task CreateGrade_WithNumericGrade_CreatesSuccessfully()
     {
         // Arrange
-        var createDto = new CreateGradeDTO { Grade = "8", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
+        var createDto = new CreateGradeDto { Grade = "8", StudentId = 1, LessonId = 1, CourseExecutionId = 1 };
         var student = new Student { Id = 1, FirstName = "John", LastName = "Doe" };
         var lesson = new Lesson { Id = 1, TestType = TestType.Written };
         var grade = new Grade { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExcecutionId = 1, Student = student };
-        var gradeDto = new GradeDTO { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "John", StudentLastName = "Doe" };
+        var gradeDto = new GradeDto { Id = 1, GradeValue = 8, StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "John", StudentLastName = "Doe" };
 
         lessonRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(lesson);
         studentRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(student);
         gradeRepositoryMock.Setup(r => r.CreateAndCommit(It.IsAny<Grade>())).ReturnsAsync((Grade g) => { g.Id = 1; return g; });
-        mapperMock.Setup(m => m.Map<GradeDTO>(It.IsAny<Grade>())).Returns(gradeDto);
+        mapperMock.Setup(m => m.Map<GradeDto>(It.IsAny<Grade>())).Returns(gradeDto);
 
         // Act
         var result = await gradeService.CreateGrade(createDto);
@@ -136,8 +136,8 @@ public class GradeServiceTests
         var existing = new Grade { Id = 1, GradeValue = 5, Feedback = "old", StudentId = 1, LessonId = 1, CourseExcecutionId = 1 };
         var student = new Student { Id = 1, FirstName = "B", LastName = "A" };
         var updatedGrade = new Grade { Id = 1, GradeValue = 10, Feedback = "new", StudentId = 1, LessonId = 1, CourseExcecutionId = 1, Student = student };
-        var gradeDto = new GradeDTO { Id = 1, GradeValue = 10, Feedback = "new", StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "B", StudentLastName = "A" };
-        var updateDto = new UpdateGradeDTO { Id = 1, Grade = "10", Feedback = "new" };
+        var gradeDto = new GradeDto { Id = 1, GradeValue = 10, Feedback = "new", StudentId = 1, LessonId = 1, CourseExecutionId = 1, StudentFirstName = "B", StudentLastName = "A" };
+        var updateDto = new UpdateGradeDto { Id = 1, Grade = "10", Feedback = "new" };
 
         gradeRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(existing);
         gradeRepositoryMock.Setup(r => r.UpdateAndCommit(It.IsAny<Grade>())).ReturnsAsync(updatedGrade);
@@ -147,7 +147,7 @@ public class GradeServiceTests
         gradeRepositoryMock.Setup(r => r.Include(It.IsAny<Expression<Func<Grade, object>>>()))
             .Returns(gradeQueryable);
         
-        mapperMock.Setup(m => m.Map<GradeDTO>(It.IsAny<Grade>())).Returns(gradeDto);
+        mapperMock.Setup(m => m.Map<GradeDto>(It.IsAny<Grade>())).Returns(gradeDto);
 
         // Act
         var result = await gradeService.UpdateGrade(updateDto);
@@ -164,7 +164,7 @@ public class GradeServiceTests
     public async Task UpdateGrade_WithNonExistentGrade_ReturnsNotFound()
     {
         // Arrange
-        var updateDto = new UpdateGradeDTO { Id = 999, Grade = "10", Feedback = "new" };
+        var updateDto = new UpdateGradeDto { Id = 999, Grade = "10", Feedback = "new" };
 
         gradeRepositoryMock.Setup(r => r.Get(999)).ReturnsAsync((Grade)null);
 
@@ -183,7 +183,7 @@ public class GradeServiceTests
     {
         // Arrange
         var existing = new Grade { Id = 1, GradeValue = 5, Feedback = "old", StudentId = 1, LessonId = 1, CourseExcecutionId = 1 };
-        var updateDto = new UpdateGradeDTO { Id = 1, Grade = "invalid", Feedback = "new" };
+        var updateDto = new UpdateGradeDto { Id = 1, Grade = "invalid", Feedback = "new" };
 
         gradeRepositoryMock.Setup(r => r.Get(1)).ReturnsAsync(existing);
 
@@ -220,10 +220,10 @@ public class GradeServiceTests
             new Grade { Id = 3, StudentId = 2, LessonId = 1, CourseExcecutionId = courseExecutionId, GradeValue = 9, Student = students[1] }
         };
 
-        var gradeDtos = new List<GradeDTO>
+        var gradeDtos = new List<GradeDto>
         {
-            new GradeDTO { Id = 2, StudentId = 1, LessonId = 1, CourseExecutionId = courseExecutionId, GradeValue = 7, StudentFirstName = "Alice", StudentLastName = "Zephyr" },
-            new GradeDTO { Id = 3, StudentId = 2, LessonId = 1, CourseExecutionId = courseExecutionId, GradeValue = 9, StudentFirstName = "Bob", StudentLastName = "Young" }
+            new GradeDto { Id = 2, StudentId = 1, LessonId = 1, CourseExecutionId = courseExecutionId, GradeValue = 7, StudentFirstName = "Alice", StudentLastName = "Zephyr" },
+            new GradeDto { Id = 3, StudentId = 2, LessonId = 1, CourseExecutionId = courseExecutionId, GradeValue = 9, StudentFirstName = "Bob", StudentLastName = "Young" }
         };
 
         // Setup Include to return a queryable of filtered grades
@@ -235,8 +235,8 @@ public class GradeServiceTests
         gradeRepositoryMock.Setup(r => r.ToListAsync(It.IsAny<IQueryable<Grade>>()))
             .ReturnsAsync(grades);
 
-        mapperMock.Setup(m => m.Map<GradeDTO>(grades[1])).Returns(gradeDtos[0]);
-        mapperMock.Setup(m => m.Map<GradeDTO>(grades[2])).Returns(gradeDtos[1]);
+        mapperMock.Setup(m => m.Map<GradeDto>(grades[1])).Returns(gradeDtos[0]);
+        mapperMock.Setup(m => m.Map<GradeDto>(grades[2])).Returns(gradeDtos[1]);
 
         // Act
         var result = await gradeService.GetLatestGradesByClassAndExecution(classId, courseExecutionId);

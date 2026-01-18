@@ -24,7 +24,7 @@ public class LessonServiceTests
         planningRepositoryMock = new Mock<IRepository<Planning>>();
         learningOutcomeRepositoryMock = new Mock<IRepository<LearningOutcome>>();
         var mapperMock = new Mock<IMapper>();
-        mapperMock.Setup(m => m.Map<LessonDTO>(It.IsAny<Lesson>())).Returns((Lesson l) => new LessonDTO { Id = l.Id, Name = l.Name });
+        mapperMock.Setup(m => m.Map<LessonDto>(It.IsAny<Lesson>())).Returns((Lesson l) => new LessonDto { Id = l.Id, Name = l.Name });
 
         lessonService = new LessonService(lessonRepositoryMock.Object, planningRepositoryMock.Object, learningOutcomeRepositoryMock.Object, mapperMock.Object);
     }

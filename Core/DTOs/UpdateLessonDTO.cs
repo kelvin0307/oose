@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class UpdateLessonDTO
+public class UpdateLessonDto
 {
     public int Id { get; set; }
     public int WeekNumber { get; set; }
