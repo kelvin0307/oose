@@ -11,4 +11,5 @@ public class CourseExecution
 
     public List<Class>? Classes { get; set; }
     public List<Material>? Materials { get; set; }
+    public ICollection<Grade>? Grades { get; set; }
 }
