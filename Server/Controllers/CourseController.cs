@@ -51,9 +51,9 @@ public class CourseController(ICourseService courseService, ILearningOutcomeServ
     }
 
     [HttpGet("{id}/validatePlanning")]
-    public IActionResult ValidatePlanning(int id)
+    public async Task<IActionResult> ValidatePlanning(int id)
     {
-        var response = validatorService.ValidateCoursePlanning(id);
+        var response = await validatorService.ValidateCoursePlanning(id);
 
         if (!response.Success)
         {
@@ -62,4 +62,6 @@ public class CourseController(ICourseService courseService, ILearningOutcomeServ
 
         return HandleResponse(response, noContentOnSuccess: true);
     }
+
+
 }
