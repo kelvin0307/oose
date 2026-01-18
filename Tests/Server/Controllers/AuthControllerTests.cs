@@ -59,7 +59,7 @@ public class AuthControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await authController.Login(loginRequest);
+        var result = await authController.LoginByEmail(loginRequest.Email);
 
         // Assert
         Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -73,7 +73,7 @@ public class AuthControllerTests
     public async Task Login_WithNullRequest_ReturnsBadRequest()
     {
         // Act
-        var result = await authController.Login(null!);
+        var result = await authController.LoginByEmail(null!);
 
         // Assert
         Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -89,7 +89,7 @@ public class AuthControllerTests
         var loginRequest = new LoginDTO { Email = "" };
 
         // Act
-        var result = await authController.Login(loginRequest);
+        var result = await authController.LoginByEmail(loginRequest.Email);
 
         // Assert
         Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
@@ -110,7 +110,7 @@ public class AuthControllerTests
             .ReturnsAsync(response);
 
         // Act
-        var result = await authController.Login(loginRequest);
+        var result = await authController.LoginByEmail(loginRequest.Email);
 
         // Assert
         Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
@@ -128,7 +128,7 @@ public class AuthControllerTests
             .ThrowsAsync(new Exception("Service error"));
 
         // Act & Assert
-        Assert.ThrowsAsync<Exception>(() => authController.Login(loginRequest));
+        Assert.ThrowsAsync<Exception>(() => authController.LoginByEmail(loginRequest.Email));
         authServiceMock.Verify(s => s.LoginTeacherByEmail(loginRequest.Email), Times.Once);
     }
 

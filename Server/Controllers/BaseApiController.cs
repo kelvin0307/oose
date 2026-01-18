@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Server.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public abstract class BaseApiController : ControllerBase
