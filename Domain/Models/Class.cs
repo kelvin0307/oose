@@ -6,4 +6,5 @@ public class Class
     public string Name { get; set; } = string.Empty;
     public string ClassCode { get; set; } = string.Empty;
     public IList<Student> Students { get; set; } = [];
+
 }

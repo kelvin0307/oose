@@ -2,12 +2,12 @@
 using Core.Common;
 using Core.DocumentGenerator.Factories.Abstraction;
 using Core.DTOs;
-using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Services;
 using Core.Services.Abstractions;
 using Core.Interfaces.Repositories;
 using Domain.Enums;
 using Domain.Models;
+using Core.Extensions.Mapper;
 
 namespace Core.Services;
 public class PlanningService : Generatable<Planning, int>, IPlanningService

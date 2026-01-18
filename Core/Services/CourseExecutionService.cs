@@ -1,10 +1,11 @@
 using AutoMapper;
 using Core.Common;
 using Core.DTOs;
-using Core.Extensions.ModelExtensions;
 using Core.Interfaces.Services;
 using Core.Interfaces.Repositories;
 using Domain.Models;
+using Domain.Enums;
+using Core.Extensions.Mapper;
 
 namespace Core.Services;
 
@@ -53,6 +54,11 @@ public class CourseExecutionService(IRepository<CourseExecution> courseExecution
             if (course == null)
             {
                 return Response<CourseExecutionDto>.NotFound("Course not found");
+            }
+
+            if (course.Status == CourseStatus.Concept)
+            {
+                return Response<CourseExecutionDto>.NotFound("Course still in concept");
             }
             
             var execution = new CourseExecution
