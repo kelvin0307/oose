@@ -9,7 +9,7 @@ using Domain.Models;
 
 namespace Core.Services;
 
-public class CourseService(IRepository<Course> courseRepository, IRepository<Planning> planningRepository, IMapper mapper) : ICourseService
+public class CourseService(IRepository<Course> courseRepository, IMapper mapper, IRepository<Planning> planningRepository) : ICourseService
 {
     public async Task<Response<List<CourseDto>>> GetAllCourses()
     {

@@ -23,7 +23,7 @@ public class CourseServiceTests
         courseRepositoryMock = new Mock<IRepository<Course>>();
         planningRepositoryMock = new Mock<IRepository<Planning>>();
         mapperMock = new Mock<IMapper>();
-        courseService = new CourseService(courseRepositoryMock.Object, planningRepositoryMock.Object, mapperMock.Object);
+        courseService = new CourseService(courseRepositoryMock.Object, mapperMock.Object, planningRepositoryMock.Object);
 
     }
 
