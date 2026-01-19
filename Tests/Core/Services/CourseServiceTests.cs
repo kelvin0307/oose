@@ -24,6 +24,7 @@ public class CourseServiceTests
         planningRepositoryMock = new Mock<IRepository<Planning>>();
         mapperMock = new Mock<IMapper>();
         courseService = new CourseService(courseRepositoryMock.Object, planningRepositoryMock.Object, mapperMock.Object);
+
     }
 
     #region GetAllCourses Tests
