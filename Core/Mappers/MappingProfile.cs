@@ -10,19 +10,20 @@ public class MappingProfile : Profile
     {
         CreateMap<Material, MaterialDto>().ReverseMap();
         CreateMap<Course, CourseDto>().ReverseMap();
+        CreateMap<Planning, PlanningDto>().ReverseMap();
         CreateMap<CreateCourseDto, Course>();
         CreateMap<Lesson, LessonDto>().ReverseMap();
         CreateMap<CreateLessonDto, Lesson>();
         CreateMap<UpdateLessonDto, Lesson>();
-        
+
         CreateMap<Rubric, RubricDto>().ReverseMap();
         CreateMap<AssessmentDimension, AssessmentDimensionDto>().ReverseMap();
         CreateMap<AssessmentDimensionScore, AssessmentDimensionScoreDto>().ReverseMap();
-        
+
         CreateMap<CreateRubricDto, Rubric>().ReverseMap();
         CreateMap<CreateAssessmentDimensionDto, AssessmentDimension>().ReverseMap();
         CreateMap<CreateAssessmentDimensionScoreDto, AssessmentDimensionScore>().ReverseMap();
-        
+
         CreateMap<UpdateRubricDto, Rubric>().ReverseMap();
         CreateMap<UpdateAssessmentDimensionDto, AssessmentDimension>().ReverseMap();
         CreateMap<UpdateAssessmentDimensionScoreDto, AssessmentDimensionScore>().ReverseMap();
@@ -36,7 +37,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.Student != null ? src.Student.FirstName : string.Empty))
             .ForMember(dest => dest.StudentLastName,
                 opt => opt.MapFrom(src => src.Student != null ? src.Student.LastName : string.Empty));
-        
-        CreateMap<CourseExecution,CourseExecutionDto>().ReverseMap();
+
+        CreateMap<CourseExecution, CourseExecutionDto>().ReverseMap();
     }
 }
