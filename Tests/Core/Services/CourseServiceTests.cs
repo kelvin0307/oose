@@ -13,6 +13,7 @@ namespace Tests.Core.Services;
 public class CourseServiceTests
 {
     private Mock<IRepository<Course>> courseRepositoryMock;
+    private Mock<IRepository<Planning>> planningRepositoryMock;
     private Mock<IMapper> mapperMock;
     private ICourseService courseService;
 
@@ -20,8 +21,9 @@ public class CourseServiceTests
     public void Setup()
     {
         courseRepositoryMock = new Mock<IRepository<Course>>();
+        planningRepositoryMock = new Mock<IRepository<Planning>>();
         mapperMock = new Mock<IMapper>();
-        courseService = new CourseService(courseRepositoryMock.Object, mapperMock.Object);
+        courseService = new CourseService(courseRepositoryMock.Object, planningRepositoryMock.Object, mapperMock.Object);
     }
 
     #region GetAllCourses Tests
