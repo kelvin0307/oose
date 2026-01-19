@@ -9,7 +9,7 @@ using Domain.Models;
 
 namespace Core.Services;
 
-public class CourseService(IRepository<Course> courseRepository, IMapper mapper) : ICourseService
+public class CourseService(IRepository<Course> courseRepository, IRepository<Planning> planningRepository, IMapper mapper) : ICourseService
 {
     public async Task<Response<List<CourseDto>>> GetAllCourses()
     {
@@ -63,6 +63,13 @@ public class CourseService(IRepository<Course> courseRepository, IMapper mapper)
             course.Status = CourseStatus.Concept;
 
             var createdCourse = await courseRepository.CreateAndCommit(course);
+            var planning = new Planning()
+            {
+                CourseId = createdCourse.Id,
+                Lessons = []
+            };
+
+            await planningRepository.CreateAndCommit(planning);
             return Response<CourseDto>.Ok(createdCourse.ToDto(mapper));
         }
         catch (InvalidOperationException)
